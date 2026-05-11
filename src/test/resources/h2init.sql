@@ -135,13 +135,13 @@ INSERT INTO employee_competence (employee_id, competence_id) VALUES
 INSERT INTO project (project_id, title, description, start_date, end_date, budget, employee_id, parent_project_id, status_id) VALUES
     (1, 'Sanistål Webshop Redesign',
         'Komplet redesign af B2B webshop.',
-        '2025-09-01', '2026-01-15', 450000.00, 1, NULL, 4);
+        '2025-09-01', '2026-01-15', 450000.00, 1, null, 4);
 
 -- Project 2: Complex parent, in progress
 INSERT INTO project (project_id, title, description, start_date, end_date, budget, employee_id, parent_project_id, status_id) VALUES
     (2, 'DLG B2B Portal',
         'Selvbetjeningsportal med produktkatalog og ordrestyring.',
-        '2026-01-15', '2026-06-30', 850000.00, 2, NULL, 2);
+        '2026-01-15', '2026-06-30', 850000.00, 2, null, 2);
 
 -- Project 3: Subproject of 2
 INSERT INTO project (project_id, title, description, start_date, end_date, budget, employee_id, parent_project_id, status_id) VALUES
@@ -192,3 +192,10 @@ INSERT INTO task_employee (task_id, employee_id) VALUES
     (5, 4),                              -- Datamapping: Jonas
     (6, 4), (6, 5),                      -- Import: Jonas, Frederik
     (7, 3), (7, 4);                      -- Søgning: Sofie, Jonas
+
+
+ALTER TABLE project ALTER COLUMN project_id RESTART WITH 100;
+ALTER TABLE status ALTER COLUMN status_id RESTART WITH 100;
+ALTER TABLE task ALTER COLUMN task_id RESTART WITH 100;
+ALTER TABLE employee ALTER COLUMN employee_id RESTART WITH 100;
+ALTER TABLE competence ALTER COLUMN competence_id RESTART WITH 100;

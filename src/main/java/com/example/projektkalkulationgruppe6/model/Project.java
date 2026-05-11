@@ -38,6 +38,23 @@ public class Project {
         this.tasks = tasks;
     }
 
+    //OBS: Nedenstående skal slettes, når Employee model og repo er færdig
+    public Project (Integer projectId, String title, String description,
+                    LocalDate startDate, LocalDate endDate,
+                    BigDecimal budget, String status, Integer parentProjectId,
+                    List<Project> subProjects, List<Task> tasks) {
+        this.projectId = projectId;
+        this.title = title;
+        this.description = description;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.budget = budget;
+        this.status = status;
+        this.parentProjectId = parentProjectId;
+        this.subProjects = subProjects;
+        this.tasks = tasks;
+    }
+
     public Integer getProjectId() { return projectId; }
     public String getTitle() { return title; }
     public String getDescription() { return description; }

@@ -26,7 +26,7 @@ public class ProjectRepository {
                 null, // employee sættes bagefter
                 rs.getBigDecimal("budget"),
                 rs.getString("status_title"),
-                rs.getInt("parent_project_id"),
+                (Integer) rs.getObject("parent_project_id"),
                 null, // subProjects sættes senere
                 null // tasks sættes senere
         );
@@ -38,8 +38,10 @@ public class ProjectRepository {
 
     public Project findById(int id) {
         String sql = """
-                SELECT * FROM project
-                WHERE project_id = ?
+            SELECT p.*, s.title AS status_title
+            FROM project p
+            JOIN status s ON p.status_id = s.status_id
+            WHERE p.project_id = ?
                 """;
         try {
             Project p = jdbcTemplate.queryForObject(sql, projectRowMapper, id);
@@ -74,7 +76,7 @@ public class ProjectRepository {
             ps.setDate(4, project.getEndDate() != null ? java.sql.Date.valueOf(project.getEndDate()) : null);
             ps.setBigDecimal(5, project.getBudget());
             ps.setInt(6, 0); // OBS HUSK OG RET TIL SENERE
-            ps.setInt(7, parentId);
+            ps.setObject(7, parentId);
             ps.setInt(8, 0); // OBS HUSK AT RETTE SENERE
             return ps;
         }, keyHolder);

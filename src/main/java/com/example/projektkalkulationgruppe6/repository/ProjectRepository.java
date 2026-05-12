@@ -100,7 +100,7 @@ public class ProjectRepository {
         return jdbcTemplate.queryForList(sql, String.class);
     }
 
-    public Project insert(Project project, int employeeId, Integer parentId) {
+    public Project insert(Project project) {
         String sql = """
                 INSERT INTO project (
                     title, description, start_date, end_date, 
@@ -119,8 +119,8 @@ public class ProjectRepository {
             ps.setDate(3, project.getStartDate() != null ? java.sql.Date.valueOf(project.getStartDate()) : null);
             ps.setDate(4, project.getEndDate() != null ? java.sql.Date.valueOf(project.getEndDate()) : null);
             ps.setBigDecimal(5, project.getHourPrice());
-            ps.setInt(6, employeeId);
-            ps.setObject(7, parentId);
+            ps.setInt(6, project.getProjectOwner().getEmployeeId());
+            ps.setObject(7, project.getParentProjectId());
             ps.setInt(8, findStatusIdByTitle(project.getStatus()));
             return ps;
         }, keyHolder);

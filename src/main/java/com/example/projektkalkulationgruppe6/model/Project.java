@@ -57,6 +57,8 @@ public class Project {
     public void setDescription(String description) { this.description = description; }
     public void setStartDate(LocalDate startDate) { this.startDate = startDate; }
     public void setEndDate(LocalDate endDate) { this.endDate = endDate; }
+    public void setHourPrice(BigDecimal hourPrice) {this.hourPrice = hourPrice; }
+    public void setProjectOwner(Employee projectOwner) { this.projectOwner = projectOwner; }
     public void setStatus(String status) { this.status = status; }
     public void setParentProjectId(Integer parentProjectId ) { this.parentProjectId = parentProjectId; }
     public void setSubProjects(List<Project> subProjects) { this.subProjects = subProjects; }

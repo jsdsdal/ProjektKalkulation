@@ -1,7 +1,88 @@
 package com.example.projektkalkulationgruppe6.service;
 
-import static org.junit.jupiter.api.Assertions.*;
+import com.example.projektkalkulationgruppe6.exception.DatabaseOperationException;
+import com.example.projektkalkulationgruppe6.exception.InvalidProjectException;
+import com.example.projektkalkulationgruppe6.model.Employee;
+import com.example.projektkalkulationgruppe6.model.Project;
+import com.example.projektkalkulationgruppe6.repository.ProjectRepository;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.ArrayList;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
+
+@ExtendWith(MockitoExtension.class)
 class ProjectServiceTest {
+
+    @Mock
+    private ProjectRepository projectRepository;
+
+    @InjectMocks ProjectService projectService;
+
+    Project mainTestProject = new Project(
+            null,
+            "Test Projekt Management",
+            "Udvikling",
+            LocalDate.of(2026,1,1),
+            LocalDate.of(2026, 12, 1),
+            new Employee(1, "test", "email", "password", new ArrayList<String>()),
+            new BigDecimal("1250.00"),
+            "Not Started",
+            null,
+            null,
+            null
+    );
+
+    @Test
+    void ThrowInvalidProjectExceptionDueToEmptyProject() {
+        Project p = new Project();
+        assertThrows(InvalidProjectException.class, () -> projectService.create(p));
+    }
+
+
+
+    @Test
+    void ThrowInvalidProjectExceptionDueToEmptyProjectTitle() {
+        Project p = mainTestProject;
+        assertDoesNotThrow(() -> projectService.create(p));
+
+        p.setTitle("");
+        assertThrows(InvalidProjectException.class, () -> projectService.create(p));
+    }
+
+    @Test
+    void ThrowInvalidProjectExceptionDueToEmptyProjectStatus() {
+        Project p = mainTestProject;
+        assertDoesNotThrow(() -> projectService.create(p));
+
+        p.setStatus("");
+        assertThrows(InvalidProjectException.class, () -> projectService.create(p));
+    }
+
+    @Test
+    void ThrowInvalidProjectExceptionDueToEmptyProjectOwner() {
+        Project p = mainTestProject;
+        assertDoesNotThrow(() -> projectService.create(p));
+
+        p.setProjectOwner(new Employee());
+        assertThrows(InvalidProjectException.class, () -> projectService.create(p));
+    }
+
+    @Test
+    void ThrowDatabaseOperationExceptionOnDataAccessException() {
+        Project p = mainTestProject;
+        when(projectRepository.insert(p)).thenThrow(new EmptyResultDataAccessException(10));
+        assertThrows(DatabaseOperationException.class, () -> projectService.create(p));
+    }
+
 
 }

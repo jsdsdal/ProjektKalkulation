@@ -65,7 +65,7 @@ class ProjectRepositoryTest {
                 null
         );
 
-        Project savedProject = repo.insert(insertProject, 1, null);
+        Project savedProject = repo.insert(insertProject);
         Project lookupProject = repo.findById(savedProject.getProjectId());
 
         assertThat(lookupProject).isNotNull();

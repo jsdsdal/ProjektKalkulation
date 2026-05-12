@@ -1,5 +1,6 @@
 package com.example.projektkalkulationgruppe6.repository;
 
+import com.example.projektkalkulationgruppe6.exception.InvalidProjectException;
 import com.example.projektkalkulationgruppe6.model.Project;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -17,6 +18,7 @@ public class ProjectRepository {
     private RowMapper<Project> projectRowMapper = (rs, rowNum) -> {
         java.sql.Date sqlStartDate = rs.getDate("start_date");
         java.sql.Date sqlEndDate = rs.getDate("end_date");
+
         return new Project(
                 rs.getInt("project_id"),
                 rs.getString("title"),
@@ -24,7 +26,7 @@ public class ProjectRepository {
                 sqlStartDate != null ? sqlStartDate.toLocalDate() : null,
                 sqlEndDate != null ? sqlEndDate.toLocalDate() : null,
                 null, // employee sættes bagefter
-                rs.getBigDecimal("budget"),
+                rs.getBigDecimal("hour_price"),
                 rs.getString("status_title"),
                 (Integer) rs.getObject("parent_project_id"),
                 null, // subProjects sættes senere
@@ -53,14 +55,56 @@ public class ProjectRepository {
     }
 
     public List<Project> findParentAndChildrenById(int id) {
-        return null;
+        String sql = """
+        WITH RECURSIVE project_tree(
+            project_id, title, description, start_date, end_date,
+            hour_price, employee_id, parent_project_id, status_id,
+            status_title, depth
+        ) AS (
+            SELECT p.*, s.title AS status_title, 0 AS depth
+            FROM project p
+            JOIN status s ON p.status_id = s.status_id
+            WHERE parent_project_id IS NULL AND project_id = ?
+
+            UNION ALL
+
+            SELECT p.*, s.title AS status_title, pt.depth + 1
+            FROM project p
+            JOIN status s ON p.status_id = s.status_id
+            JOIN project_tree pt ON p.parent_project_id = pt.project_id
+        )
+        SELECT * FROM project_tree
+                """;
+        return jdbcTemplate.query(sql, projectRowMapper, id);
+
     }
 
-    public Project insert(Project project, Integer parentId) {
+    public int findStatusIdByTitle(String title) {
+        String sql = """
+                SELECT status_id FROM status WHERE title = ?
+                """;
+        try {
+            int id = jdbcTemplate.queryForObject(sql, Integer.class, title);
+            return id;
+        } catch (EmptyResultDataAccessException e) {
+            throw new InvalidProjectException("Ugyldig status: " + title);
+        }
+    }
+
+    public List<String> findAllStatusList() {
+        String sql = """
+                SELECT title 
+                FROM status
+                ORDER BY status_id
+                """;
+        return jdbcTemplate.queryForList(sql, String.class);
+    }
+
+    public Project insert(Project project, int employeeId, Integer parentId) {
         String sql = """
                 INSERT INTO project (
                     title, description, start_date, end_date, 
-                    budget, employee_id, parent_project_id, status_id
+                    hour_price, employee_id, parent_project_id, status_id
                     )
                     values(?, ?, ?, ?, ?, ?, ?, ?)
                 """;
@@ -74,10 +118,10 @@ public class ProjectRepository {
             ps.setString(2, project.getDescription());
             ps.setDate(3, project.getStartDate() != null ? java.sql.Date.valueOf(project.getStartDate()) : null);
             ps.setDate(4, project.getEndDate() != null ? java.sql.Date.valueOf(project.getEndDate()) : null);
-            ps.setBigDecimal(5, project.getBudget());
-            ps.setInt(6, 0); // OBS HUSK OG RET TIL SENERE
+            ps.setBigDecimal(5, project.getHourPrice());
+            ps.setInt(6, employeeId);
             ps.setObject(7, parentId);
-            ps.setInt(8, 0); // OBS HUSK AT RETTE SENERE
+            ps.setInt(8, findStatusIdByTitle(project.getStatus()));
             return ps;
         }, keyHolder);
 

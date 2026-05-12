@@ -29,7 +29,7 @@ CREATE TABLE project (
     description VARCHAR(500),
     start_date DATE,
     end_date DATE,
-    budget DECIMAL (10,2),
+    hour_price DECIMAL (10,2),
     employee_id INT NOT NULL,
     parent_project_id INT,
     status_id INT NOT NULL,
@@ -132,19 +132,19 @@ INSERT INTO employee_competence (employee_id, competence_id) VALUES
 -- Projects (3 total)
 -- ============================================================
 -- Project 1: Simple, done
-INSERT INTO project (project_id, title, description, start_date, end_date, budget, employee_id, parent_project_id, status_id) VALUES
+INSERT INTO project (project_id, title, description, start_date, end_date, hour_price, employee_id, parent_project_id, status_id) VALUES
     (1, 'Sanistål Webshop Redesign',
         'Komplet redesign af B2B webshop.',
-        '2025-09-01', '2026-01-15', 450000.00, 1, null, 4);
+        '2025-09-01', '2026-01-15', 1000.00, 1, null, 4);
 
 -- Project 2: Complex parent, in progress
-INSERT INTO project (project_id, title, description, start_date, end_date, budget, employee_id, parent_project_id, status_id) VALUES
+INSERT INTO project (project_id, title, description, start_date, end_date, hour_price, employee_id, parent_project_id, status_id) VALUES
     (2, 'DLG B2B Portal',
         'Selvbetjeningsportal med produktkatalog og ordrestyring.',
-        '2026-01-15', '2026-06-30', 850000.00, 2, null, 2);
+        '2026-01-15', '2026-06-30', 1200.00, 2, null, 2);
 
 -- Project 3: Subproject of 2
-INSERT INTO project (project_id, title, description, start_date, end_date, budget, employee_id, parent_project_id, status_id) VALUES
+INSERT INTO project (project_id, title, description, start_date, end_date, hour_price, employee_id, parent_project_id, status_id) VALUES
     (3, 'DLG Produktkatalog',
         'Søgbar produktkatalog med filtrering og PIM-integration.',
         '2026-02-01', '2026-05-15', NULL, 2, 2, 3);

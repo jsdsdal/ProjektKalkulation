@@ -18,8 +18,6 @@ public class ProjectService {
     public Project create(Project project) {
         validateProject(project);
 
-        //OBS Skal denne kunne håndtere et project med subproject?
-
         try {
             return projectRepository.insert(project);
         } catch (DataAccessException ex) {
@@ -50,6 +48,34 @@ public class ProjectService {
 
     }
 
+    public Project createSubproject(Project subproject, int parentProjectId) {
+        Project parent = projectRepository.findById(parentProjectId);
+
+        // tjek om projekt findes
+        if (parent == null) {
+            throw new InvalidProjectException("Parent project not found: " + parentProjectId);
+        }
+
+        // ingen børnebørn
+        if (parent.getParentProjectId() != null) {
+            throw new InvalidProjectException("Cannot create subproject under existing subproject.");
+        }
+
+        // må ikke starte før parent project
+        if (parent.getStartDate() != null && subproject.getStartDate() != null
+        && subproject.getStartDate().isBefore(parent.getStartDate())) {
+            throw new InvalidProjectException("Subproject cannot start before the parent project.");
+        }
+
+        // må ikke slutte efter parent project
+        if (parent.getEndDate() != null && subproject.getEndDate() != null
+            && subproject.getEndDate().isAfter(parent.getEndDate())) {
+            throw new InvalidProjectException("Subproject cannot end after the parent project.");
+        }
+
+        subproject.setParentProjectId(parentProjectId);
+        return create(subproject);
+    }
 
 
 }

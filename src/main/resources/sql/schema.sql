@@ -25,7 +25,7 @@ CREATE TABLE project (
     description VARCHAR(500),
     start_date DATE,
     end_date DATE,
-    budget DECIMAL (10,2),
+    hour_price DECIMAL (10,2),
     employee_id INT NOT NULL,
     parent_project_id INT,
     status_id INT NOT NULL,

@@ -89,24 +89,24 @@ INSERT INTO employee_competence (employee_id, competence_id) VALUES
 -- ============================================================
 
 -- SIMPLE PROJECTS (3) — no subprojects, flat tasks only
-INSERT INTO project (project_id, title, description, start_date, end_date, budget, employee_id, parent_project_id, status_id) VALUES
+INSERT INTO project (project_id, title, description, start_date, end_date, hour_price, employee_id, parent_project_id, status_id) VALUES
     (1,  'Sanistål Webshop Redesign',
     'Komplet redesign af Sanistål eksisterende B2B webshop med fokus på selvbetjening og brugeroplevelse.',
-    '2025-09-01', '2026-01-15', 450000.00, 1, NULL, 4),
+    '2025-09-01', '2026-01-15', 1000.00, 1, NULL, 4),
 
     (2,  'Novo Nordisk PIM Opsætning',
     'Implementering af PIM-system til håndtering af produktdata på tværs af Novo Nordisks digitale kanaler.',
-    '2026-07-01', '2026-12-01', 680000.00, 2, NULL, 1),
+    '2026-07-01', '2026-12-01', 1000.00, 2, NULL, 1),
 
     (3,  'CPH Airport Landing Page',
     'Kampagne-landingsside til CPH Airports sommerpromotion med integration til booking-system.',
-    '2026-06-01', '2026-08-15', 120000.00, 3, NULL, 3);
+    '2026-06-01', '2026-08-15', 1000.00, 3, NULL, 3);
 
 -- COMPLEX PROJECT A: Husqvarna (parent + 2 subprojects)
-INSERT INTO project (project_id, title, description, start_date, end_date, budget, employee_id, parent_project_id, status_id) VALUES
+INSERT INTO project (project_id, title, description, start_date, end_date, hour_price, employee_id, parent_project_id, status_id) VALUES
     (4,  'Husqvarna E-commerce Platform',
     'Fuld e-commerce platform til Husqvarnas nordiske B2B-kunder inkl. produktkatalog, bestilling og selvbetjening.',
-    '2026-03-01', '2026-09-30', 1200000.00, 1, NULL, 2),
+    '2026-03-01', '2026-09-30', 1500.00, 1, NULL, 2),
 
     (5,  'Husqvarna Frontend',
     'Komponentbibliotek og brugergrænseflader til Husqvarna-platformen.',
@@ -117,10 +117,10 @@ INSERT INTO project (project_id, title, description, start_date, end_date, budge
     '2026-03-15', '2026-08-31', NULL, 1, 4, 2);
 
 -- COMPLEX PROJECT B: DLG (parent + 2 subprojects) — behind schedule
-INSERT INTO project (project_id, title, description, start_date, end_date, budget, employee_id, parent_project_id, status_id) VALUES
+INSERT INTO project (project_id, title, description, start_date, end_date, hour_price, employee_id, parent_project_id, status_id) VALUES
     (7,  'DLG B2B Portal',
     'Selvbetjeningsportal til DLGs landbrugskunder med produktkatalog og ordrestyring.',
-    '2026-01-15', '2026-06-30', 850000.00, 2, NULL, 2),
+    '2026-01-15', '2026-06-30', 1400.00, 2, NULL, 2),
 
     (8,  'DLG Produktkatalog',
     'Søgbar produktkatalog med filtrering, kategorisering og PIM-integration.',
@@ -131,10 +131,10 @@ INSERT INTO project (project_id, title, description, start_date, end_date, budge
     '2026-03-01', '2026-06-30', NULL, 2, 7, 2);
 
 -- COMPLEX PROJECT C: Georg Jensen (parent + 2 subprojects)
-INSERT INTO project (project_id, title, description, start_date, end_date, budget, employee_id, parent_project_id, status_id) VALUES
+INSERT INTO project (project_id, title, description, start_date, end_date, hour_price, employee_id, parent_project_id, status_id) VALUES
     (10, 'Georg Jensen Omnichannel',
     'Omnichannel-strategi for Georg Jensen med Shopify som kerne og integration til PIM og Marketing Automation.',
-    '2026-04-01', '2026-10-31', 950000.00, 4, NULL, 2),
+    '2026-04-01', '2026-10-31', 1500.00, 4, NULL, 2),
 
     (11, 'Georg Jensen Shopify Migration',
     'Migration fra legacy-platform til Shopify Plus inkl. tema-udvikling og datamigrering.',
@@ -145,18 +145,18 @@ INSERT INTO project (project_id, title, description, start_date, end_date, budge
     '2026-07-01', '2026-10-31', NULL, 4, 10, 1);
 
 -- MIXED PROJECTS (3)
-INSERT INTO project (project_id, title, description, start_date, end_date, budget, employee_id, parent_project_id, status_id) VALUES
+INSERT INTO project (project_id, title, description, start_date, end_date, hour_price, employee_id, parent_project_id, status_id) VALUES
     (13, 'Fritz Hansen Website Relaunch',
     'Nyt website på Sitecore med fokus på brand storytelling og produktpræsentation.',
-    '2026-02-01', '2026-05-31', 520000.00, 5, NULL, 3),
+    '2026-02-01', '2026-05-31', 1250.00, 5, NULL, 3),
 
     (14, 'Neye CRM Integration',
     'Integration af Salesforce CRM med Neyes eksisterende e-commerce platform til personaliseret kundekommunikation.',
-    '2026-03-01', '2026-07-31', 380000.00, 5, NULL, 2),
+    '2026-03-01', '2026-07-31', 1200.00, 5, NULL, 2),
 
     (15, 'Drømmeland Webshop',
     'Ny Shopify-baseret webshop til Drømmeland med fokus på mobil brugeroplevelse.',
-    '2026-01-01', '2026-03-31', 200000.00, 3, NULL, 5);
+    '2026-01-01', '2026-03-31', 1250.00, 3, NULL, 5);
 
 -- ============================================================
 -- Tasks (43 total)

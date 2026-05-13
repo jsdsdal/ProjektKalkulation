@@ -11,6 +11,51 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TE
 @ActiveProfiles("test")
 @Sql(scripts = "classpath:h2init.sql", executionPhase = BEFORE_TEST_METHOD)
 
+@SpringBootTest
+@ActiveProfiles("test")
+
 class EmployeeRepositoryTest {
+
+    @Autowired
+    private EmployeeRepository repository;
+
+    @Test
+    void testFindByEmailReturnsEmployee(){
+        Employee example = repository.findByEmail("lars@alphasolutions.com");
+
+        assertThat(example).isNotNull();
+        assertEquals("Lars Nielsen", example.getName());
+        assertEquals("lars@alphasolutions.com", example.getEmail());
+    }
+
+    @Test
+    void testFindByEmailReturnsNotNullWhenNotFound(){
+        Employee example = repository.findByEmail("ukendt@email.com");
+        assertNull(example);
+    }
+
+    @Test
+    void testFindByEmailAttachesCompetencies(){
+        Employee example = repository.findByEmail("lars@alphasolutions.com");
+
+        assertNotNull(example);
+        assertFalse(example.getCompetencies().isEmpty());
+        assertTrue(example.getCompetencies().contains("SQL"));
+    }
+
+
+    @Test
+    void testFindByEmailReturnsEmptyCompetenciesWhenNoCompetencies(){
+        Employee example = repository.findByEmail("frederik@alphasolutions.com");
+
+        assertNotNull(example);
+        assertTrue(example.getCompetencies().isEmpty());
+    }
+
+
+
+
+
+
 
 }

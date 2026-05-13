@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="form-page">
+
+
+  <div class="form-wrapper">
+    <h1 th:text="${formTitle}">Opret liste</h1>
+
+    <div class="error-banner" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+    <form th:action="${formAction}" th:object="${project}" method="post">
+      <div class="field">
+        <label for="title">Title</label>
+        <input id="title" type="text" th:field="*{title}" maxlength="50" placeholder="Indtast venligst"/>
+      </div>
+
+      <div class="field">
+        <label for="description">Description</label>
+        <textarea id="description" th:field="*{description}" maxlength="500" placeholder="Skriv venligst"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="startDate">Start Date</label>
+        <input id="startDate" type="date" th:field="*{startDate}"/>
+      </div>
+
+      <div class="field">
+        <label for="endDate">End Date</label>
+        <input id="endDate" type="date" th:field="*{endDate}"/>
+      </div>
+
+      <div class="field">
+        <label for="hour_price">Hour Price</label>
+        <input id="hour_price" type="number" th:field="*{hourPrice}" placeholder="Indtast venligst" min="0" step="50.00"/>
+      </div>
+
+
+
+      <div class="form-actions">
+        <button type="submit" class="btn-primary" th:text="${submitLabel}">Gem</button>
+        <a th:href="@{/profile/list}" class="btn-secondary">Afbryd</a>
+      </div>
+    </form>
+  </div>
+
+</div>
+
+</body>
+</html>

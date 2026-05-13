@@ -9,7 +9,7 @@
 
 
   <div class="form-wrapper">
-    <h1 th:text="${formTitle}">Opret liste</h1>
+    <h1 th:text="${formTitle}">Create Project</h1>
 
     <div class="error-banner" th:if="${errorMessage}" th:text="${errorMessage}"></div>
 
@@ -39,11 +39,22 @@
         <input id="hour_price" type="number" th:field="*{hourPrice}" placeholder="Indtast venligst" min="0" step="50.00"/>
       </div>
 
+      <div class="field">
+        <label for="status">Status</label>
+        <select id="status" th:field="*{status}">
+        <option th:each="s : ${statusList}" th:value="${s}" th:text="${s}"></option>
+        </select>
+      </div>
+
+
+
+
+
 
 
       <div class="form-actions">
-        <button type="submit" class="btn-primary" th:text="${submitLabel}">Gem</button>
-        <a th:href="@{/profile/list}" class="btn-secondary">Afbryd</a>
+        <button type="submit" class="btn-primary" th:text="${submitLabel}">Create</button>
+        <a th:href="${cancelUrl}" class="btn-secondary">Cancel</a>
       </div>
     </form>
   </div>

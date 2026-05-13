@@ -8,6 +8,8 @@ import com.example.projektkalkulationgruppe6.repository.ProjectRepository;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ProjectService {
     private ProjectRepository projectRepository;
@@ -27,6 +29,17 @@ public class ProjectService {
         } catch (DataAccessException ex) {
             throw new DatabaseOperationException("Error: The project was not created.", ex);
         }
+    }
+
+    public List<String> findAllStatusList() {
+        List<String> statusList = projectRepository.findAllStatusList();
+
+        if (statusList.isEmpty()) {
+            throw new DatabaseOperationException(
+                    "Error: Status list could not be loaded.",
+                    new Throwable("List result is empty"));
+        }
+        return statusList;
     }
 
     private void validateProject(Project project) {

@@ -3,7 +3,6 @@ package com.example.projektkalkulationgruppe6.controller;
 import com.example.projektkalkulationgruppe6.exception.InvalidProjectException;
 import com.example.projektkalkulationgruppe6.model.Project;
 import com.example.projektkalkulationgruppe6.service.ProjectService;
-import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,10 +20,11 @@ public class ProjectController {
     }
 
     @GetMapping("/create-project")
-    public String showCreateForm(HttpSession httpSession, Model model) {
+    public String showCreateForm(Model model) {
         //tjek for session login
         model.addAttribute("project", new Project());
         model.addAttribute("formTitle", "Create Project");
+        model.addAttribute("statusList", projectService.findAllStatusList());
         model.addAttribute("formAction", "/home");
         model.addAttribute("submitLabel", "Create");
         model.addAttribute("cancelUrl", "/home");
@@ -32,7 +32,7 @@ public class ProjectController {
     }
 
     @PostMapping()
-    public String create(HttpSession httpSession, @ModelAttribute Project project, Model model) {
+    public String create(@ModelAttribute Project project, Model model) {
         //tjek for session login
         try {
             projectService.create(project);

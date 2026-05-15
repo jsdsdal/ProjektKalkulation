@@ -1,15 +1,25 @@
 package com.example.projektkalkulationgruppe6.repository;
 
+import com.example.projektkalkulationgruppe6.model.Task;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
+import java.time.LocalDate;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
+
 
 @SpringBootTest
 @ActiveProfiles("test")
 @Sql(scripts = "classpath:h2init.sql", executionPhase = BEFORE_TEST_METHOD)
+@Sql(statements = "ALTER TABLE task ALTER COLUMN task_id RESTART WITH 100;", executionPhase = BEFORE_TEST_METHOD)
 
 class TaskRepositoryTest {
 
@@ -52,16 +62,16 @@ class TaskRepositoryTest {
         Task savedTask = repo.insert(insertTask, 1);
         Task lookupTask = repo.findById(savedTask.getTaskId());
 
-            assertThat(lookupTask).isNotNull();
-            assertThat(lookupTask.getTaskId()).isEqualTo(savedTask.getTaskId());
-            assertThat(lookupTask.getTitle()).isEqualTo(savedTask.getTitle());
-            assertThat(lookupTask.getStartDate()).isEqualTo(insertTask.getStartDate());
-            assertThat(lookupTask.getEstimatedHours()).isEqualTo(savedTask.getEstimatedHours());
-            assertThat(lookupTask.getActualHours()).isEqualTo(savedTask.getActualHours());
-            assertThat(lookupTask.getParentTaskId()).isEqualTo(savedTask.getParentTaskId());
-            assertThat(lookupTask.getSubTask()).isEqualTo(savedTask.getSubTask());
-            assertThat(lookupTask.getAsignees()).isEqualTo(savedTask.getAsignees());
-            assertThat(lookupTask.getCompetencies()).isEqualTo(savedTask.getCompetencies());
+        assertThat(lookupTask).isNotNull();
+        assertThat(lookupTask.getTaskId()).isEqualTo(savedTask.getTaskId());
+        assertThat(lookupTask.getTitle()).isEqualTo(savedTask.getTitle());
+        assertThat(lookupTask.getStartDate()).isEqualTo(insertTask.getStartDate());
+        assertThat(lookupTask.getEstimatedHours()).isEqualTo(savedTask.getEstimatedHours());
+        assertThat(lookupTask.getActualHours()).isEqualTo(savedTask.getActualHours());
+        assertThat(lookupTask.getParentTaskId()).isEqualTo(savedTask.getParentTaskId());
+        assertThat(lookupTask.getSubTask()).isEqualTo(savedTask.getSubTask());
+        assertThat(lookupTask.getAsignees()).isEqualTo(savedTask.getAsignees());
+        assertThat(lookupTask.getCompetencies()).isEqualTo(savedTask.getCompetencies());
     }
 
     @Test

@@ -23,6 +23,11 @@ public class ProjectController {
         this.projectService = projectService;
     }
 
+    @GetMapping()
+    public String home() {
+        return "redirect:/home";
+    }
+
     @GetMapping("/create-project")
     public String showCreateForm(Model model) {
         //tjek for session login
@@ -39,7 +44,7 @@ public class ProjectController {
     public String create(@ModelAttribute Project project, Model model) {
         //tjek for session login
         try {
-            project.setProjectOwner(new Employee(100, "Test1", "testmail@test.dk", "1234", new ArrayList<String>()));
+            project.setProjectOwner(new Employee(1, "Lars Nielsen", "lars@alphasolutions.com", "lars1234", new ArrayList<>()));
             projectService.create(project);
             return "redirect:/home";
         } catch (InvalidProjectException ex) {

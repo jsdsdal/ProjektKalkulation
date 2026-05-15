@@ -54,6 +54,25 @@ public class ProjectRepository {
         }
     }
 
+    public List<Project> findSubprojectsByParentId(int parentId) {
+        String sql = """
+                SELECT p.*, s.title AS status_title
+                FROM project p
+                JOIN status s ON p.status_id = s.status_id
+                WHERE p.parent_project_id = ?
+                """;
+        return jdbcTemplate.query(sql, projectRowMapper, parentId);
+    }
+
+    public Project findByIdWithSubprojects(int id) {
+        Project parent = findById(id);
+        if (parent == null) return null;
+
+        List<Project> subprojects = findSubprojectsByParentId(id);
+        parent.setSubProjects(subprojects);
+        return parent;
+    }
+
     public List<Project> findParentAndChildrenById(int id) {
         String sql = """
         WITH RECURSIVE project_tree(
@@ -136,10 +155,6 @@ public class ProjectRepository {
         return findById(key.intValue());
 
     }
-
-
-
-
 
 
 

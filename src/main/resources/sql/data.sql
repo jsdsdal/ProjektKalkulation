@@ -31,30 +31,30 @@ INSERT INTO status (status_id, title) VALUES
 -- Employees (20 total, 5 with Project Management)
 -- ============================================================
 -- Project Managers (can own projects, higher hourly wage)
-INSERT INTO employee (employee_id, name, email, password, hourly_wage) VALUES
-    (1,  'Lars Nielsen',      'lars@alphasolutions.com',      'lars1234',      1200.00),
-    (2,  'Maria Jensen',      'maria@alphasolutions.com',     'maria1234',     1100.00),
-    (3,  'Peter Hansen',      'peter@alphasolutions.com',     'peter1234',     1300.00),
-    (4,  'Anne Sørensen',     'anne@alphasolutions.com',      'anne1234',      1150.00),
-(5,  'Klaus Andersen',    'klaus@alphasolutions.com',     'klaus1234',     1400.00);
+INSERT INTO employee (employee_id, name, email, password) VALUES
+    (1,  'Lars Nielsen',      'lars@alphasolutions.com',      'lars1234'),
+    (2,  'Maria Jensen',      'maria@alphasolutions.com',     'maria1234'),
+    (3,  'Peter Hansen',      'peter@alphasolutions.com',     'peter1234'),
+    (4,  'Anne Sørensen',     'anne@alphasolutions.com',      'anne1234'),
+(5,  'Klaus Andersen',    'klaus@alphasolutions.com',     'klaus1234');
 
 -- Consultants / Specialists
-INSERT INTO employee (employee_id, name, email, password, hourly_wage) VALUES
-    (6,  'Mikkel Larsen',     'mikkel@alphasolutions.com',    'mikkel1234',     850.00),
-    (7,  'Sofie Berg',        'sofie@alphasolutions.com',     'sofie1234',      900.00),
-    (8,  'Jonas Holm',        'jonas@alphasolutions.com',     'jonas1234',      800.00),
-    (9,  'Emma Kristensen',   'emma@alphasolutions.com',      'emma1234',       950.00),
-    (10, 'Frederik Møller',   'frederik@alphasolutions.com',  'frederik1234',   750.00),
-    (11, 'Ida Petersen',      'ida@alphasolutions.com',       'ida1234',        850.00),
-    (12, 'Oliver Madsen',     'oliver@alphasolutions.com',    'oliver1234',     900.00),
-    (13, 'Mathilde Olsen',    'mathilde@alphasolutions.com',  'mathilde1234',   800.00),
-    (14, 'Victor Rasmussen',  'victor@alphasolutions.com',    'victor1234',     950.00),
-    (15, 'Nanna Thomsen',     'nanna@alphasolutions.com',     'nanna1234',      850.00),
-    (16, 'Sebastian Juul',    'sebastian@alphasolutions.com', 'sebastian1234',  750.00),
-    (17, 'Astrid Dam',        'astrid@alphasolutions.com',    'astrid1234',     900.00),
-    (18, 'Emil Winther',      'emil@alphasolutions.com',      'emil1234',       800.00),
-    (19, 'Laura Kjær',        'laura@alphasolutions.com',     'laura1234',      850.00),
-    (20, 'Rasmus Lund',       'rasmus@alphasolutions.com',    'rasmus1234',     700.00);
+INSERT INTO employee (employee_id, name, email, password) VALUES
+    (6,  'Mikkel Larsen',     'mikkel@alphasolutions.com',    'mikkel1234'),
+    (7,  'Sofie Berg',        'sofie@alphasolutions.com',     'sofie1234'),
+    (8,  'Jonas Holm',        'jonas@alphasolutions.com',     'jonas1234'),
+    (9,  'Emma Kristensen',   'emma@alphasolutions.com',      'emma1234'),
+    (10, 'Frederik Møller',   'frederik@alphasolutions.com',  'frederik1234'),
+    (11, 'Ida Petersen',      'ida@alphasolutions.com',       'ida1234'),
+    (12, 'Oliver Madsen',     'oliver@alphasolutions.com',    'oliver1234'),
+    (13, 'Mathilde Olsen',    'mathilde@alphasolutions.com',  'mathilde1234'),
+    (14, 'Victor Rasmussen',  'victor@alphasolutions.com',    'victor1234'),
+    (15, 'Nanna Thomsen',     'nanna@alphasolutions.com',     'nanna1234'),
+    (16, 'Sebastian Juul',    'sebastian@alphasolutions.com', 'sebastian1234'),
+    (17, 'Astrid Dam',        'astrid@alphasolutions.com',    'astrid1234'),
+    (18, 'Emil Winther',      'emil@alphasolutions.com',      'emil1234'),
+    (19, 'Laura Kjær',        'laura@alphasolutions.com',     'laura1234'),
+    (20, 'Rasmus Lund',       'rasmus@alphasolutions.com',    'rasmus1234');
 
 -- ============================================================
 -- Employee Competences

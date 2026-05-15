@@ -10,13 +10,12 @@ CREATE TABLE employee (
     employee_id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
-    password VARCHAR(50) NOT NULL,
-    hourly_wage DECIMAL (10,2)
+    password VARCHAR(50) NOT NULL
 );
 
 CREATE TABLE status (
-                        status_id INT AUTO_INCREMENT PRIMARY KEY,
-                        title VARCHAR(20) NOT NULL UNIQUE
+    status_id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(20) NOT NULL UNIQUE
 );
 
 CREATE TABLE project (

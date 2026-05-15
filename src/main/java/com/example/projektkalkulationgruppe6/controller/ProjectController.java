@@ -23,10 +23,10 @@ public class ProjectController {
         this.projectService = projectService;
     }
 
-    @GetMapping()
-    public String home() {
-        return "redirect:/home";
-    }
+//    @GetMapping()
+//    public String home() {
+//        return "redirect:/home";
+//    }
 
     @GetMapping("/create-project")
     public String showCreateForm(Model model) {

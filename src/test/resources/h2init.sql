@@ -125,8 +125,8 @@ INSERT INTO employee_competence (employee_id, competence_id) VALUES
     (1, 1), (1, 2), (1, 4),             -- Lars: PM, C#, SQL
     (2, 1), (2, 5), (2, 6),             -- Maria: PM, UX/UI, API
     (3, 3), (3, 5),                      -- Sofie: JS, UX/UI
-    (4, 2), (4, 4), (4, 6),             -- Jonas: C#, SQL, API
-    (5, 3), (5, 7);                      -- Frederik: JS, Test/QA
+    (4, 2), (4, 4), (4, 6);             -- Jonas: C#, SQL, API
+                  -- Frederik: JS, Test/QA
 
 -- ============================================================
 -- Projects (3 total)

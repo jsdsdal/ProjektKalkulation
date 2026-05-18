@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Task</title>
+  <link rel="stylesheet" th:href="@{/css/style.css}"/>
+
+</head>
+<body>
+<div class="form-page">
+
+
+  <div class="form-wrapper">
+    <h1 th:text="${formTitle}">Create Task</h1>
+
+    <div class="error-banner" th:if="${errorMessage}" th:text="${errorMessage}"></div>
+
+    <form th:action="${formAction}" th:object="${task}" method="post">
+      <div class="field">
+        <label for="title">Title</label>
+        <input id="title" type="text" th:field="*{title}" maxlength="50" placeholder="Title"/>
+      </div>
+
+      <div class="field">
+        <label for="description">Description</label>
+        <textarea id="description" th:field="*{description}" maxlength="500" placeholder="Type your description here…"></textarea>
+      </div>
+
+      <div class="field">
+        <label for="competenceId">Add Competence</label>
+        <select id="competenceId" name="competenceId">
+          <option th:each="c : ${allCompetencies}"
+                  th:value="${c}"
+                  th:text="${c}">
+          </option>
+        </select>
+      </div>
+
+
+      <div class="field">
+        <label for="employeeId">Add Assignee</label>
+        <select id="employeeId" name="employeeId">
+          <option th:each="e : ${allEmployees}"
+                  th:value="${e.employeeId}"
+                  th:text="${e.name}">
+          </option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="startDate">Start Date</label>
+        <input id="startDate" type="date" th:field="*{startDate}"/>
+      </div>
+
+      <div class="field">
+        <label for="endDate">End Date</label>
+        <input id="endDate" type="date" th:field="*{endDate}"/>
+      </div>
+
+      <div class="field">
+        <label>Estimated Hours</label>
+        <p th:text="${task.estimatedHours}"></p>
+      </div>
+
+      <div class="field">
+        <label for="actualHours">Actual Hours</label>
+        <input id="actualHours" type="number" th:field="*{actualHours}" placeholder="e.g. 10.00" min="0" step="0.50"/>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn-primary" th:text="${submitLabel}">Create Task</button>
+        <a th:href="${cancelUrl}" class="btn-secondary">Cancel</a>
+      </div>
+    </form>
+  </div>
+
+</div>
+
+</body>
+</html>

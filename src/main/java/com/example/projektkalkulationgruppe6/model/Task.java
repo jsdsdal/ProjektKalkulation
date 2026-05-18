@@ -13,12 +13,16 @@ public class Task {
     private double actualHours;
     private Integer parentTaskId;
     private List<Task> subTask;
-    private List<Employee> asignees;
+    private List<Employee> assignees;
     private List<String> competencies;
+
+    public Task() {
+
+    }
 
     public Task(Integer taskId, String title, String description, LocalDate startDate, LocalDate endDate,
                 double estimatedHours, double actualHours, Integer parentTaskId, List<Task> subTask,
-                List<Employee> asignees, List<String> competencies) {
+                List<Employee> assignees, List<String> competencies) {
         this.taskId = taskId;
         this.title = title;
         this.description = description;
@@ -28,9 +32,11 @@ public class Task {
         this.actualHours = actualHours;
         this.parentTaskId = parentTaskId;
         this.subTask = subTask;
-        this.asignees = asignees;
+        this.assignees = assignees;
         this.competencies = competencies;
     }
+
+
 
     public Integer getTaskId() {return taskId;}
     public String getTitle() {return title;}
@@ -41,7 +47,7 @@ public class Task {
     public double getActualHours() {return actualHours;}
     public Integer getParentTaskId() {return parentTaskId;}
     public List<Task> getSubTask() {return subTask;}
-    public List<Employee> getAsignees() {return asignees;}
+    public List<Employee> getAssignees() {return assignees;}
     public List<String> getCompetencies() {return competencies;}
 
 
@@ -54,7 +60,7 @@ public class Task {
     public void setActualHours(double actualHours) {this.actualHours = actualHours;}
     public void setParentTaskId(Integer parentTaskId) {this.parentTaskId = parentTaskId;}
     public void setSubTask(List<Task> subTask) {this.subTask = subTask;}
-    public void setAsignees(List<Employee> asignees) {this.asignees = asignees;}
+    public void setAssignees(List<Employee> asignees) {this.assignees = asignees;}
     public void setCompetencies(List<String> competencies) {this.competencies = competencies;}
 
     @Override
@@ -69,7 +75,7 @@ public class Task {
                 ", actualHours=" + actualHours +
                 ", parentTaskId=" + parentTaskId +
                 ", subTask=" + subTask +
-                ", asignees=" + asignees +
+                ", assignees=" + assignees +
                 ", competencies=" + competencies +
                 '}';
     }

@@ -1,4 +1,5 @@
 package com.example.projektkalkulationgruppe6.repository;
+import com.example.projektkalkulationgruppe6.model.Employee;
 import com.example.projektkalkulationgruppe6.model.Task;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -7,34 +8,31 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import java.sql.PreparedStatement;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 public class TaskRepository {
 
     private final JdbcTemplate jdbcTemplate;
-    private final RowMapper<Task> taskRowMapper = (rs, rowNum) -> {
-        //java.sql.Date sqlStartDate = rs.getDate("start_date");
-       //java.sql.Date sqlEndDdate = rs.getDate("end_date");
-
-        return new Task(
-                rs.getInt("task_id"),
-                rs.getString("title"),
-                rs.getString("description"),
-                rs.getDate("start_date").toLocalDate(),
-                rs.getDate("end_date").toLocalDate(),
-                rs.getDouble("estimated_hours"),
-                rs.getDouble("actual_hours"),
-                (Integer) rs.getObject("parent_task_id"),
-                null, // subTasks (fyldes senere via logik)
-                null, // assignees (fyldes via attachAssignees)
-                null // competencies (fyldes via attachCompetencies)
-        );
-
-    };
+    private final RowMapper<Task> taskRowMapper = (rs, rowNum) -> new Task(
+            rs.getInt("task_id"),
+            rs.getString("title"),
+            rs.getString("description"),
+            rs.getDate("start_date").toLocalDate(),
+            rs.getDate("end_date").toLocalDate(),
+            rs.getDouble("estimated_hours"),
+            rs.getDouble("actual_hours"),
+            (Integer) rs.getObject("parent_task_id"),
+            null, // subTasks
+            null, // assignees
+            null // competencies
+    );
 
     public TaskRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
+
+    //findAll
 
     public Task findById(Integer id) {
         String sql = """
@@ -43,12 +41,16 @@ public class TaskRepository {
                 WHERE task_id = ?
                 """;
         Task task = jdbcTemplate.queryForObject(sql, taskRowMapper, id);
+        attachCompetencies(List.of(task));
+        attachAssignees(List.of(task));
 
-       /* if (task != null) {
-            // Husk at hente de tilknyttede lister via dine private hjælpe-metoder
-            attachAssignees(Collections.singletonList(task));
-            attachCompetencies(Collections.singletonList(task));
-        }*/
+        String subTaskSql = """
+                SELECT *
+                FROM task
+                WHERE parent_task_id = ?
+        """;
+        List<Task> subTasks = jdbcTemplate.query(subTaskSql, taskRowMapper, id);
+        task.setSubTask(subTasks);
 
         return task;
     }
@@ -59,9 +61,12 @@ public class TaskRepository {
                 FROM task
                 WHERE project_id = ?
                 """;
-        List<Task> allTask = jdbcTemplate.query(sql, taskRowMapper, projectId);
+        List<Task> task = jdbcTemplate.query(sql, taskRowMapper, projectId);
+        attachCompetencies(task);
+        attachAssignees(task);
+        attachSubTasks(task);
 
-        return allTask;
+        return task;
     }
 
     public Task insert(Task task, int projectId) {
@@ -81,6 +86,7 @@ public class TaskRepository {
             ps.setDouble(5, task.getEstimatedHours());
             ps.setDouble(6, task.getActualHours());
             ps.setInt(7, projectId);
+
             if (task.getParentTaskId() != null) {
                 ps.setInt(8, task.getParentTaskId());
             } else {
@@ -89,19 +95,109 @@ public class TaskRepository {
             return ps;
         }, keyHolder);
 
-        int newId = (int) keyHolder.getKeys().get("task_id");
-
         Number key = keyHolder.getKey();
         if (key != null) {
             task.setTaskId(key.intValue());
         } else {
-            throw new IllegalStateException("Kunne ikke hente genereret task_id.");
+            throw new IllegalStateException("Error: Could not retrieve generated TaskID.");
         }
 
         return task;
 
     }
 
+    //Update
+    //deleteById
 
+    //Assignees
+
+    private List<Employee> findAssigneesByTaskId(int taskId) {
+        String sql = """
+            SELECT e.employee_id, e.name, e.email, e.password
+                FROM task_employee te
+                JOIN employee e
+                ON te.employee_id = e.employee_id
+                WHERE te.task_id = ?
+                ORDER BY te.employee_id
+            """;
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new Employee(
+                rs.getInt("employee_id"),
+                rs.getString("name"),
+                rs.getString("email"),
+                rs.getString("password"),
+                null
+        ), taskId);
+    }
+
+    private void attachAssignees(List<Task> tasks) {
+        for (Task t : tasks) {
+            t.setAssignees(findAssigneesByTaskId(t.getTaskId()));
+        }
+    }
+
+    public void addAssigneeToTask(int taskId, int employeeId) {
+        String sql = """
+        INSERT INTO task_employee (task_id, employee_id)
+        VALUES (?, ?)
+        """;
+        jdbcTemplate.update(sql, taskId, employeeId);
+    }
+
+
+    // removeAssigneeFromTask
+
+    //Competencies
+
+    public List<String> findAllCompetencies() {
+        String sql = """
+        SELECT CONCAT(competence_id, ':', title)
+        FROM competence
+        ORDER BY competence_id
+        """;
+        return jdbcTemplate.queryForList(sql, String.class);
+    }
+    private List<String> findCompetenciesByTaskId(int taskId) {
+        String sql = """
+            SELECT c.title
+                FROM task_competence tc
+                JOIN competence c
+                ON tc.competence_id = c.competence_id
+                WHERE tc.task_id = ?
+                ORDER BY tc.competence_id
+            """;
+        return jdbcTemplate.queryForList(sql, String.class, taskId);
+    }
+
+    private void attachCompetencies(List<Task> tasks) {
+        for (Task t : tasks) {
+            List<String> competencies = findCompetenciesByTaskId(t.getTaskId());
+            t.setCompetencies(competencies);
+        }
+    }
+
+    public void addCompetenceToTask(int taskId, int competenceId) {
+        String sql = """
+        INSERT INTO task_competence (task_id, competence_id)
+        VALUES (?, ?)
+        """;
+        jdbcTemplate.update(sql, taskId, competenceId);
+    }
+
+
+
+
+    // removeCompetenceFromTask
+
+
+    //SubTask
+
+    private void attachSubTasks(List<Task> tasks) {
+        for (Task t : tasks) {
+            List<Task> subTasks = tasks.stream()
+                    .filter(sub -> t.getTaskId().equals(sub.getParentTaskId()))
+                    .collect(Collectors.toList());
+            t.setSubTask(subTasks);
+        }
+    }
 }
 

@@ -46,6 +46,20 @@
         </select>
       </div>
 
+      <div class="field">
+        <label for="projectOwnerId">Project Owner</label>
+        <select id="projectOwnerId" name="projectOwnerId">
+
+          <option value="" disabled selected>Vælg Project Owner</option>
+          <option
+                  th:each="e : ${employees}"
+                  th:value="${e.getEmployeeId}"
+                  th:text="${e.getName}">
+
+          </option>
+        </select>
+      </div>
+
 
 
 

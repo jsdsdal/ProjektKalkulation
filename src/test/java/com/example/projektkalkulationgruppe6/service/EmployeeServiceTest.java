@@ -1,5 +1,6 @@
 package com.example.projektkalkulationgruppe6.service;
 
+import com.example.projektkalkulationgruppe6.exception.EmployeeNotFoundException;
 import com.example.projektkalkulationgruppe6.exception.InvalidEmployeeException;
 import com.example.projektkalkulationgruppe6.model.Employee;
 import com.example.projektkalkulationgruppe6.repository.EmployeeRepository;
@@ -32,6 +33,13 @@ class EmployeeServiceTest {
     }
 
     //LOGIN MED KORREKTE CREDENTIALS
+
+    @Test
+    void falseIdShouldThrowEmployeeNotFound() {
+        when(employeeRepository.findById(100)).thenReturn(null);
+
+        assertThrows(EmployeeNotFoundException.class, () -> employeeService.findById(100));
+    }
 
     @Test
     void loginWithValidEmailAndPasswordReturnsEmployee(){

@@ -3,6 +3,7 @@ package com.example.projektkalkulationgruppe6.controller;
 import com.example.projektkalkulationgruppe6.model.Employee;
 import com.example.projektkalkulationgruppe6.model.Project;
 import com.example.projektkalkulationgruppe6.repository.ProjectRepository;
+import com.example.projektkalkulationgruppe6.service.EmployeeService;
 import com.example.projektkalkulationgruppe6.service.ProjectService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,9 @@ class ProjectControllerTest {
     @MockitoBean
     private ProjectService projectService;
 
+    @MockitoBean
+    private EmployeeService employeeService;
+
     Project p1 = new Project(
             null,
             "Test1",
@@ -42,7 +46,7 @@ class ProjectControllerTest {
             null);
 
     @Test
-    void shouldCreateProject() throws Exception {
+    void shouldShowProjectForm() throws Exception {
 
         Project p1Return = p1;
         p1Return.setProjectId(1);
@@ -55,13 +59,19 @@ class ProjectControllerTest {
                 "Actual Hours Done",
                 "Rejected")
         );
+        when(employeeService.findAll()).thenReturn(
+                List.of(
+                        new Employee(1, "Lars", "test@test.dk", "1234", List.of("sql"))
+                )
+        );
 
         mockMvc.perform(get("/home/create-project"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("projects/project-form"))
                 .andExpect(model().attributeExists("project"))
                 .andExpect(model().attribute("formTitle", "Create Project"))
-                .andExpect(model().attribute("formAction", "/home"))
+                .andExpect(model().attribute("formAction", "/home/create-project"))
+                .andExpect(model().attributeExists("employees"))
                 .andExpect(model().attribute("statusList",
                         List.of("Not Started",
                                 "Estimate In Progress",
@@ -72,5 +82,7 @@ class ProjectControllerTest {
                 .andExpect(model().attribute("cancelUrl", "/home"));
 
     }
+
+
 
 }

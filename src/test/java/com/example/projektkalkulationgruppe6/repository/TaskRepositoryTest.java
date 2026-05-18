@@ -26,8 +26,6 @@ class TaskRepositoryTest {
     @Autowired
     private TaskRepository repo;
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
 
     @Test
     void readTask1ByTaskId() {
@@ -35,12 +33,12 @@ class TaskRepositoryTest {
 
 
         assertThat(t1).isNotNull();
-        assertEquals(t1.getTitle(), ("UX Research"));
-        assertEquals(t1.getDescription(), ("Brugerinterviews og wireframes"));
-        assertEquals(t1.getStartDate(), LocalDate.of(2025, 9, 1));
-        assertEquals(t1.getEndDate(), LocalDate.of(2025, 9, 30));
-        assertEquals(t1.getEstimatedHours(), 24.00);
-        assertEquals(t1.getActualHours(), 28.00);
+        assertEquals(("UX Research"), t1.getTitle());
+        assertEquals(("Brugerinterviews og wireframes"), t1.getDescription());
+        assertEquals(LocalDate.of(2025, 9, 1), t1.getStartDate());
+        assertEquals(LocalDate.of(2025, 9, 30),t1.getEndDate());
+        assertEquals(24.00, t1.getEstimatedHours());
+        assertEquals(28.00, t1.getActualHours());
         assertNull(t1.getParentTaskId());
     }
 
@@ -69,9 +67,9 @@ class TaskRepositoryTest {
         assertThat(lookupTask.getEstimatedHours()).isEqualTo(savedTask.getEstimatedHours());
         assertThat(lookupTask.getActualHours()).isEqualTo(savedTask.getActualHours());
         assertThat(lookupTask.getParentTaskId()).isEqualTo(savedTask.getParentTaskId());
-        assertThat(lookupTask.getSubTask()).isEqualTo(savedTask.getSubTask());
-        assertThat(lookupTask.getAsignees()).isEqualTo(savedTask.getAsignees());
-        assertThat(lookupTask.getCompetencies()).isEqualTo(savedTask.getCompetencies());
+        assertThat(lookupTask.getSubTask()).isEmpty();
+        assertThat(lookupTask.getAssignees()).isEmpty();
+        assertThat(lookupTask.getCompetencies()).isEmpty();
     }
 
     @Test
@@ -81,7 +79,7 @@ class TaskRepositoryTest {
         assertThat(tasks).isNotNull();
         assertThat(tasks).hasSize(3);
 
-        Task first = tasks.get(0);
+        Task first = tasks.getFirst();
         assertEquals("UX Research", first.getTitle());
         assertEquals(LocalDate.of(2025, 9, 1), first.getStartDate());
         assertEquals(LocalDate.of(2025, 9, 30), first.getEndDate());
@@ -89,5 +87,27 @@ class TaskRepositoryTest {
         assertEquals(28.00, first.getActualHours());
         assertNull(first.getParentTaskId());
     }
+
+    @Test
+    void readCompetenciesFromTask() {
+        Task t1 = repo.findById(1);
+        assertThat(t1.getCompetencies()).isNotNull();
+        assertThat(t1.getCompetencies()).contains("UX/UI Design");
+    }
+
+    @Test
+    void readAssigneesFromTask() {
+        Task t1 = repo.findById(1);
+        assertThat(t1.getAssignees()).isNotNull();
+        assertThat(t1.getAssignees()).extracting("name").contains("Sofie Berg");
+    }
+
+    @Test
+    void readSubTasksFromTask4() {
+        Task t4 = repo.findById(4);
+        assertThat(t4.getSubTask()).isNotNull();
+        assertThat(t4.getSubTask()).hasSize(2);
+    }
+
 
 }

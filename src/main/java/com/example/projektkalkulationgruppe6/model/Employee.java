@@ -1,5 +1,7 @@
 package com.example.projektkalkulationgruppe6.model;
 
+import org.jspecify.annotations.Nullable;
+
 import java.util.List;
 
 public class Employee {

@@ -27,6 +27,44 @@ public class EmployeeRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    public List<Employee> findAllProjectManagers() {
+
+        return null;
+    }
+
+    public List<Employee> findAll() {
+        String sql = """
+                SELECT employee_id, name, email, password
+                FROM employee
+                ORDER BY name
+                """;
+        List<Employee> result = jdbcTemplate.query(sql, employeeRowMapper);
+
+        if (result.isEmpty()) {
+            return null;
+        }
+
+        attachCompetencies(result);
+
+        return result;
+    }
+
+    public Employee findById(int id) {
+        String sql = """
+                SELECT employee_id, name, email, password
+                FROM employee
+                WHERE employee_id = ?
+                """;
+
+        List<Employee> result = jdbcTemplate.query(sql, employeeRowMapper, id);
+
+        if (result.isEmpty()) {
+            return null;
+        }
+        attachCompetencies(result);
+        return result.getFirst();
+    }
+
     public Employee findByEmail(String email){
         String sql = """
                 SELECT employee_id, name, email, password

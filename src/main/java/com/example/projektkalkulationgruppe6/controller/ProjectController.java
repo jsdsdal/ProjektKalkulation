@@ -3,13 +3,11 @@ package com.example.projektkalkulationgruppe6.controller;
 import com.example.projektkalkulationgruppe6.exception.InvalidProjectException;
 import com.example.projektkalkulationgruppe6.model.Employee;
 import com.example.projektkalkulationgruppe6.model.Project;
+import com.example.projektkalkulationgruppe6.service.EmployeeService;
 import com.example.projektkalkulationgruppe6.service.ProjectService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,15 +15,17 @@ import java.util.List;
 @Controller
 @RequestMapping("/home")
 public class ProjectController {
+    private final EmployeeService employeeService;
     private ProjectService projectService;
 
-    public ProjectController(ProjectService projectService) {
+    public ProjectController(ProjectService projectService, EmployeeService employeeService) {
         this.projectService = projectService;
+        this.employeeService = employeeService;
     }
 
     @GetMapping()
     public String home() {
-        return "redirect:/home";
+        return "home";
     }
 
     @GetMapping("/create-project")
@@ -34,23 +34,27 @@ public class ProjectController {
         model.addAttribute("project", new Project());
         model.addAttribute("formTitle", "Create Project");
         model.addAttribute("statusList", projectService.findAllStatusList());
-        model.addAttribute("formAction", "/home");
+        model.addAttribute("employees", employeeService.findAll());
+        model.addAttribute("formAction", "/home/create-project");
         model.addAttribute("submitLabel", "Create");
         model.addAttribute("cancelUrl", "/home");
         return "projects/project-form";
     }
 
-    @PostMapping()
-    public String create(@ModelAttribute Project project, Model model) {
+    @PostMapping("/create-project")
+    public String create(@ModelAttribute Project project, @RequestParam int projectOwnerId, Model model) {
         //tjek for session login
         try {
-            project.setProjectOwner(new Employee(1, "Lars Nielsen", "lars@alphasolutions.com", "lars1234", new ArrayList<>()));
+            Employee projectOwner = employeeService.findById(projectOwnerId);
+            project.setProjectOwner(projectOwner);
             projectService.create(project);
             return "redirect:/home";
         } catch (InvalidProjectException ex) {
             model.addAttribute("project", project);
             model.addAttribute("formTitle", "Create Project");
-            model.addAttribute("formAction", "/home");
+            model.addAttribute("statusList", projectService.findAllStatusList());
+            model.addAttribute("employees", employeeService.findAll());
+            model.addAttribute("formAction", "/home/create-project");
             model.addAttribute("submitLabel", "Create");
             model.addAttribute("errorMessage", ex.getMessage());
             model.addAttribute("cancelUrl", "/home");

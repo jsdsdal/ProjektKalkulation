@@ -9,9 +9,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
+@RequestMapping("/login")
 public class LoginController {
 
     private final EmployeeService employeeService;
@@ -33,7 +35,7 @@ public class LoginController {
         try {
             Employee employee = employeeService.login(email, password);
             session.setAttribute("employeeId", employee.getEmployeeId());
-            return "redirect:";
+            return "redirect:/home";
         } catch (InvalidEmployeeException ex) {
             model.addAttribute("errorMessage", ex.getMessage());
             return "auth/login";

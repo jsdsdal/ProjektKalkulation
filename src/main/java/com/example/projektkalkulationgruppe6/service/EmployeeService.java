@@ -1,12 +1,14 @@
 package com.example.projektkalkulationgruppe6.service;
 
 
+import com.example.projektkalkulationgruppe6.exception.DatabaseOperationException;
 import com.example.projektkalkulationgruppe6.exception.EmployeeNotFoundException;
 import com.example.projektkalkulationgruppe6.exception.InvalidEmployeeException;
 import com.example.projektkalkulationgruppe6.model.Employee;
 import com.example.projektkalkulationgruppe6.repository.EmployeeRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 @Service
@@ -16,6 +18,27 @@ public class EmployeeService {
 
     public EmployeeService(EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
+    }
+
+    public List<Employee> findAll() {
+
+        List<Employee> employees = employeeRepository.findAll();
+
+        if (employees == null) {
+            throw new DatabaseOperationException("Employee List could not be found.", new Throwable("NotFound"));
+        }
+
+        return employees;
+    }
+
+    public Employee findById(int id) {
+        Employee employee = employeeRepository.findById(id);
+
+        if (employee == null) {
+            throw new EmployeeNotFoundException(id);
+        }
+
+        return employee;
     }
 
     public Employee login(String email, String password){

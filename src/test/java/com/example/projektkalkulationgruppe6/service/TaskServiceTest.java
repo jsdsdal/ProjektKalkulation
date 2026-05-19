@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doThrow;
@@ -49,6 +50,13 @@ class TaskServiceTest {
     }
 
     @Test
+    void ThrowDatabaseOperationExceptionWhenFindAllFails() {
+        when(taskRepository.findAllTask())
+                .thenThrow(new EmptyResultDataAccessException(1));
+        assertThrows(DatabaseOperationException.class, () -> taskService.findAllTask());
+    }
+
+    @Test
     void ThrowInvalidTaskExceptionDueToEmptyProject() {
         Task t = new Task();
         assertThrows(InvalidTaskException.class, () -> taskService.create(t, 1));
@@ -79,6 +87,19 @@ class TaskServiceTest {
         mainTestTask.setStartDate(LocalDate.of(2026, 12, 12));
         mainTestTask.setEndDate(LocalDate.of(2026, 1, 1));
         assertThrows(InvalidTaskException.class, () -> taskService.create(mainTestTask, 1));
+    }
+
+    @Test
+    void deleteByIdShouldDeleteTask() {
+        when(taskRepository.deleteById(1)).thenReturn(true);
+        assertDoesNotThrow(() -> taskService.deleteById(1));
+    }
+
+    @Test
+    void ThrowDatabaseOperationExceptionWhenDeleteFails() {
+        when(taskRepository.deleteById(1))
+                .thenThrow(new EmptyResultDataAccessException(1));
+        assertThrows(DatabaseOperationException.class, () -> taskService.deleteById(1));
     }
 
 

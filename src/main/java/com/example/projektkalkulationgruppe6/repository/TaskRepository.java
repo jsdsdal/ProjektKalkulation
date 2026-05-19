@@ -32,7 +32,14 @@ public class TaskRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    //findAll
+    public List<Task> findAllTask() {
+        String sql = """
+                SELECT task_id, title, description, start_date, end_date, estimated_hours, actual_hours, project_id, parent_task_id
+                FROM task
+                ORDER BY task_id
+                """;
+        return jdbcTemplate.query(sql, taskRowMapper);
+    }
 
     public Task findById(Integer id) {
         String sql = """
@@ -107,7 +114,16 @@ public class TaskRepository {
     }
 
     //Update
-    //deleteById
+
+    public boolean deleteById(int taskId){
+        String sql = """
+        DELETE FROM task
+        WHERE task_id = ?
+        """;
+
+        int rowDeleted = jdbcTemplate.update(sql, taskId);
+        return rowDeleted > 0;
+    }
 
     //Assignees
 
@@ -144,7 +160,14 @@ public class TaskRepository {
     }
 
 
-    // removeAssigneeFromTask
+    public void removeAssigneeFromTask(int taskId, int employeeId) {
+        String sql = """
+        DELETE FROM task_employee
+        WHERE task_id = ?
+        AND employee_id = ?
+        """;
+        jdbcTemplate.update(sql, taskId, employeeId);
+    }
 
     //Competencies
 
@@ -184,12 +207,16 @@ public class TaskRepository {
     }
 
 
+    public void removeCompetenceFromTask(int taskId, int competenceId) {
+        String sql = """
+        DELETE FROM task_competence 
+        WHERE task_id = ? 
+        AND competence_id = ?
+        """;
+        jdbcTemplate.update(sql, taskId, competenceId); }
 
 
-    // removeCompetenceFromTask
-
-
-    //SubTask
+//SubTask
 
     private void attachSubTasks(List<Task> tasks) {
         for (Task t : tasks) {

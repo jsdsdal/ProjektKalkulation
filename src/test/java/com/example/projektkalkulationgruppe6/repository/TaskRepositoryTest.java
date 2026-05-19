@@ -4,7 +4,6 @@ import com.example.projektkalkulationgruppe6.model.Task;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 import java.time.LocalDate;
@@ -25,6 +24,13 @@ class TaskRepositoryTest {
 
     @Autowired
     private TaskRepository repo;
+
+    @Test
+    void findAllShouldReturnAllTasks() {
+        List<Task> tasks = repo.findAllTask();
+        assertThat(tasks).isNotNull();
+        assertThat(tasks).hasSizeGreaterThan(0);
+    }
 
 
     @Test
@@ -73,6 +79,19 @@ class TaskRepositoryTest {
     }
 
     @Test
+    void deleteByIdShouldDeleteTask() {
+        boolean deleted = repo.deleteById(1);
+        assertThat(deleted).isTrue();
+    }
+
+    @Test
+    void deleteByIdShouldReturnFalseWhenTaskDoesNotExist() {
+        boolean deleted = repo.deleteById(999);
+        assertThat(deleted).isFalse();
+    }
+
+
+    @Test
     void testFindParentsAndChildrenByProjectId() {
         List<Task> tasks = repo.findParentsAndChildrenByProjectId(1);
 
@@ -89,14 +108,14 @@ class TaskRepositoryTest {
     }
 
     @Test
-    void readCompetenciesFromTask() {
+    void readCompetenciesFromTask1() {
         Task t1 = repo.findById(1);
         assertThat(t1.getCompetencies()).isNotNull();
         assertThat(t1.getCompetencies()).contains("UX/UI Design");
     }
 
     @Test
-    void readAssigneesFromTask() {
+    void readAssigneesFromTask1() {
         Task t1 = repo.findById(1);
         assertThat(t1.getAssignees()).isNotNull();
         assertThat(t1.getAssignees()).extracting("name").contains("Sofie Berg");

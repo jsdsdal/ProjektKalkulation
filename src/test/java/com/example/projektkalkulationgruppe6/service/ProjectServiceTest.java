@@ -43,6 +43,12 @@ class ProjectServiceTest {
     );
 
     @Test
+    void ThrowDatabaseOperationExceptionDueToFindAllDataAccessException() {
+        when(projectRepository.findAll()).thenThrow(new EmptyResultDataAccessException(10));
+        assertThrows(DatabaseOperationException.class, () -> projectService.findAll());
+    }
+
+    @Test
     void ThrowInvalidProjectExceptionDueToEmptyProject() {
         Project p = new Project();
         assertThrows(InvalidProjectException.class, () -> projectService.create(p));

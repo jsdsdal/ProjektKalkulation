@@ -38,6 +38,16 @@ public class ProjectRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    public List<Project> findAll() {
+        String sql = """
+            SELECT p.*, s.title AS status_title
+            FROM project p
+            JOIN status s ON p.status_id = s.status_id
+            WHERE p.parent_project_id IS null
+                """;
+        return jdbcTemplate.query(sql, projectRowMapper);
+    }
+
     public Project findById(int id) {
         String sql = """
             SELECT p.*, s.title AS status_title

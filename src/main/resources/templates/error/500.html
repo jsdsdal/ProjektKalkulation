@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${status} + ' - ' + ${error}">500 - Internal Server Error</title>
+</head>
+<body>
+<div class="container">
+  <h1 th:text="${status} + ' - ' + ${error}">500 - Internal Server Error</h1>
+
+  <div class="error-box">
+    <p><strong>Error:</strong> <span th:text="${error}">Internal Server Error</span></p>
+    <p><strong>Message:</strong> <span th:text="${message}">Something went wrong.</span></p>
+  </div>
+
+  <p>An error occurred while processing your request.</p>
+
+  <div class="actions">
+    <a th:href="@{/exprofiles}" class="button">Back to profiles</a>
+  </div>
+</div>
+</body>
+</html>

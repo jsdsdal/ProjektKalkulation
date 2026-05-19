@@ -3,6 +3,7 @@ package com.example.projektkalkulationgruppe6.controller;
 import com.example.projektkalkulationgruppe6.exception.InvalidTaskException;
 import com.example.projektkalkulationgruppe6.model.Task;
 import com.example.projektkalkulationgruppe6.service.TaskService;
+import com.example.projektkalkulationgruppe6.utility.SessionHelper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -27,6 +28,9 @@ class TaskControllerTest {
 
     @MockitoBean
     private TaskService taskService;
+
+    @MockitoBean
+    private SessionHelper sessionHelper;
 
     Task mainTestTask = new Task(
             null,

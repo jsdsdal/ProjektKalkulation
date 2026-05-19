@@ -5,6 +5,7 @@ import com.example.projektkalkulationgruppe6.exception.DatabaseOperationExceptio
 import com.example.projektkalkulationgruppe6.exception.InvalidTaskException;
 import com.example.projektkalkulationgruppe6.model.Task;
 import com.example.projektkalkulationgruppe6.service.TaskService;
+import com.example.projektkalkulationgruppe6.utility.SessionHelper;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,13 +17,16 @@ import org.springframework.web.bind.annotation.*;
 public class TaskController {
 
     private final TaskService taskService;
+    private final SessionHelper sessionHelper;
 
-    public TaskController(TaskService taskService) {
+    public TaskController(TaskService taskService, SessionHelper sessionHelper) {
         this.taskService = taskService;
+        this.sessionHelper = sessionHelper;
     }
 
     @GetMapping("/create")
     public String showCreateForm(HttpSession session, Model model) {
+        sessionHelper.isLoggedIn(session);
         model.addAttribute("task", new Task());
         model.addAttribute("formTitle", "Create task");
         model.addAttribute("formAction","/task/create");
@@ -34,6 +38,7 @@ public class TaskController {
 
     @PostMapping("/create")
     public String create(@ModelAttribute Task task, HttpSession session, Model model) {
+        sessionHelper.isLoggedIn(session);
         int projectId = (int) session.getAttribute("projectId");
         try {
             taskService.create(task, projectId);

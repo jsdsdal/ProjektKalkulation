@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${status} + ' - ' + ${error}">401 - Unauthorized</title>
+</head>
+<body>
+<div class="container">
+    <h1 th:text="${status} + ' - ' + ${error}">401 - Unauthorized</h1>
+
+    <div class="error-box">
+        <p><strong>Error:</strong> <span th:text="${error}">Unauthorized</span></p>
+        <p><strong>Message:</strong> <span th:text="${message}">You need to be logged in to view this page.</span></p>
+    </div>
+
+    <p>You need to be logged in to view this page.</p>
+
+    <div class="actions">
+        <a th:href="@{/login}" class="button">Go back to the login page</a>
+    </div>
+</div>
+</body>
+</html>

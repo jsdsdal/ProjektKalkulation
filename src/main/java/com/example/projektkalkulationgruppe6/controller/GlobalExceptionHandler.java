@@ -10,14 +10,14 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-//    @ExceptionHandler(DatabaseOperationException.class)
-//    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-//    public String handleDatabaseOperation(DatabaseOperationException ex, Model model) {
-//        model.addAttribute("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
-//        model.addAttribute("error", HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
-//        model.addAttribute("message", "Der er sket en database-fejl.");
-//        return "error/500";
-//    }
+    @ExceptionHandler(DatabaseOperationException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public String handleDatabaseOperation(DatabaseOperationException ex, Model model) {
+        model.addAttribute("status", HttpStatus.INTERNAL_SERVER_ERROR.value());
+        model.addAttribute("error", HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
+        model.addAttribute("message", "Der er sket en database-fejl.");
+        return "error/500";
+    }
 
     @ExceptionHandler(EmployeeNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)

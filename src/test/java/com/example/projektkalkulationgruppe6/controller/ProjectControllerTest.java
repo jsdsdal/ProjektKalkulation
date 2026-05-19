@@ -5,6 +5,7 @@ import com.example.projektkalkulationgruppe6.model.Project;
 import com.example.projektkalkulationgruppe6.repository.ProjectRepository;
 import com.example.projektkalkulationgruppe6.service.EmployeeService;
 import com.example.projektkalkulationgruppe6.service.ProjectService;
+import com.example.projektkalkulationgruppe6.utility.SessionHelper;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,9 @@ class ProjectControllerTest {
 
     @MockitoBean
     private EmployeeService employeeService;
+
+    @MockitoBean
+    private SessionHelper sessionHelper;
 
     Project p1 = new Project(
             null,

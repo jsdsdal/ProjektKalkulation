@@ -11,6 +11,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -41,6 +42,16 @@ class TaskControllerTest {
             null,
             null
     );
+
+    @Test
+    void listShouldReturnTaskListView() throws Exception {
+        when(taskService.findAllTask()).thenReturn(List.of(mainTestTask));
+
+        mockMvc.perform(get("/task"))
+                .andExpect(status().isOk())
+                .andExpect(view().name("task/task-list"))
+                .andExpect(model().attributeExists("tasks"));
+    }
 
     @Test
     void getCreateFormShouldReturnFormView() throws Exception {
@@ -89,5 +100,12 @@ class TaskControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("task/task-form"))
                 .andExpect(model().attribute("errorMessage", "Title is required"));
+    }
+
+    @Test
+    void deleteTaskShouldRedirectToList() throws Exception {
+        mockMvc.perform(post("/task/1/delete"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/task/list"));
     }
 }

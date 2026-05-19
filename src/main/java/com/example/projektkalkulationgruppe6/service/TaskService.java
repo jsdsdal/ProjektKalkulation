@@ -2,6 +2,7 @@ package com.example.projektkalkulationgruppe6.service;
 
 import com.example.projektkalkulationgruppe6.exception.DatabaseOperationException;
 import com.example.projektkalkulationgruppe6.exception.InvalidTaskException;
+import com.example.projektkalkulationgruppe6.exception.TaskNotFoundException;
 import com.example.projektkalkulationgruppe6.model.Task;
 import com.example.projektkalkulationgruppe6.repository.TaskRepository;
 import org.springframework.dao.DataAccessException;
@@ -17,12 +18,17 @@ public class TaskService {
         this.taskRepository = taskRepository;
     }
 
-    public List<String> findAllCompetencies() {
-        return taskRepository.findAllCompetencies();
+
+    public List<Task> findAllTask() {
+        try {
+            return taskRepository.findAllTask();
+        } catch (DataAccessException ex) {
+            throw new DatabaseOperationException("Error: could not retrieve tasks", ex);
+        }
     }
 
     public Task findById(int id) {
-        try{
+        try {
             Task task = taskRepository.findById(id);
             if (task == null) {
                 throw new InvalidTaskException("Task with ID " + id + " was not found");
@@ -35,32 +41,53 @@ public class TaskService {
 
     public Task create(Task task, int projectId) {
         validateTask(task);
-
-        try{
+        try {
             return taskRepository.insert(task, projectId);
         } catch (DataAccessException ex) {
             throw new DatabaseOperationException("Error: the task was not created.", ex);
         }
+    }
+
+    public void deleteById(int taskId) {
+        validateId(taskId);
+        try {
+            boolean deleted = taskRepository.deleteById(taskId);
+            if (!deleted) {
+                throw new TaskNotFoundException(taskId);
+            }
+        } catch (DataAccessException ex) {
+            throw new DatabaseOperationException("Error: Cannot delete task.", ex);
         }
-        private void validateTask(Task task) {
-            if (task == null) {
-                throw new InvalidTaskException("Task is required");
-            }
+    }
 
-            String title = task.getTitle();
-            if (title == null || title.isBlank()) {
-                throw new InvalidTaskException("Title is required");
-            }
+    private void validateId(int id) {
+        if (id <= 0) {
+            throw new InvalidTaskException("ID must be a positive number");
+        }
+    }
 
-            if (task.getStartDate() != null && task.getEndDate() != null) {
-                if (task.getStartDate().isAfter(task.getEndDate())) {
-                    throw new InvalidTaskException("Start date cannot be after end date");
-                }
-            }
+    private void validateTask(Task task) {
 
+        if (task == null) {
+            throw new InvalidTaskException("Task is required");
         }
 
+        String title = task.getTitle();
+        if (title == null || title.isBlank()) {
+            throw new InvalidTaskException("Title is required");
+        }
 
+        if (task.getStartDate() != null && task.getEndDate() != null) {
+            if (task.getStartDate().isAfter(task.getEndDate())) {
+                throw new InvalidTaskException("Start date cannot be after end date");
+            }
+        }
+
+        if (title.length() > 50) {
+            throw new InvalidTaskException("Title cannot exceed 50 characters.");
+        }
+
+    }
 
     public void addAssigneeToTask(int taskId, int employeeId) {
         try {
@@ -70,7 +97,17 @@ public class TaskService {
         }
     }
 
-    //removeAssigneeFromTask
+    public void removeAssigneeFromTask(int taskId, int employeeId) {
+        try {
+            taskRepository.removeAssigneeFromTask(taskId, employeeId);
+        } catch (DataAccessException ex) {
+            throw new DatabaseOperationException("Error: could not remove assignee from task", ex);
+        }
+    }
+
+    public List<String> findAllCompetencies() {
+        return taskRepository.findAllCompetencies();
+    }
 
     public void addCompetenceToTask(int taskId, int competenceId) {
         try {
@@ -80,6 +117,16 @@ public class TaskService {
         }
     }
 
-    //removeCompetenceFromTask
+    public void removeCompetenceFromTask(int taskId, int competenceId) {
+        try {
+            taskRepository.removeCompetenceFromTask(taskId, competenceId);
+        } catch (DataAccessException ex) {
+            throw new DatabaseOperationException("Error: could not remove competence from task", ex);
+        }
+    }
+
+
+
 }
+
 

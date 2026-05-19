@@ -21,6 +21,13 @@ public class TaskController {
         this.taskService = taskService;
     }
 
+    @GetMapping()
+    public String list(Model model) {
+        model.addAttribute("tasks", taskService.findAllTask());
+        return "task/task-list";
+    }
+
+
     @GetMapping("/create")
     public String showCreateForm(HttpSession session, Model model) {
         model.addAttribute("task", new Task());
@@ -28,6 +35,8 @@ public class TaskController {
         model.addAttribute("formAction","/task/create");
         model.addAttribute("submitLabel", "Create");
         model.addAttribute("cancelUrl", "/home");
+        model.addAttribute("allCompetencies", taskService.findAllCompetencies());
+        //findAllEmployees
 
         return "task/task-form";
     }
@@ -44,10 +53,18 @@ public class TaskController {
             model.addAttribute("formAction","/task/create");
             model.addAttribute("submitLabel", "Create");
             model.addAttribute("cancelUrl", "/home");
+            model.addAttribute("allCompetencies", taskService.findAllCompetencies());
+            //findAllEmployees
             model.addAttribute("errorMessage", ex.getMessage());
 
             return "task/task-form";
         }
+    }
+
+    @PostMapping("/{id}/delete")
+    public String delete(@PathVariable int id) {
+        taskService.deleteById(id);
+        return "redirect:/task/list";
     }
 
     @PostMapping("/{taskId}/assignee/add")
@@ -57,10 +74,24 @@ public class TaskController {
         return "redirect:/task/edit/" + taskId;
     }
 
+    @PostMapping("/{taskId}/assignee/remove")
+    public String removeAssignee(@PathVariable int taskId,
+                                 @RequestParam int employeeId) {
+        taskService.removeAssigneeFromTask(taskId, employeeId);
+        return "redirect:/task/edit/" + taskId;
+    }
+
     @PostMapping("/{taskId}/competence/add")
     public String addCompetence(@PathVariable int taskId,
                                 @RequestParam int competenceId) {
         taskService.addCompetenceToTask(taskId, competenceId);
+        return "redirect:/task/edit/" + taskId;
+    }
+
+    @PostMapping("/{taskId}/competence/remove")
+    public String removeCompetence(@PathVariable int taskId,
+                                   @RequestParam int competenceId) {
+        taskService.removeCompetenceFromTask(taskId, competenceId);
         return "redirect:/task/edit/" + taskId;
     }
 

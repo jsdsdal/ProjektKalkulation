@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Task</title>
-  <link rel="stylesheet" th:href="@{/css/style.css}"/>
+
 
 </head>
 <body>
@@ -58,11 +58,11 @@
       </div>
 
       <div class="field">
-        <label>Estimated Hours</label>
-        <p th:text="${task.estimatedHours}"></p>
+        <label for="estimatedHours">Estimated Hours</label>
+        <input id="estimatedHours" type="number" th:field="*{estimatedHours}" placeholder="e.g. 10.00" min="0" step="0.50"/>
       </div>
 
-      <div class="field">
+      <div class="field" th:if="${task.taskId != null}">
         <label for="actualHours">Actual Hours</label>
         <input id="actualHours" type="number" th:field="*{actualHours}" placeholder="e.g. 10.00" min="0" step="0.50"/>
       </div>

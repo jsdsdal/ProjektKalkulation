@@ -19,6 +19,14 @@ public class ProjectService {
         this.projectRepository = projectRepository;
     }
 
+    public List<Project> findAll() {
+        try {
+            return projectRepository.findAll();
+        } catch (DataAccessException ex) {
+            throw new DatabaseOperationException("Projects could not be loaded.", ex);
+        }
+    }
+
     public Project create(Project project) {
         validateProject(project);
 
@@ -30,13 +38,21 @@ public class ProjectService {
     }
 
     public List<String> findAllStatusList() {
-        List<String> statusList = projectRepository.findAllStatusList();
+
+        List<String> statusList;
+
+        try {
+            statusList = projectRepository.findAllStatusList();
+        } catch (DataAccessException ex) {
+            throw new DatabaseOperationException("Status list could not be loaded.", ex);
+        }
 
         if (statusList.isEmpty()) {
             throw new DatabaseOperationException(
                     "Error: Status list could not be loaded.",
                     new Throwable("List result is empty"));
         }
+
         return statusList;
     }
 

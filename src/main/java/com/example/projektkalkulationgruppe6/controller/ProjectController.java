@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Controller
-@RequestMapping("/home")
+@RequestMapping("/projects")
 public class ProjectController {
     private final EmployeeService employeeService;
     private ProjectService projectService;
@@ -28,6 +28,11 @@ public class ProjectController {
         return "home";
     }
 
+    @GetMapping("/table")
+    public String list(Model model) {
+        return "projects/project-list";
+    }
+
     @GetMapping("/create-project")
     public String showCreateForm(Model model) {
         //tjek for session login
@@ -35,9 +40,9 @@ public class ProjectController {
         model.addAttribute("formTitle", "Create Project");
         model.addAttribute("statusList", projectService.findAllStatusList());
         model.addAttribute("employees", employeeService.findAll());
-        model.addAttribute("formAction", "/home/create-project");
+        model.addAttribute("formAction", "/projects/create-project");
         model.addAttribute("submitLabel", "Create");
-        model.addAttribute("cancelUrl", "/home");
+        model.addAttribute("cancelUrl", "/projects/table");
         return "projects/project-form";
     }
 
@@ -48,16 +53,16 @@ public class ProjectController {
             Employee projectOwner = employeeService.findById(projectOwnerId);
             project.setProjectOwner(projectOwner);
             projectService.create(project);
-            return "redirect:/home";
+            return "redirect:/projects/project-list";
         } catch (InvalidProjectException ex) {
             model.addAttribute("project", project);
             model.addAttribute("formTitle", "Create Project");
             model.addAttribute("statusList", projectService.findAllStatusList());
             model.addAttribute("employees", employeeService.findAll());
-            model.addAttribute("formAction", "/home/create-project");
+            model.addAttribute("formAction", "/projects/create-project");
             model.addAttribute("submitLabel", "Create");
             model.addAttribute("errorMessage", ex.getMessage());
-            model.addAttribute("cancelUrl", "/home");
+            model.addAttribute("cancelUrl", "/projects/table");
             return "projects/project-form";
         }
     }

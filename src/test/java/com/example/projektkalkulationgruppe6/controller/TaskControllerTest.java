@@ -2,6 +2,7 @@ package com.example.projektkalkulationgruppe6.controller;
 
 import com.example.projektkalkulationgruppe6.exception.InvalidTaskException;
 import com.example.projektkalkulationgruppe6.model.Task;
+import com.example.projektkalkulationgruppe6.service.EmployeeService;
 import com.example.projektkalkulationgruppe6.service.TaskService;
 import com.example.projektkalkulationgruppe6.utility.SessionHelper;
 import org.junit.jupiter.api.Test;
@@ -29,6 +30,9 @@ class TaskControllerTest {
 
     @MockitoBean
     private TaskService taskService;
+
+    @MockitoBean
+    private EmployeeService employeeService;
 
     @MockitoBean
     private SessionHelper sessionHelper;
@@ -73,7 +77,7 @@ class TaskControllerTest {
         MockHttpSession session = new MockHttpSession();
         session.setAttribute("projectId", 1);
 
-        when(taskService.create(any(Task.class), eq(1))).thenReturn(mainTestTask);
+        when(taskService.create(any(Task.class), eq(1), any(), any())).thenReturn(mainTestTask);
 
         mockMvc.perform(post("/task/create")
                         .session(session)
@@ -92,7 +96,7 @@ class TaskControllerTest {
         MockHttpSession session = new MockHttpSession();
         session.setAttribute("projectId", 1);
 
-        when(taskService.create(any(Task.class), eq(1)))
+        when(taskService.create(any(Task.class), eq(1), any(), any()))
                 .thenThrow(new InvalidTaskException("Title is required"));
 
         mockMvc.perform(post("/task/create")

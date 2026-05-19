@@ -2,11 +2,45 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Task</title>
+  <title>Task List</title>
 </head>
 <body>
+<div class="page">
 
-<h1>List over tasks</h1>
+  <h1>Tasks</h1>
 
+  <a th:href="@{/task/create(projectId=${projectId})}">Create New Task</a>
+
+  <table>
+    <thead>
+    <tr>
+      <th>Title</th>
+      <th>Description</th>
+      <th>Start Date</th>
+      <th>End Date</th>
+      <th>Estimated Hours</th>
+      <th>Actual Hours</th>
+      <th>Actions</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="task : ${tasks}">
+      <td th:text="${task.title}"></td>
+      <td th:text="${task.description}"></td>
+      <td th:text="${task.startDate}"></td>
+      <td th:text="${task.endDate}"></td>
+      <td th:text="${task.estimatedHours}"></td>
+      <td th:text="${task.actualHours}"></td>
+      <td>
+        <a th:href="@{/task/edit/{id}(id=${task.taskId})}">Edit</a>
+        <form th:action="@{/task/{id}/delete(id=${task.taskId})}" method="post">
+          <button type="submit">Delete</button>
+        </form>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+</div>
 </body>
 </html>

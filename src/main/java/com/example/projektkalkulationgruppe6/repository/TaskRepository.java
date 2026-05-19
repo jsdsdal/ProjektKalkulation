@@ -32,6 +32,8 @@ public class TaskRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    public record CompetenceOption(int id, String title){}
+
     public List<Task> findAllTask() {
         String sql = """
                 SELECT task_id, title, description, start_date, end_date, estimated_hours, actual_hours, project_id, parent_task_id
@@ -113,7 +115,23 @@ public class TaskRepository {
 
     }
 
-    //Update
+    public boolean update(Task task) {
+        String sql = """
+                UPDATE task
+                SET title = ?, description = ?, start_date = ?, end_date = ?, estimated_hours = ?, actual_hours = ?
+                WHERE task_id = ?
+                """;
+        int rowsUpdated = jdbcTemplate.update(sql,
+                task.getTitle(),
+                task.getDescription(),
+                java.sql.Date.valueOf(task.getStartDate()),
+                java.sql.Date.valueOf(task.getEndDate()),
+                task.getEstimatedHours(),
+                task.getActualHours(),
+                task.getTaskId());
+        return rowsUpdated > 0;
+
+    }
 
     public boolean deleteById(int taskId){
         String sql = """
@@ -171,13 +189,14 @@ public class TaskRepository {
 
     //Competencies
 
-    public List<String> findAllCompetencies() {
+    public List<CompetenceOption> findAllCompetencies() {
         String sql = """
-        SELECT CONCAT(competence_id, ':', title)
+        SELECT competence_id, title
         FROM competence
         ORDER BY competence_id
         """;
-        return jdbcTemplate.queryForList(sql, String.class);
+        return jdbcTemplate.query(sql, (rs, rowNum) ->
+                new CompetenceOption(rs.getInt("competence_id"), rs.getString("title")));
     }
     private List<String> findCompetenciesByTaskId(int taskId) {
         String sql = """
@@ -209,7 +228,7 @@ public class TaskRepository {
 
     public void removeCompetenceFromTask(int taskId, int competenceId) {
         String sql = """
-        DELETE FROM task_competence 
+        DELETE FROM task_competence
         WHERE task_id = ? 
         AND competence_id = ?
         """;

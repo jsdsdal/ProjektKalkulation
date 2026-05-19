@@ -16,6 +16,7 @@
     <div class="error-banner" th:if="${errorMessage}" th:text="${errorMessage}"></div>
 
     <form th:action="${formAction}" th:object="${task}" method="post">
+      <input type="hidden" name="projectId" th:value="${projectId}" th:if="${projectId != null}"/>
       <div class="field">
         <label for="title">Title</label>
         <input id="title" type="text" th:field="*{title}" maxlength="50" placeholder="Title"/>
@@ -27,24 +28,27 @@
       </div>
 
       <div class="field">
-        <label for="competenceId">Add Competence</label>
-        <select id="competenceId" name="competenceId">
-          <option th:each="c : ${allCompetencies}"
-                  th:value="${c}"
-                  th:text="${c}">
-          </option>
-        </select>
+        <label>Competencies</label>
+        <div th:each="c : ${allCompetencies}">
+          <input type="checkbox"
+                 name="competenceId"
+                 th:value="${c.id}"
+                 th:id="${'competence-' + c.id}"/>
+          <label th:for="${'competence-' + c.id}" th:text="${c.title}"></label>
+        </div>
       </div>
 
-
       <div class="field">
-        <label for="employeeId">Add Assignee</label>
-        <select id="employeeId" name="employeeId">
-          <option th:each="e : ${allEmployees}"
-                  th:value="${e.employeeId}"
-                  th:text="${e.name}">
-          </option>
-        </select>
+        <label>Assignees</label>
+        <div th:each="e : ${allEmployees}">
+          <label>
+            <input type="checkbox"
+                   name="employeeId"
+                   th:value="${e.employeeId}"
+                   th:id="${'employee-' + e.employeeId}"/>
+          </label>
+          <label th:for="${'employee-' + e.employeeId}" th:text="${e.name}"></label>
+        </div>
       </div>
 
       <div class="field">

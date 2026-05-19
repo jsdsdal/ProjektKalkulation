@@ -120,4 +120,26 @@ public class LoginControllerTest {
 
     }
 
+    @Test
+    void logoutInvalidatesSession() throws Exception {
+        mockMvc.perform(post("/login/logout")
+                        .sessionAttr("employeeId", 1))
+                .andExpect(request().sessionAttributeDoesNotExist("employeeId"));
+    }
+
+    @Test
+    void logoutRedirectsToLogin() throws Exception {
+        mockMvc.perform(post("/login/logout")
+                        .sessionAttr("Employee", 1))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/login"));
+    }
+
+    @Test
+    void logoutRedirectsToLoginWithoutSession() throws Exception {
+        mockMvc.perform(post("/login/logout"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/login"));
+    }
+
 }

@@ -34,14 +34,18 @@ public class ProjectController {
     }
 
     @GetMapping("/table")
-    public String list(Model model) {
+    public String list(Model model, HttpSession session) {
+        sessionHelper.isLoggedIn(session);
+
+        model.addAttribute("projects", projectService.findAll());
+
         return "projects/project-list";
     }
 
     @GetMapping("/create-project")
     public String showCreateForm(Model model, HttpSession session) {
         sessionHelper.isLoggedIn(session);
-        //tjek for session login
+
         model.addAttribute("project", new Project());
         model.addAttribute("formTitle", "Create Project");
         model.addAttribute("statusList", projectService.findAllStatusList());
@@ -55,7 +59,7 @@ public class ProjectController {
     @PostMapping("/create-project")
     public String create(@ModelAttribute Project project, @RequestParam int projectOwnerId, Model model, HttpSession session) {
         sessionHelper.isLoggedIn(session);
-        //tjek for session login
+
         try {
             Employee projectOwner = employeeService.findById(projectOwnerId);
             project.setProjectOwner(projectOwner);

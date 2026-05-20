@@ -1,6 +1,7 @@
 package com.example.projektkalkulationgruppe6.controller;
 
 import com.example.projektkalkulationgruppe6.exception.InvalidProjectException;
+import com.example.projektkalkulationgruppe6.exception.ProjectNotFoundException;
 import com.example.projektkalkulationgruppe6.model.Employee;
 import com.example.projektkalkulationgruppe6.model.Project;
 import com.example.projektkalkulationgruppe6.service.EmployeeService;
@@ -77,6 +78,23 @@ public class ProjectController {
             return "projects/project-form";
         }
     }
+
+    @PostMapping("/{id}/delete")
+    public String delete(@PathVariable int id, HttpSession session, Model model) {
+        sessionHelper.isLoggedIn(session);
+
+        try {
+            projectService.delete(id);
+            return "redirect:projects/project-list";
+        } catch (ProjectNotFoundException ex) {
+            model.addAttribute("errorMessage", ex.getMessage());
+            return "error/404";
+        } catch (InvalidProjectException ex) {
+            model.addAttribute("errorMessage", ex.getMessage());
+            return "error/400";
+        }
+    }
+
 
 
 //    @PostMapping("/create-project")

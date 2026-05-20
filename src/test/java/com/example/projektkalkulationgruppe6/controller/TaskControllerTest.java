@@ -55,7 +55,7 @@ class TaskControllerTest {
     void listShouldReturnTaskListView() throws Exception {
         when(taskService.findAllTask()).thenReturn(List.of(mainTestTask));
 
-        mockMvc.perform(get("/task"))
+        mockMvc.perform(get("/task/list"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("task/task-list"))
                 .andExpect(model().attributeExists("tasks"));
@@ -81,6 +81,7 @@ class TaskControllerTest {
 
         mockMvc.perform(post("/task/create")
                         .session(session)
+                        .param("projectId", "1")
                         .param("title", "Test Task")
                         .param("description", "Test Description")
                         .param("startDate", "2026-01-01")
@@ -101,6 +102,7 @@ class TaskControllerTest {
 
         mockMvc.perform(post("/task/create")
                         .session(session)
+                        .param("projectId", "1")
                         .param("title", "")
                         .param("description", "Test Description")
                         .param("startDate", "2026-01-01")

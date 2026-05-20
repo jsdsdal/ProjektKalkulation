@@ -2,6 +2,7 @@ package com.example.projektkalkulationgruppe6.service;
 
 import com.example.projektkalkulationgruppe6.exception.DatabaseOperationException;
 import com.example.projektkalkulationgruppe6.exception.InvalidProjectException;
+import com.example.projektkalkulationgruppe6.exception.InvalidTaskException;
 import com.example.projektkalkulationgruppe6.exception.ProjectNotFoundException;
 import com.example.projektkalkulationgruppe6.model.Employee;
 import com.example.projektkalkulationgruppe6.model.Project;
@@ -9,6 +10,7 @@ import com.example.projektkalkulationgruppe6.repository.ProjectRepository;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -38,6 +40,31 @@ public class ProjectService {
         }
     }
 
+    private Project getTreeById(int id) {
+        validateId(id);
+
+        List<Project> projects = new ArrayList<>();
+
+        try {
+            projects = projectRepository.findParentAndChildrenById(id);
+        } catch (DataAccessException ex) {
+            throw new DatabaseOperationException("Error: The Project could not be loaded.", ex);
+        }
+
+        if (projects.isEmpty()) {
+            throw new ProjectNotFoundException(id);
+        }
+
+        Project parentProject = projects.getFirst();
+
+        projects.removeFirst();
+
+        parentProject.setSubProjects(projects);
+
+        return parentProject;
+
+    }
+
     public List<String> findAllStatusList() {
 
         List<String> statusList;
@@ -55,6 +82,13 @@ public class ProjectService {
         }
 
         return statusList;
+    }
+
+    private void validateId(int id) {
+        if (id <= 0) {
+                throw new InvalidProjectException("ID must be a positive number");
+            }
+
     }
 
     private void validateProject(Project project) {

@@ -2,6 +2,7 @@ package com.example.projektkalkulationgruppe6.service;
 
 import com.example.projektkalkulationgruppe6.exception.DatabaseOperationException;
 import com.example.projektkalkulationgruppe6.exception.InvalidProjectException;
+import com.example.projektkalkulationgruppe6.exception.ProjectNotFoundException;
 import com.example.projektkalkulationgruppe6.model.Employee;
 import com.example.projektkalkulationgruppe6.model.Project;
 import com.example.projektkalkulationgruppe6.repository.ProjectRepository;
@@ -18,7 +19,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ProjectServiceTest {
@@ -82,6 +83,47 @@ class ProjectServiceTest {
         Project p = mainTestProject;
         when(projectRepository.insert(p)).thenThrow(new EmptyResultDataAccessException(10));
         assertThrows(DatabaseOperationException.class, () -> projectService.create(p));
+    }
+
+
+
+    //DELETE
+
+    @Test
+    void deleteWithValidIdCallsRepository() {
+        when(projectRepository.deleteById(1)).thenReturn(true);
+
+        projectService.delete(1);
+
+        verify(projectRepository, times(1)).deleteById(1);
+    }
+
+    @Test
+    void deleteProjectNotFoundThrowsProjectNotFoundException() {
+        when(projectRepository.deleteById(9999)).thenReturn(false);
+
+        assertThrows(ProjectNotFoundException.class,
+                () -> projectService.delete(9999));
+    }
+
+    @Test
+    void deleteWithInvalidIdThrowsInvalidProjectException() {
+        assertThrows(InvalidProjectException.class,
+                () -> projectService.delete(0));
+    }
+
+    @Test
+    void deleteWithNegativeIdThrowsInvalidProjectException() {
+        assertThrows(InvalidProjectException.class,
+                () -> projectService.delete(-1));
+    }
+
+    @Test
+    void deleteWithInvalidIdDoesNotCallRepository() {
+        assertThrows(InvalidProjectException.class,
+                () -> projectService.delete(0));
+
+        verifyNoInteractions(projectRepository);
     }
 
 

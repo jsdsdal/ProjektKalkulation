@@ -119,6 +119,20 @@ class ProjectRepositoryTest {
 
     }
 
+    @Test
+    void DeleteByIdExistingProjectReturnsTrue(){
+        boolean result = repo.deleteById(1);
+        assertTrue(result);
+    }
+
+    @Test
+    void DeleteByIdNonExistingProjectReturnsTrue(){
+        boolean result = repo.deleteById(9999);
+        assertFalse(result);
+    }
+
+
+
 
 
 

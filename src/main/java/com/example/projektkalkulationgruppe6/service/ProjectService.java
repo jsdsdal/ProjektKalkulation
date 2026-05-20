@@ -2,6 +2,7 @@ package com.example.projektkalkulationgruppe6.service;
 
 import com.example.projektkalkulationgruppe6.exception.DatabaseOperationException;
 import com.example.projektkalkulationgruppe6.exception.InvalidProjectException;
+import com.example.projektkalkulationgruppe6.exception.ProjectNotFoundException;
 import com.example.projektkalkulationgruppe6.model.Employee;
 import com.example.projektkalkulationgruppe6.model.Project;
 import com.example.projektkalkulationgruppe6.repository.ProjectRepository;
@@ -106,6 +107,19 @@ public class ProjectService {
 
         subproject.setParentProjectId(parentProjectId);
         return create(subproject);
+    }
+
+    public void delete(int projectId){
+        if(projectId<=0){
+            throw new InvalidProjectException("ProjectID needs to be a positive number");
+        }
+
+        boolean deleted = projectRepository.deleteById(projectId);
+
+        if(!deleted){
+            throw new ProjectNotFoundException(projectId);
+        }
+
     }
 
 

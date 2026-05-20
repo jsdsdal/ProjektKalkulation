@@ -166,6 +166,17 @@ public class ProjectRepository {
 
     }
 
+    public boolean deleteById(int projectId){
+        String sql = """
+        DELETE FROM project
+        WHERE project_id = ?
+        """;
+
+        int rowsDeleted = jdbcTemplate.update(sql, projectId);
+        return rowsDeleted > 0;
+
+    }
+
 
 
 

@@ -11,6 +11,7 @@ public class Task {
     private LocalDate endDate;
     private double estimatedHours;
     private double actualHours;
+    private Integer projectId;
     private Integer parentTaskId;
     private List<Task> subTask;
     private List<Employee> assignees;
@@ -21,7 +22,7 @@ public class Task {
     }
 
     public Task(Integer taskId, String title, String description, LocalDate startDate, LocalDate endDate,
-                double estimatedHours, double actualHours, Integer parentTaskId, List<Task> subTask,
+                double estimatedHours, double actualHours, Integer projectId, Integer parentTaskId, List<Task> subTask,
                 List<Employee> assignees, List<String> competencies) {
         this.taskId = taskId;
         this.title = title;
@@ -30,6 +31,7 @@ public class Task {
         this.endDate = endDate;
         this.estimatedHours = estimatedHours;
         this.actualHours = actualHours;
+        this.projectId = projectId;
         this.parentTaskId = parentTaskId;
         this.subTask = subTask;
         this.assignees = assignees;
@@ -45,6 +47,7 @@ public class Task {
     public LocalDate getEndDate() {return endDate;}
     public double getEstimatedHours() {return estimatedHours;}
     public double getActualHours() {return actualHours;}
+    public Integer getProjectId() {return projectId;}
     public Integer getParentTaskId() {return parentTaskId;}
     public List<Task> getSubTask() {return subTask;}
     public List<Employee> getAssignees() {return assignees;}
@@ -58,6 +61,7 @@ public class Task {
     public void setEndDate(LocalDate endDate) {this.endDate = endDate;}
     public void setEstimatedHours(double estimatedHours) {this.estimatedHours = estimatedHours;}
     public void setActualHours(double actualHours) {this.actualHours = actualHours;}
+    public void setProjectId(Integer projectId) {this.projectId = projectId;}
     public void setParentTaskId(Integer parentTaskId) {this.parentTaskId = parentTaskId;}
     public void setSubTask(List<Task> subTask) {this.subTask = subTask;}
     public void setAssignees(List<Employee> asignees) {this.assignees = asignees;}
@@ -65,19 +69,20 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" +
-                "taskId=" + taskId +
-                ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", startDate=" + startDate +
-                ", endDate=" + endDate +
-                ", estimatedHours=" + estimatedHours +
-                ", actualHours=" + actualHours +
-                ", parentTaskId=" + parentTaskId +
-                ", subTask=" + subTask +
-                ", assignees=" + assignees +
-                ", competencies=" + competencies +
-                '}';
+        return "\n**************************\n" +
+                "taskId: " + taskId + "\n" +
+                "Title: " + title + "\n" +
+                "Description: " + description + "\n" +
+                "StartDate: " + startDate +
+                ", EndDate: " + endDate +
+                ", EstimatedHours: " + estimatedHours +
+                ", ActualHours: " + actualHours +
+                ", ProjectId: " + projectId +
+                ", ParentTaskId: " + parentTaskId + "\n" +
+                "SubTask: " + subTask + "\n" +
+                "Assignees: " + assignees + "\n" +
+                "Competencies: " + competencies
+                ;
     }
 }
 

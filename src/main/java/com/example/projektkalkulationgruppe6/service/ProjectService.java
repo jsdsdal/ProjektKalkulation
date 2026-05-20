@@ -2,10 +2,9 @@ package com.example.projektkalkulationgruppe6.service;
 
 import com.example.projektkalkulationgruppe6.exception.DatabaseOperationException;
 import com.example.projektkalkulationgruppe6.exception.InvalidProjectException;
-import com.example.projektkalkulationgruppe6.exception.InvalidTaskException;
 import com.example.projektkalkulationgruppe6.exception.ProjectNotFoundException;
-import com.example.projektkalkulationgruppe6.model.Employee;
 import com.example.projektkalkulationgruppe6.model.Project;
+import com.example.projektkalkulationgruppe6.model.Task;
 import com.example.projektkalkulationgruppe6.repository.ProjectRepository;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
@@ -15,11 +14,14 @@ import java.util.List;
 
 @Service
 public class ProjectService {
-    private ProjectRepository projectRepository;
+    private final ProjectRepository projectRepository;
+    private final TaskService taskService;
 
 
-    public ProjectService(ProjectRepository projectRepository) {
+
+    public ProjectService(ProjectRepository projectRepository, TaskService taskService) {
         this.projectRepository = projectRepository;
+        this.taskService = taskService;
     }
 
     public List<Project> findAll() {
@@ -40,10 +42,30 @@ public class ProjectService {
         }
     }
 
-    private Project getTreeById(int id) {
+    public Project findById(int id) {
         validateId(id);
 
+        Project project;
+
+        try {
+            project = getTreeById(id);
+        } catch (DataAccessException ex) {
+            throw new DatabaseOperationException("Error: The Project could not be loaded.", ex);
+        }
+
+        if (project == null) {
+            throw new ProjectNotFoundException(id);
+        }
+
+        return project;
+
+
+    }
+
+    private Project getTreeById(int id) {
         List<Project> projects = new ArrayList<>();
+
+
 
         try {
             projects = projectRepository.findParentAndChildrenById(id);
@@ -51,8 +73,15 @@ public class ProjectService {
             throw new DatabaseOperationException("Error: The Project could not be loaded.", ex);
         }
 
+
+
         if (projects.isEmpty()) {
             throw new ProjectNotFoundException(id);
+        }
+
+        for (Project p : projects) {
+            List<Task> tasks = taskService.getTreesByProjectId(p.getProjectId());
+            p.setTasks(tasks);
         }
 
         Project parentProject = projects.getFirst();

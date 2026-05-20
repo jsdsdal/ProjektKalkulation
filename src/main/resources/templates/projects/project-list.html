@@ -7,5 +7,24 @@
 <body>
 <h1>Alle Projekter</h1>
 
+<!-- Lists -->
+<div class="lists-header">
+    <h2>My Projects</h2>
+    <a th:href="${createProjectUrl}" class="btn-primary">Create Project</a>
+</div>
+<p class="lists-subtitle">Choose a project for detailed view</p>
+
+<div class="lists-grid">
+    <a th:each="p : ${projects}"
+       th:href="@{ ${viewProjectUrl} + ${p.projectId} }"
+       class="list-card">
+        <h3 th:text="${p.title}">Project Title</h3>
+        <p th:text="${p.status}">Project Status</p>
+    </a>
+    <div class="empty-state" th:if="${projects == null or projects.isEmpty()}">
+        <p>You don't have any projects yet.</p>
+    </div>
+</div>
+
 </body>
 </html>

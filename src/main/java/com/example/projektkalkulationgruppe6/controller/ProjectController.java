@@ -38,6 +38,10 @@ public class ProjectController {
         sessionHelper.isLoggedIn(session);
 
         model.addAttribute("projects", projectService.findAll());
+        model.addAttribute("viewProjectUrl", "/projects/");
+        model.addAttribute("createProjectUrl", "/projects/create-project");
+        model.addAttribute("editProjectUrl", "/projects/edit-project");
+        model.addAttribute("deleteProjectUrl", "/projects/delete-project");
 
         return "projects/project-list";
     }
@@ -77,10 +81,6 @@ public class ProjectController {
             return "projects/project-form";
         }
     }
-
-
-//    @PostMapping("/create-project")
-//    public
 
 
 

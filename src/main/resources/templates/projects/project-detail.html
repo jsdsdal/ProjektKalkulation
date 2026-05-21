@@ -19,7 +19,11 @@
         <!-- Subprojects -->
         <th:block th:each="sub : ${project.subProjects}">
             <tr>
-                <td th:text="${sub.title}">Subproject</td>
+
+                <td>
+                        <a th:href="@{${readSubProjectUrl} + ${sub.projectId}}"
+                           th:text="${sub.title}">Subproject</a>
+                </td>
                 <td>Subproject</td>
                 <td th:text="${sub.startDate}"></td>
                 <td th:text="${sub.endDate}"></td>
@@ -37,8 +41,11 @@
     <th:block th:fragment="taskRows(tasks, depth)">
         <th:block th:each="task : ${tasks}">
             <tr>
-                <td th:style="'padding-left: ' + (${depth} * 30) + 'px'"
-                    th:text="${task.title}">Task</td>
+                <td
+                        th:style="'padding-left: ' + (${depth} * 30) + 'px'"
+                        <a th:href="@{${readTaskUrl} + ${task.taskId}}"
+                           th:text="${task.title}">Task</a>
+                </td>
                 <td th:text="${depth} == 0 ? 'Task' : 'Task'">Type</td>
                 <td th:text="${task.startDate}"></td>
                 <td th:text="${task.endDate}"></td>

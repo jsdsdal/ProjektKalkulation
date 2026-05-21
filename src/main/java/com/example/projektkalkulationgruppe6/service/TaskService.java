@@ -27,6 +27,16 @@ public class TaskService {
         }
     }
 
+    public List<Task> getTreesByProjectId(int projectId) {
+        try {
+            return taskRepository.findParentsAndChildrenByProjectId(projectId);
+        } catch (DataAccessException ex) {
+            throw new DatabaseOperationException ("Error: Could not retrieve tasks with Project ID " + projectId, ex);
+        }
+    }
+
+
+
     public Task findById(int id) {
         try {
             Task task = taskRepository.findById(id);

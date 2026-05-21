@@ -22,6 +22,7 @@ public class TaskRepository {
             rs.getDate("end_date").toLocalDate(),
             rs.getDouble("estimated_hours"),
             rs.getDouble("actual_hours"),
+            (Integer) rs.getObject("project_id"),
             (Integer) rs.getObject("parent_task_id"),
             null, // subTasks
             null, // assignees
@@ -70,12 +71,14 @@ public class TaskRepository {
                 FROM task
                 WHERE project_id = ?
                 """;
-        List<Task> task = jdbcTemplate.query(sql, taskRowMapper, projectId);
-        attachCompetencies(task);
-        attachAssignees(task);
-        attachSubTasks(task);
+        List<Task> tasks = jdbcTemplate.query(sql, taskRowMapper, projectId);
+        attachCompetencies(tasks);
+        attachAssignees(tasks);
+        attachSubTasks(tasks);
 
-        return task;
+        return tasks.stream()
+                .filter(t -> t.getParentTaskId() == null)
+                .collect(Collectors.toList());
     }
 
     public Task insert(Task task, int projectId) {

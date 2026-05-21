@@ -6,98 +6,54 @@
     <link rel="stylesheet" th:href="@{/main.css}"/>
 </head>
 <body>
+<!-- NAV -->
+<div th:replace="~{fragments :: sidebar}"></div>
 
-<!-- ── Sidebar ──────────────────────────────────────────────── -->
-<aside class="sidebar">
-    <div class="sidebar-logo">
-        <!-- Simple infinity-like icon matching wireframe -->
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-            <path d="M12 12c-2-2.5-4-4-6-4a4 4 0 0 0 0 8c2 0 4-1.5 6-4z"/>
-            <path d="M12 12c2 2.5 4 4 6 4a4 4 0 0 0 0-8c-2 0-4 1.5-6 4z"/>
-        </svg>
-        AlphaScope
-    </div>
 
-    <nav class="sidebar-nav">
-        <a th:href="@{/home}" class="sidebar-link">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-            Dashboard
-        </a>
-        <a th:href="@{/projects/table}" class="sidebar-link active">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
-            Projects
-        </a>
-        <a th:href="@{/employees}" class="sidebar-link">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-            Employees
-        </a>
-        <div class="sidebar-link-group">
-            <a th:href="@{/profile}" class="sidebar-link">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-                My Profile
-                <svg class="sidebar-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-            </a>
-        </div>
-    </nav>
-</aside>
-
-<!-- ── Main ──────────────────────────────────────────────────── -->
 <main class="main">
 
-    <!-- Page header -->
     <div class="page-header">
         <h1 class="page-title">Projects</h1>
         <a th:href="@{/projects/create-project}" class="btn-primary">+ NEW PROJECT</a>
     </div>
 
-    <!-- Tabs + search row -->
     <div class="tabs-row">
         <div class="tabs">
             <button class="tab active">Overview</button>
-            <a th:href="@{/projects/table}" class="tab">Table</a>
+            <button class="tab">Table</button>
             <button class="tab">Employees</button>
-            <button class="tab-more">•••</button>
         </div>
         <div class="search-bar">
-            <input type="text" placeholder="Placeholder"/>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" placeholder="Search projects..."/>
         </div>
     </div>
 
-    <!-- ── Stat cards ──────────────────────────────────────── -->
     <div class="stat-cards">
         <div class="stat-card">
             <div class="stat-card-label">Active projects</div>
-            <div class="stat-card-value" th:text="${activeCount != null ? activeCount : projects.size()}">5</div>
-            <div class="stat-card-sub">
-                <span th:if="${attentionCount != null}" th:text="${attentionCount + ' projects need your attention'}"></span>
-                <span th:unless="${attentionCount != null}">across all projects</span>
-            </div>
+            <div class="stat-card-value" th:text="${projects.size()}">0</div>
+            <div class="stat-card-sub">across all projects</div>
         </div>
         <div class="stat-card">
             <div class="stat-card-label">Tasks due this week</div>
-            <div class="stat-card-value" th:text="${tasksDueThisWeek != null ? tasksDueThisWeek : '—'}">100</div>
+            <div class="stat-card-value">—</div>
             <div class="stat-card-sub">across all projects</div>
         </div>
         <div class="stat-card warning">
             <div class="stat-card-label">Estimated hours this week</div>
-            <div class="stat-card-value" th:text="${estHoursThisWeek != null ? estHoursThisWeek : '—'}">346</div>
+            <div class="stat-card-value">—</div>
             <div class="stat-card-sub">across all projects</div>
         </div>
         <div class="stat-card">
             <div class="stat-card-label">Over-allocated employees</div>
-            <div class="stat-card-value" th:text="${overAllocatedCount != null ? overAllocatedCount + ' employees' : '—'}">3 employees</div>
-            <div class="stat-card-sub">have more than 37 hrs est.</div>
+            <div class="stat-card-value">—</div>
+            <div class="stat-card-sub">—</div>
         </div>
     </div>
 
-    <!-- ── Table view ─────────────────────────────────────── -->
     <div class="section-header">
         <span class="section-title">Table view</span>
-        <button class="sort-btn">
-            Sort by...
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
+        <button class="sort-btn">Sort by... ▾</button>
     </div>
 
     <div class="table-wrap">
@@ -105,10 +61,7 @@
             <thead>
             <tr>
                 <th><input type="checkbox"/></th>
-                <th>
-                    Title
-                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:4px"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
-                </th>
+                <th>Title ↓</th>
                 <th>Team size</th>
                 <th>Est. revenue</th>
                 <th>Actual revenue</th>
@@ -118,51 +71,39 @@
             </tr>
             </thead>
             <tbody>
-            <!-- Parent project row -->
+
             <th:block th:each="project : ${projects}">
                 <tr>
                     <td><input type="checkbox"/></td>
                     <td class="td-title">
                         <a th:href="@{/projects/{id}(id=${project.projectId})}"
-                           th:text="${project.title}">Project Title</a>
+                           th:text="${project.title}">Title</a>
                     </td>
-                    <!-- Team size: count of unique employees on leaf tasks.
-                         Not yet in model — placeholder until DashboardService adds it -->
-                    <td th:text="${project.teamSize != null ? project.teamSize : '—'}">—</td>
-                    <td class="td-mono"
-                        th:text="${project.forecastedRevenue != null ? #numbers.formatDecimal(project.forecastedRevenue, 1, 'COMMA', 0, 'POINT') : '—'}">
-                        —
-                    </td>
-                    <td class="td-mono"
-                        th:text="${project.actualRevenue != null ? #numbers.formatDecimal(project.actualRevenue, 1, 'COMMA', 0, 'POINT') : '—'}">
-                        —
-                    </td>
-                    <td class="td-mono"
-                        th:text="${project.totalEstimatedHours != null ? project.totalEstimatedHours + 'h' : '—'}">
-                        —
-                    </td>
+                    <td>—</td>
+                    <td class="td-mono">—</td>
+                    <td class="td-mono">—</td>
+                    <td class="td-mono">—</td>
                     <td>
                         <span class="badge"
-                              th:classappend="${project.status == 'Actual Hours Done'} ? 'badge-green'
-                                           : (${project.status == 'Estimate in Progress'} ? 'badge-yellow'
-                                           : (${project.status == 'Rejected'} ? 'badge-red'
-                                           : (${project.status == 'Not Started'} ? 'badge-gray'
-                                           : 'badge-blue')))"
-                              th:text="${project.status}">
-                            Status
-                        </span>
+                              th:classappend="${project.status == 'Actual Hours Done'} ? ' badge-green'
+                                           : (${project.status == 'Estimate in Progress'} ? ' badge-yellow'
+                                           : (${project.status == 'Rejected'} ? ' badge-red'
+                                           : (${project.status == 'Not Started'} ? ' badge-gray'
+                                           : ' badge-blue')))"
+                              th:text="${project.status}">Status</span>
                     </td>
                     <td>
-                        <button class="action-menu-btn"
-                                th:attr="onclick='toggleMenu(' + ${project.projectId} + ')'">
-                            •••
-                        </button>
+                        <a th:href="@{/projects/{id}/edit(id=${project.projectId})}"
+                           style="font-size:12px; color:var(--gray-500); margin-right:8px;">Edit</a>
+                        <form th:action="@{/projects/{id}/delete(id=${project.projectId})}"
+                              method="post" style="display:inline;"
+                              onsubmit="return confirm('Slet dette projekt?')">
+                            <button type="submit" class="action-menu-btn">✕</button>
+                        </form>
                     </td>
                 </tr>
 
-                <!-- Subproject rows, indented -->
-                <tr th:each="sub : ${project.subProjects}"
-                    class="subproject-row">
+                <tr th:each="sub : ${project.subProjects}" class="subproject-row">
                     <td><input type="checkbox"/></td>
                     <td class="td-title">
                         <a th:href="@{/projects/{id}(id=${sub.projectId})}"
@@ -174,41 +115,33 @@
                     <td class="td-mono">—</td>
                     <td>
                         <span class="badge"
-                              th:classappend="${sub.status == 'Actual Hours Done'} ? 'badge-green'
-                                           : (${sub.status == 'Estimate in Progress'} ? 'badge-yellow'
-                                           : (${sub.status == 'Rejected'} ? 'badge-red'
-                                           : (${sub.status == 'Not Started'} ? 'badge-gray'
-                                           : 'badge-blue')))"
-                              th:text="${sub.status}">
-                            Status
-                        </span>
+                              th:classappend="${sub.status == 'Actual Hours Done'} ? ' badge-green'
+                                           : (${sub.status == 'Estimate in Progress'} ? ' badge-yellow'
+                                           : (${sub.status == 'Rejected'} ? ' badge-red'
+                                           : (${sub.status == 'Not Started'} ? ' badge-gray'
+                                           : ' badge-blue')))"
+                              th:text="${sub.status}">Status</span>
                     </td>
                     <td>
-                        <button class="action-menu-btn">•••</button>
+                        <a th:href="@{/projects/{id}/edit(id=${sub.projectId})}"
+                           style="font-size:12px; color:var(--gray-500);">Edit</a>
                     </td>
                 </tr>
             </th:block>
 
-            <!-- Empty state -->
             <tr th:if="${#lists.isEmpty(projects)}">
-                <td colspan="8" style="text-align:center; color:var(--gray-500); padding: 40px;">
+                <td colspan="8" style="text-align:center; color:var(--gray-500); padding:40px;">
                     Ingen projekter fundet.
                 </td>
             </tr>
+
             </tbody>
         </table>
     </div>
 
-    <!-- ── Pagination ─────────────────────────────────────── -->
     <div class="pagination">
         <button class="page-btn-arrow" disabled>&#8249;</button>
         <button class="page-btn active">1</button>
-        <button class="page-btn">2</button>
-        <button class="page-btn">3</button>
-        <button class="page-btn">4</button>
-        <button class="page-btn">5</button>
-        <span class="page-dots">…</span>
-        <button class="page-btn">11</button>
         <button class="page-btn-arrow">&#8250;</button>
     </div>
 

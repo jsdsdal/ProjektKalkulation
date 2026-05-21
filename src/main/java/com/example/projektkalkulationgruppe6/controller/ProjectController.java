@@ -52,10 +52,14 @@ public class ProjectController {
     }
 
     @GetMapping("/{id}")
-    public String read(@ModelAttribute Project project, @PathVariable int id, HttpSession session, Model model) {
+    public String read(@PathVariable int id, HttpSession session, Model model) {
         sessionHelper.isLoggedIn(session);
 
-        model.addAttribute("project", project);
+        model.addAttribute("project", projectService.findById(id));
+        model.addAttribute("readSubProjectUrl", "/projects/");
+        model.addAttribute("updateSubProjectUrl", "/edit-project/");
+        model.addAttribute("delelteSubProjectUrl", "/delete-project");
+        model.addAttribute("readTaskUrl", "");
 
 
         return "projects/project-detail";

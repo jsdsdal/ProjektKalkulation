@@ -28,11 +28,6 @@ public class ProjectController {
         this.sessionHelper = sessionHelper;
     }
 
-    @GetMapping()
-    public String home(HttpSession session) {
-        sessionHelper.isLoggedIn(session);
-        return "home";
-    }
 
     // TODO: fjern debug endpoint
     @GetMapping("/debug/{id}")

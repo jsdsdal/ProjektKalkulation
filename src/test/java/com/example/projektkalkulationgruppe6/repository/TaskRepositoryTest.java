@@ -61,6 +61,7 @@ class TaskRepositoryTest {
                 null,
                 null,
                 null,
+                null,
                 null
         );
         Task savedTask = repo.insert(insertTask, 1);

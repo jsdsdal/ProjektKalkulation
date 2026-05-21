@@ -52,6 +52,16 @@ public class ProjectController {
         return "projects/project-list";
     }
 
+    @GetMapping("/{id}")
+    public String read(@ModelAttribute Project project, @PathVariable int id, HttpSession session, Model model) {
+        sessionHelper.isLoggedIn(session);
+
+        model.addAttribute("project", project);
+
+
+        return "projects/project-detail";
+    }
+
     @GetMapping("/create-project")
     public String showCreateForm(Model model, HttpSession session) {
         sessionHelper.isLoggedIn(session);

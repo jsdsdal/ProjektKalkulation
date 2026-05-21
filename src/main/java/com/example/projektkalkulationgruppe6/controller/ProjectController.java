@@ -104,6 +104,51 @@ public class ProjectController {
         }
     }
 
+    @GetMapping("/{id}/edit")
+    public String showEditForm(@PathVariable int id, HttpSession session, Model model) {
+        sessionHelper.isLoggedIn(session);
+
+        Project project = projectService.findById(id);
+
+        model.addAttribute("project", project);
+        model.addAttribute("formTitle", "Edit Project");
+        model.addAttribute("formAction", "/projects/" + id + "/edit");
+        model.addAttribute("submitLabel", "Save");
+        model.addAttribute("cancelUrl", "/projects/project-list");
+        model.addAttribute("statusList", projectService.findAllStatusList());
+        model.addAttribute("employees", employeeService.findAll());
+
+        return "projects/project-form";
+    }
+
+    @PostMapping("/{id}/edit")
+    public String edit(@PathVariable int id,
+                       @ModelAttribute Project project,
+                       HttpSession session,
+                       Model model) {
+        sessionHelper.isLoggedIn(session);
+
+        try {
+            int employeeId = (int) session.getAttribute("employeeId");
+            project.setProjectOwner(employeeService.findById(employeeId));
+            projectService.update(id, project);
+            return "redirect:/projects/project-list";
+        } catch (ProjectNotFoundException ex) {
+            model.addAttribute("errorMessage", ex.getMessage());
+            return "error/404";
+        } catch (InvalidProjectException ex) {
+            model.addAttribute("project", project);
+            model.addAttribute("formTitle", "Edit Project");
+            model.addAttribute("formAction", "/projects/" + id + "/edit");
+            model.addAttribute("submitLabel", "Save");
+            model.addAttribute("cancelUrl", "/projects/project-list");
+            model.addAttribute("statusList", projectService.findAllStatusList());
+            model.addAttribute("employees", employeeService.findAll());
+            model.addAttribute("errorMessage", ex.getMessage());
+            return "projects/project-form";
+        }
+    }
+
 
 
 //    @PostMapping("/create-project")

@@ -1,6 +1,7 @@
 package com.example.projektkalkulationgruppe6.controller;
 
 import com.example.projektkalkulationgruppe6.exception.InvalidProjectException;
+import com.example.projektkalkulationgruppe6.exception.ProjectNotFoundException;
 import com.example.projektkalkulationgruppe6.model.Employee;
 import com.example.projektkalkulationgruppe6.model.Project;
 import com.example.projektkalkulationgruppe6.service.EmployeeService;
@@ -31,6 +32,15 @@ public class ProjectController {
     public String home(HttpSession session) {
         sessionHelper.isLoggedIn(session);
         return "home";
+    }
+
+    // TODO: fjern debug endpoint
+    @GetMapping("/debug/{id}")
+    @ResponseBody
+    public String debug(@PathVariable int id) {
+        Project project = projectService.findById(id);
+        System.out.println(project);
+        return "<pre>" + project.toString() + "</pre>";
     }
 
     @GetMapping("/table")
@@ -81,6 +91,23 @@ public class ProjectController {
             return "projects/project-form";
         }
     }
+
+    @PostMapping("/{id}/delete")
+    public String delete(@PathVariable int id, HttpSession session, Model model) {
+        sessionHelper.isLoggedIn(session);
+
+        try {
+            projectService.delete(id);
+            return "redirect:projects/project-list";
+        } catch (ProjectNotFoundException ex) {
+            model.addAttribute("errorMessage", ex.getMessage());
+            return "error/404";
+        } catch (InvalidProjectException ex) {
+            model.addAttribute("errorMessage", ex.getMessage());
+            return "error/400";
+        }
+    }
+
 
 
 

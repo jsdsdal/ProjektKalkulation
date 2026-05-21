@@ -27,6 +27,16 @@ public class TaskService {
         }
     }
 
+    public List<Task> getTreesByProjectId(int projectId) {
+        try {
+            return taskRepository.findParentsAndChildrenByProjectId(projectId);
+        } catch (DataAccessException ex) {
+            throw new DatabaseOperationException ("Error: Could not retrieve tasks with Project ID " + projectId, ex);
+        }
+    }
+
+
+
     public Task findById(int id) {
         try {
             Task task = taskRepository.findById(id);
@@ -39,12 +49,43 @@ public class TaskService {
         }
     }
 
-    public Task create(Task task, int projectId) {
+    public Task create(Task task, int projectId, List<Integer> competenceIds, List<Integer> employeeIds) {
         validateTask(task);
         try {
-            return taskRepository.insert(task, projectId);
+            Task savedTask = taskRepository.insert(task, projectId);
+
+            if (competenceIds !=null){
+                for (int competenceId : competenceIds) {
+                    taskRepository.addCompetenceToTask(savedTask.getTaskId(), competenceId);
+                }
+            }
+
+            if (employeeIds !=null){
+                for (int employeeId : employeeIds) {
+                    taskRepository.addAssigneeToTask(savedTask.getTaskId(), employeeId);
+                }
+            }
+
+            return savedTask;
+
         } catch (DataAccessException ex) {
             throw new DatabaseOperationException("Error: the task was not created.", ex);
+        }
+    }
+
+    public Task update (Task task) {
+        validateTask(task);
+        if (task.getTaskId() == null){
+            throw new InvalidTaskException("Task ID is required for update.");
+        }
+        validateId(task.getTaskId());
+        try {
+              boolean updated = taskRepository.update(task);
+              if (!updated) {
+                  throw new TaskNotFoundException(task.getTaskId());
+              } return task;
+        } catch (DataAccessException ex) {
+            throw new DatabaseOperationException("Error: the task was not updated.", ex);
         }
     }
 
@@ -83,6 +124,13 @@ public class TaskService {
             }
         }
 
+        if (task.getEstimatedHours() < 0) {
+            throw new InvalidTaskException("Estimated hours cannot be negative");
+        }
+        if (task.getActualHours() < 0) {
+            throw new InvalidTaskException("Actual hours cannot be negative");
+        }
+
         if (title.length() > 50) {
             throw new InvalidTaskException("Title cannot exceed 50 characters.");
         }
@@ -105,7 +153,7 @@ public class TaskService {
         }
     }
 
-    public List<String> findAllCompetencies() {
+    public List<TaskRepository.CompetenceOption> findAllCompetencies() {
         return taskRepository.findAllCompetencies();
     }
 

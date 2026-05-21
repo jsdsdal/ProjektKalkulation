@@ -10,6 +10,7 @@ import org.springframework.test.context.jdbc.Sql;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,12 +24,12 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TE
 class ProjectRepositoryTest {
 
     @Autowired
-    private ProjectRepository repo;
+    private ProjectRepository projectRepository;
 
     //OBS: Opdater, når Tasks er på plads
     @Test
     void readProject1ByProjectId() {
-        Project p1 = repo.findById(1);
+        Project p1 = projectRepository.findById(1);
 
         assertThat(p1).isNotNull();
         assertEquals(p1.getTitle(), ("Sanistål Webshop Redesign"));
@@ -45,47 +46,47 @@ class ProjectRepositoryTest {
 
     @Test
     void readProjectShouldReturnNull() {
-        assertNull(repo.findById(4));
+        assertNull(projectRepository.findById(4));
     }
 
-    //OBS: Opdater, når employee og Tasks er på plads
-//    @Test
-//    void insertAndReadBack() {
-//        Project insertProject = new Project(
-//                null,
-//                "Test Projekt Management",
-//                "Udvikling",
-//                LocalDate.of(2026,1,1),
-//                LocalDate.of(2026, 12, 1),
-//                new Employee(),
-//                new BigDecimal("1250.00"),
-//                "Not Started",
-//                null,
-//                null,
-//                null
-//        );
-//
-//        Project savedProject = repo.insert(insertProject);
-//        Project lookupProject = repo.findById(savedProject.getProjectId());
-//
-//        assertThat(lookupProject).isNotNull();
-//        assertThat(lookupProject.getProjectId()).isNotNull();
-//        assertEquals(100, lookupProject.getProjectId());
-//        assertEquals("Test Projekt Management", lookupProject.getTitle());
-//        assertEquals("Udvikling", lookupProject.getDescription());
-//        assertEquals(LocalDate.of(2026, 1, 1), lookupProject.getStartDate());
-//        assertEquals(LocalDate.of(2026, 12, 1), lookupProject.getEndDate());
-//        assertEquals(new BigDecimal("1250.00"), lookupProject.getHourPrice());
-//        assertEquals("Not Started", lookupProject.getStatus());
-//        assertNull(lookupProject.getParentProjectId());
-//        assertNull(lookupProject.getSubProjects());
-//        assertNull(lookupProject.getTasks());
-//
-//    }
+
+    @Test
+    void insertAndReadBack() {
+        Project insertProject = new Project(
+                null,
+                "Test Projekt Management",
+                "Udvikling",
+                LocalDate.of(2026,1,1),
+                LocalDate.of(2026, 12, 1),
+                new Employee(1, "test", "email", "password", new ArrayList<String>()),
+                new BigDecimal("1250.00"),
+                "Not Started",
+                null,
+                null,
+                null
+        );
+
+        Project savedProject = projectRepository.insert(insertProject);
+        Project lookupProject = projectRepository.findById(savedProject.getProjectId());
+
+        assertThat(lookupProject).isNotNull();
+        assertThat(lookupProject.getProjectId()).isNotNull();
+        assertEquals(100, lookupProject.getProjectId());
+        assertEquals("Test Projekt Management", lookupProject.getTitle());
+        assertEquals("Udvikling", lookupProject.getDescription());
+        assertEquals(LocalDate.of(2026, 1, 1), lookupProject.getStartDate());
+        assertEquals(LocalDate.of(2026, 12, 1), lookupProject.getEndDate());
+        assertEquals(new BigDecimal("1250.00"), lookupProject.getHourPrice());
+        assertEquals("Not Started", lookupProject.getStatus());
+        assertNull(lookupProject.getParentProjectId());
+        assertNull(lookupProject.getSubProjects());
+        assertNull(lookupProject.getTasks());
+
+    }
 
     @Test
     void ShouldGetStatusList() {
-        List<String> list = repo.findAllStatusList();
+        List<String> list = projectRepository.findAllStatusList();
 
         assertThat(list).isNotEmpty();
         assertEquals("Not Started", list.get(0));
@@ -99,14 +100,14 @@ class ProjectRepositoryTest {
 
     @Test
     void ShouldReturnProjectAndSubProject() {
-        List<Project> list = repo.findParentAndChildrenById(2);
+        List<Project> list = projectRepository.findParentAndChildrenById(2);
         assertThat(list).isNotEmpty();
         assertEquals(2, list.size());
     }
 
     @Test
     void ShouldReturnProjectOnly() {
-        List<Project> list = repo.findParentAndChildrenById(1);
+        List<Project> list = projectRepository.findParentAndChildrenById(1);
         assertThat(list).isNotEmpty();
         assertEquals(1, list.size());
     }
@@ -114,20 +115,20 @@ class ProjectRepositoryTest {
 
     @Test
     void ShouldReturnEmptyList() {
-        List<Project> list = repo.findParentAndChildrenById(3);
+        List<Project> list = projectRepository.findParentAndChildrenById(3);
         assertThat(list).isEmpty();
 
     }
 
     @Test
     void DeleteByIdExistingProjectReturnsTrue(){
-        boolean result = repo.deleteById(1);
+        boolean result = projectRepository.deleteById(1);
         assertTrue(result);
     }
 
     @Test
     void DeleteByIdNonExistingProjectReturnsTrue(){
-        boolean result = repo.deleteById(9999);
+        boolean result = projectRepository.deleteById(9999);
         assertFalse(result);
     }
 

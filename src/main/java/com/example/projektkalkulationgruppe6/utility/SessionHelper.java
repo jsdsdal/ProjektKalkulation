@@ -20,5 +20,12 @@ public class SessionHelper {
         }
     }
 
+    public Integer getProjectId(HttpSession session) {
+        return (Integer) session.getAttribute("projectId");
+    }
+
+    public void setProjectId(HttpSession session, int projectId) {
+        session.setAttribute("projectId", projectId);
+    }
 
 }

@@ -13,8 +13,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.time.LocalDate;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
@@ -35,6 +33,7 @@ class TaskServiceTest {
             LocalDate.of(2026, 12, 12),
             11.00,
             20.00,
+            null,
             null,
             null,
             null,
@@ -59,26 +58,26 @@ class TaskServiceTest {
     @Test
     void ThrowInvalidTaskExceptionDueToEmptyProject() {
         Task t = new Task();
-        assertThrows(InvalidTaskException.class, () -> taskService.create(t, 1));
+        assertThrows(InvalidTaskException.class, () -> taskService.create(t, 1, null, null));
     }
 
     @Test
     void ThrowInvalidTaskExceptionDueToEmptyTaskTitle() {
         mainTestTask.setTitle("");
-        assertThrows(InvalidTaskException.class, () -> taskService.create(mainTestTask, 1));
+        assertThrows(InvalidTaskException.class, () -> taskService.create(mainTestTask, 1, null, null));
     }
 
     @Test
     void ThrowInvalidTaskExceptionDueToNullTaskTitle() {
         mainTestTask.setTitle(null);
-        assertThrows(InvalidTaskException.class, () -> taskService.create(mainTestTask, 1));
+        assertThrows(InvalidTaskException.class, () -> taskService.create(mainTestTask, 1, null, null));
     }
 
     @Test
     void ThrowDatabaseOperationExceptionOnDataAccessException() {
         Task t = mainTestTask;
         when(taskRepository.insert(t, 1)).thenThrow(new EmptyResultDataAccessException(10));
-        assertThrows(DatabaseOperationException.class, () -> taskService.create(t, 1));
+        assertThrows(DatabaseOperationException.class, () -> taskService.create(t, 1, null,null));
     }
 
 
@@ -86,7 +85,7 @@ class TaskServiceTest {
     void ThrowInvalidTaskExceptionWhenStarDateIsAfterEndDate() {
         mainTestTask.setStartDate(LocalDate.of(2026, 12, 12));
         mainTestTask.setEndDate(LocalDate.of(2026, 1, 1));
-        assertThrows(InvalidTaskException.class, () -> taskService.create(mainTestTask, 1));
+        assertThrows(InvalidTaskException.class, () -> taskService.create(mainTestTask, 1,null ,null));
     }
 
     @Test

@@ -22,6 +22,7 @@ public class TaskRepository {
             rs.getDate("end_date").toLocalDate(),
             rs.getDouble("estimated_hours"),
             rs.getDouble("actual_hours"),
+            (Integer) rs.getObject("project_id"),
             (Integer) rs.getObject("parent_task_id"),
             null, // subTasks
             null, // assignees
@@ -31,6 +32,8 @@ public class TaskRepository {
     public TaskRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
+
+    public record CompetenceOption(int id, String title){}
 
     public List<Task> findAllTask() {
         String sql = """
@@ -68,12 +71,14 @@ public class TaskRepository {
                 FROM task
                 WHERE project_id = ?
                 """;
-        List<Task> task = jdbcTemplate.query(sql, taskRowMapper, projectId);
-        attachCompetencies(task);
-        attachAssignees(task);
-        attachSubTasks(task);
+        List<Task> tasks = jdbcTemplate.query(sql, taskRowMapper, projectId);
+        attachCompetencies(tasks);
+        attachAssignees(tasks);
+        attachSubTasks(tasks);
 
-        return task;
+        return tasks.stream()
+                .filter(t -> t.getParentTaskId() == null)
+                .collect(Collectors.toList());
     }
 
     public Task insert(Task task, int projectId) {
@@ -113,7 +118,23 @@ public class TaskRepository {
 
     }
 
-    //Update
+    public boolean update(Task task) {
+        String sql = """
+                UPDATE task
+                SET title = ?, description = ?, start_date = ?, end_date = ?, estimated_hours = ?, actual_hours = ?
+                WHERE task_id = ?
+                """;
+        int rowsUpdated = jdbcTemplate.update(sql,
+                task.getTitle(),
+                task.getDescription(),
+                java.sql.Date.valueOf(task.getStartDate()),
+                java.sql.Date.valueOf(task.getEndDate()),
+                task.getEstimatedHours(),
+                task.getActualHours(),
+                task.getTaskId());
+        return rowsUpdated > 0;
+
+    }
 
     public boolean deleteById(int taskId){
         String sql = """
@@ -171,13 +192,14 @@ public class TaskRepository {
 
     //Competencies
 
-    public List<String> findAllCompetencies() {
+    public List<CompetenceOption> findAllCompetencies() {
         String sql = """
-        SELECT CONCAT(competence_id, ':', title)
+        SELECT competence_id, title
         FROM competence
         ORDER BY competence_id
         """;
-        return jdbcTemplate.queryForList(sql, String.class);
+        return jdbcTemplate.query(sql, (rs, rowNum) ->
+                new CompetenceOption(rs.getInt("competence_id"), rs.getString("title")));
     }
     private List<String> findCompetenciesByTaskId(int taskId) {
         String sql = """
@@ -209,7 +231,7 @@ public class TaskRepository {
 
     public void removeCompetenceFromTask(int taskId, int competenceId) {
         String sql = """
-        DELETE FROM task_competence 
+        DELETE FROM task_competence
         WHERE task_id = ? 
         AND competence_id = ?
         """;

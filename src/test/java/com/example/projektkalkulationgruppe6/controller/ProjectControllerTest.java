@@ -208,5 +208,17 @@ class ProjectControllerTest {
     }
 
 
+    @Test
+    void deleteValidIdRedirectsToHome() throws Exception {
+        mockMvc.perform(post("/projects/1/delete")
+                        .sessionAttr("employeeId", 1))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("projects/project-list"));
+    }
+
+
+
+
+
 
 }

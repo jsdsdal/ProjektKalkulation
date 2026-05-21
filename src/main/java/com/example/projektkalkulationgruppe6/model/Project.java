@@ -66,10 +66,18 @@ public class Project {
 
     @Override
     public String toString() {
-        return "ProjectID: " + projectId + ", Title: " + title + ", Description: " + description +
-                ", StartDate: " + startDate + ", EndDate: " + endDate + ", ProjectOwner: " + projectOwner +
-                ", Budget: " + hourPrice + ", Status: " + status + " ParentProjectID: " + parentProjectId +
-                ", SubProjects: " + subProjects + ", Tasks: " + tasks;
+        return "\n---------------------- \n" +
+                "ProjectID: " + projectId + "\n" +
+                "Title: " + title + "\n" +
+                "Description: " + description + "\n" +
+                ", StartDate: " + startDate +
+                ", EndDate: " + endDate + "\n" +
+                "ProjectOwner: " + projectOwner + "\n" +
+                "HourPrice: " + hourPrice +
+                ", Status: " + status +
+                ", ParentProjectID: " + parentProjectId + "\n" +
+                "SubProjects: " + subProjects + ", " + "\n" +
+                "Tasks: " + tasks;
     }
 
 

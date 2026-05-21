@@ -185,5 +185,39 @@ public class ProjectService {
 
     }
 
+    public Project findById(int projectId) {
+        if (projectId <= 0) {
+            throw new InvalidProjectException("ProjectID needs to be a positive number");
+        }
+
+        Project project = projectRepository.findById(projectId);
+
+        if (project == null) {
+            throw new ProjectNotFoundException(projectId);
+        }
+
+        return project;
+    }
+
+    public Project update(int projectId, Project project) {
+        if (projectId <= 0) {
+            throw new InvalidProjectException("ProjectID needs to be a positive number");
+        }
+
+        validateProject(project);
+
+        boolean updated = projectRepository.updateById(projectId, project);
+
+        if (!updated) {
+            throw new ProjectNotFoundException(projectId);
+        }
+
+        return projectRepository.findById(projectId);
+    }
+
+
+
+
+
 
 }

@@ -178,7 +178,33 @@ public class ProjectRepository {
     }
 
 
+    public boolean updateById(int projectId, Project project) {
+        String sql = """
+            UPDATE project
+            SET title = ?,
+                description = ?,
+                start_date = ?,
+                end_date = ?,
+                hour_price = ?,
+                employee_id = ?,
+                parent_project_id = ?,
+                status_id = ?
+            WHERE project_id = ?
+            """;
 
+        int rowsUpdated = jdbcTemplate.update(sql,
+                project.getTitle(),
+                project.getDescription(),
+                project.getStartDate() != null ? java.sql.Date.valueOf(project.getStartDate()) : null,
+                project.getEndDate() != null ? java.sql.Date.valueOf(project.getEndDate()) : null,
+                project.getHourPrice(),
+                project.getProjectOwner().getEmployeeId(),
+                project.getParentProjectId(),
+                findStatusIdByTitle(project.getStatus()),
+                projectId);
+
+        return rowsUpdated > 0;
+    }
 
 
 

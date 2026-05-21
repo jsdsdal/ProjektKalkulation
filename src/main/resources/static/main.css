@@ -1,69 +1,13 @@
-/* NAVIGATION MENU - FØRSTE UDKAST FRA W3SCHOOLS */
-.sidebar {
-    margin: 0;
-    padding: 0;
-    width: 200px;
-    background-color: #f1f1f1;
-    position: fixed;
-    height: 100%;
-    overflow: auto;
-}
-
-/* Sidebar links */
-.sidebar a {
-    display: block;
-    color: black;
-    padding: 16px;
-    text-decoration: none;
-}
-
-/* Active/current link */
-.sidebar a.active {
-    background-color: #04AA6D;
-    color: white;
-}
-
-/* Links on mouse-over */
-.sidebar a:hover:not(.active) {
-    background-color: #555;
-    color: white;
-}
-
-/* Page content. The value of the margin-left property should match the value of the sidebar's width property */
-div.content {
-    margin-left: 200px;
-    padding: 1px 16px;
-    height: 1000px;
-}
-
-/* On screens that are less than 700px wide, make the sidebar into a topbar */
-@media screen and (max-width: 700px) {
-    .sidebar {
-        width: 100%;
-        height: auto;
-        position: relative;
-    }
-    .sidebar a {float: left;}
-    div.content {margin-left: 0;}
-}
-
-/* On screens that are less than 400px, display the bar vertically, instead of horizontally */
-@media screen and (max-width: 400px) {
-    .sidebar a {
-        text-align: center;
-        float: none;
-    }
-}
-
 /* ============================================================
    AlphaScope — Global Stylesheet
-   Matches wireframe: clean, professional, red accent (#C0392B)
    ============================================================ */
 
+/* Jeg har gjort mig bekendt at bruge  fonts fra goggleoggle igen - */
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
 
 /* ── Variables ─────────────────────────────────────────────── */
 :root {
+    /* vores farvevalg - referer til disse */
     --red:           #C0392B;
     --red-hover:     #A93226;
     --black:         #111111;
@@ -90,8 +34,15 @@ div.content {
 }
 
 /* ── Reset ──────────────────────────────────────────────────── */
+
+/* reset fungerer som en baseline - dette tvinger alting til at passe under visse forhold*/
+
+/* border-box garanterer at vores padding er inkl i en boks' dimensioner, ikke lagt oveni.
+dvs. ui blir ikke ødelagt af forskellige tabeller, boxes osv */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* samme font size overalt */
 html { font-size: 15px; }
+/* sørger for alt er flex så sidebar + main kan bo sammen */
 body {
     font-family: var(--font-body);
     background: var(--gray-100);
@@ -99,9 +50,13 @@ body {
     display: flex;
     min-height: 100vh;
 }
+/* her sørger vi bare for alle links (a) har vores layout og ikke default (blue underlined) */
 a { color: inherit; text-decoration: none; }
+/* samme princip her */
 button { font-family: inherit; cursor: pointer; }
+/* samme */
 input, select, textarea { font-family: inherit; }
+/* tænk inherit = vi tvinger browser til at altid bruge vores, ikke default */
 
 /* ── Sidebar ────────────────────────────────────────────────── */
 .sidebar {
@@ -129,7 +84,6 @@ input, select, textarea { font-family: inherit; }
     border-bottom: 1px solid var(--border);
     margin-bottom: 12px;
 }
-.sidebar-logo svg { color: var(--red); }
 
 .sidebar-nav { display: flex; flex-direction: column; gap: 2px; padding: 0 10px; flex: 1; }
 
@@ -227,7 +181,7 @@ input, select, textarea { font-family: inherit; }
     width: 100%;
 }
 .search-bar input::placeholder { color: var(--gray-300); }
-.search-bar svg { color: var(--gray-400); flex-shrink: 0; }
+.search-bar svg { color: var(--gray-500); flex-shrink: 0; }
 
 /* Tabs row with search aligned right */
 .tabs-row {
@@ -555,7 +509,7 @@ input[type="checkbox"] {
     position: absolute; right: 10px; top: 50%;
     transform: translateY(-50%);
     background: none; border: none;
-    color: var(--gray-400);
+    color: var(--gray-500);
     display: flex; align-items: center;
 }
 
@@ -574,7 +528,7 @@ input[type="checkbox"] {
 .subproject-row td.td-title { padding-left: 32px; }
 .subproject-row td.td-title::before {
     content: '↳ ';
-    color: var(--gray-400);
+    color: var(--gray-500);
 }
 .subproject-row { background: #FAFAFA; }
 

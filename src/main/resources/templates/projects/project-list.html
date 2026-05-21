@@ -7,16 +7,16 @@
 </head>
 <body>
 <!-- NAV -->
-<div th:replace="~{fragments :: sidebar}"></div>
+<aside th:replace="~{fragments :: sidebar(activePage='projects')}"></aside>
 
-
+<!-- CONTENT -->
 <main class="main">
 
     <div class="page-header">
         <h1 class="page-title">Projects</h1>
         <a th:href="@{/projects/create-project}" class="btn-primary">+ NEW PROJECT</a>
     </div>
-
+    <!-- tabs - navigationspanel -->
     <div class="tabs-row">
         <div class="tabs">
             <button class="tab active">Overview</button>
@@ -27,7 +27,7 @@
             <input type="text" placeholder="Search projects..."/>
         </div>
     </div>
-
+    <!-- stats - fabrikeret / opsat -->
     <div class="stat-cards">
         <div class="stat-card">
             <div class="stat-card-label">Active projects</div>
@@ -50,12 +50,13 @@
             <div class="stat-card-sub">—</div>
         </div>
     </div>
-
+    <!-- også fabrikeret sort -->
     <div class="section-header">
         <span class="section-title">Table view</span>
         <button class="sort-btn">Sort by... ▾</button>
     </div>
 
+    <!-- tabel -->
     <div class="table-wrap">
         <table>
             <thead>
@@ -84,6 +85,7 @@
                     <td class="td-mono">—</td>
                     <td class="td-mono">—</td>
                     <td>
+                        <!-- status + farver -->
                         <span class="badge"
                               th:classappend="${project.status == 'Actual Hours Done'} ? ' badge-green'
                                            : (${project.status == 'Estimate in Progress'} ? ' badge-yellow'
@@ -93,6 +95,7 @@
                               th:text="${project.status}">Status</span>
                     </td>
                     <td>
+                        <!-- slet - burde virke ? -->
                         <a th:href="@{/projects/{id}/edit(id=${project.projectId})}"
                            style="font-size:12px; color:var(--gray-500); margin-right:8px;">Edit</a>
                         <form th:action="@{/projects/{id}/delete(id=${project.projectId})}"
@@ -138,7 +141,7 @@
             </tbody>
         </table>
     </div>
-
+    <!-- knapper til flere sider - virker ikke, fabrikeret -->
     <div class="pagination">
         <button class="page-btn-arrow" disabled>&#8249;</button>
         <button class="page-btn active">1</button>

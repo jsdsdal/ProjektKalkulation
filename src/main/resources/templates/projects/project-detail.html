@@ -41,9 +41,8 @@
     <th:block th:fragment="taskRows(tasks, depth)">
         <th:block th:each="task : ${tasks}">
             <tr>
-                <td
-                        th:style="'padding-left: ' + (${depth} * 30) + 'px'"
-                        <a th:href="@{${readTaskUrl} + ${task.taskId}}"
+                <td th:style="'padding-left: ' + (${depth} * 30) + 'px'">
+                        <a th:href="@{${readTaskUrl} + ${task.projectId} + '/tasks/' + ${task.taskId}}"
                            th:text="${task.title}">Task</a>
                 </td>
                 <td th:text="${depth} == 0 ? 'Task' : 'Task'">Type</td>

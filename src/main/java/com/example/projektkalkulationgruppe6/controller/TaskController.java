@@ -86,7 +86,8 @@ public class TaskController {
         } catch (InvalidTaskException | DatabaseOperationException ex) {
             model.addAttribute("task", task);
             model.addAttribute("formTitle", "Create task");
-            model.addAttribute("formAction", "/projects/" + projectId + "/tasks/create-task");            model.addAttribute("submitLabel", "Create");
+            model.addAttribute("formAction", "/projects/" + projectId + "/tasks/create-task");
+            model.addAttribute("submitLabel", "Create");
             model.addAttribute("cancelUrl", "/home");
             model.addAttribute("allCompetencies", taskService.findAllCompetencies());
             model.addAttribute("allEmployees", employeeService.findAll());
@@ -138,7 +139,8 @@ public class TaskController {
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable int projectId, @PathVariable int id) {
         taskService.deleteById(id);
-        return "redirect:/projects/" + projectId + "/tasks/list";    }
+        return "redirect:/projects/" + projectId + "/tasks/list";
+    }
 
     @PostMapping("/{taskId}/assignee/add")
     public String addAssignee(@PathVariable int projectId, @PathVariable int taskId,
@@ -167,8 +169,6 @@ public class TaskController {
         taskService.removeCompetenceFromTask(taskId, competenceId);
         return "redirect:/projects/" + projectId + "/tasks/" + taskId + "/edit";
     }
-
-
 
 
 }

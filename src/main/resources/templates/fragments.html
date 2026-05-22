@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="da">
 <head>
     <meta charset="UTF-8">
     <title>Fragments</title>
+
 </head>
 <body>
 <!-- SIDEBAR -->
@@ -20,6 +21,37 @@
            th:classappend="${activePage == 'profile'} ? ' active'">My Profile</a>
     </nav>
 </aside>
+<!-- POP-UP TASK -->
+<div th:fragment="taskModal(task)"
+     th:id="'task-' + ${task.taskId}"
+     popover
+     class="popup-modal">
+
+    <button th:attr="popovertarget='task-' + ${task.taskId}"
+            popovertargetaction="hide"
+            class="modal-close">×</button>
+
+    <h2 th:text="${task.title}">Title</h2>
+    <p th:text="${task.description}">Description</p>
+
+    <div class="detail-grid">
+        <div>
+            <label>Start Date</label>
+            <span th:text="${task.startDate}">—</span>
+
+            <label>Estimated Hours</label>
+            <span th:text="${task.estimatedHours + ' hours'}">—</span>
+        </div>
+        <div>
+            <label>End Date</label>
+            <span th:text="${task.endDate}">—</span>
+
+            <label>Actual Hours</label>
+            <span th:text="${task.actualHours > 0 ? task.actualHours + ' hours' : '—'}">—</span>
+        </div>
+    </div>
+
+</div>
 
 <!-- Page content -->
 <div class="content">

@@ -6,6 +6,7 @@ import com.example.projektkalkulationgruppe6.model.Employee;
 import com.example.projektkalkulationgruppe6.model.Project;
 import com.example.projektkalkulationgruppe6.service.EmployeeService;
 import com.example.projektkalkulationgruppe6.service.ProjectService;
+import com.example.projektkalkulationgruppe6.service.TaskService;
 import com.example.projektkalkulationgruppe6.utility.SessionHelper;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
@@ -20,11 +21,14 @@ import java.util.List;
 public class ProjectController {
     private final EmployeeService employeeService;
     private final ProjectService projectService;
+    private final TaskService taskService;
     private final SessionHelper sessionHelper;
 
-    public ProjectController(ProjectService projectService, EmployeeService employeeService, SessionHelper sessionHelper) {
+
+    public ProjectController(ProjectService projectService, EmployeeService employeeService, TaskService taskService, SessionHelper sessionHelper) {
         this.projectService = projectService;
         this.employeeService = employeeService;
+        this.taskService = taskService;
         this.sessionHelper = sessionHelper;
     }
 
@@ -41,11 +45,14 @@ public class ProjectController {
     @GetMapping("/table")
     public String list(Model model, HttpSession session) {
         sessionHelper.isLoggedIn(session);
+
         model.addAttribute("projects", projectService.findAll());
         model.addAttribute("viewProjectUrl", "/projects/");
         model.addAttribute("createProjectUrl", "/projects/create-project");
         model.addAttribute("editProjectUrl", "/projects/edit-project");
         model.addAttribute("deleteProjectUrl", "/projects/delete-project");
+        model.addAttribute("tasksDueThisWeekCount", taskService.getCountOfAllTasksDueThisWeek());
+
 
         return "projects/project-list";
 
@@ -87,6 +94,14 @@ public class ProjectController {
         }
 
         return "projects/sub-project-detail";
+    }
+
+    @GetMapping("/{id}/overview")
+    public String overview(@PathVariable int id, Model model, HttpSession session){
+        model.addAttribute("daysUntilDeadline", projectService.getRemainingDaysTillDeadlineForProject(id));
+
+
+        return "projects/project-overview";
     }
 
     @GetMapping("/create-project")

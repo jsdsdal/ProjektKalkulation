@@ -248,5 +248,24 @@ public class TaskRepository {
             t.setSubTask(subTasks);
         }
     }
+
+
+    public List<Task> findAllTasksDueThisWeek() {
+        String sql = """
+            SELECT task_id, title, description,
+                   start_date, end_date,
+                   estimated_hours, actual_hours,
+                   project_id, parent_task_id
+            FROM task
+            WHERE end_date BETWEEN
+                DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY)
+                AND
+                DATE_ADD(DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY), INTERVAL 6 DAY)
+            ORDER BY end_date ASC
+            """;
+        return jdbcTemplate.query(sql, taskRowMapper);
+    }
+
+
 }
 

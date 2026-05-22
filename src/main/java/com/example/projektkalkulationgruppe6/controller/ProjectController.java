@@ -79,7 +79,7 @@ public class ProjectController {
         return "projects/sub-project-detail";
     }
 
-    @GetMapping("/overview/{id}")
+    @GetMapping("/{id}/overview")
     public String overview(@PathVariable int id, Model model, HttpSession session){
         model.addAttribute("daysUntilDeadline", projectService.getRemainingDaysTillDeadlineForProject(id));
 

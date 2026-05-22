@@ -21,7 +21,7 @@
             <tr>
 
                 <td>
-                        <a th:href="@{${readSubProjectUrl} + ${sub.projectId}}"
+                        <a th:href="@{${readSubProjectAndTaskBaseUrl} + ${sub.projectId}}"
                            th:text="${sub.title}">Subproject</a>
                 </td>
                 <td>Subproject</td>
@@ -42,7 +42,7 @@
         <th:block th:each="task : ${tasks}">
             <tr>
                 <td th:style="'padding-left: ' + (${depth} * 30) + 'px'">
-                        <a th:href="@{${readTaskUrl} + ${task.projectId} + '/tasks/' + ${task.taskId}}"
+                        <a th:href="@{${readSubProjectAndTaskBaseUrl} + ${task.projectId} + ${readTaskUrlSegment} + ${task.taskId}}"
                            th:text="${task.title}">Task</a>
                 </td>
                 <td th:text="${depth} == 0 ? 'Task' : 'Task'">Type</td>

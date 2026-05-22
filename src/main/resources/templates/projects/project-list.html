@@ -1,11 +1,154 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="da" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title th:text="${project}"></title>
+    <meta charset="UTF-8"/>
+    <title>Projects — AlphaScope</title>
+    <link rel="stylesheet" th:href="@{/main.css}"/>
 </head>
 <body>
-<h1>View Project</h1>
+<!-- NAV -->
+<aside th:replace="~{fragments :: sidebar(activePage='projects')}"></aside>
+
+<!-- CONTENT -->
+<main class="main">
+
+    <div class="page-header">
+        <h1 class="page-title">Projects</h1>
+        <a th:href="@{/projects/create-project}" class="btn-primary">+ NEW PROJECT</a>
+    </div>
+    <!-- tabs - navigationspanel -->
+    <div class="tabs-row">
+        <div class="tabs">
+            <button class="tab active">Overview</button>
+            <button class="tab">Table</button>
+            <button class="tab">Employees</button>
+        </div>
+        <div class="search-bar">
+            <input type="text" placeholder="Search projects..."/>
+        </div>
+    </div>
+    <!-- stats - fabrikeret / opsat -->
+    <div class="stat-cards">
+        <div class="stat-card">
+            <div class="stat-card-label">Active projects</div>
+            <div class="stat-card-value" th:text="${projects.size()}">0</div>
+            <div class="stat-card-sub">across all projects</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-label">Tasks due this week</div>
+            <div class="stat-card-value">—</div>
+            <div class="stat-card-sub">across all projects</div>
+        </div>
+        <div class="stat-card warning">
+            <div class="stat-card-label">Estimated hours this week</div>
+            <div class="stat-card-value">—</div>
+            <div class="stat-card-sub">across all projects</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-label">Over-allocated employees</div>
+            <div class="stat-card-value">—</div>
+            <div class="stat-card-sub">—</div>
+        </div>
+    </div>
+    <!-- også fabrikeret sort -->
+    <div class="section-header">
+        <span class="section-title">Table view</span>
+        <button class="sort-btn">Sort by... ▾</button>
+    </div>
+
+    <!-- tabel -->
+    <div class="table-wrap">
+        <table>
+            <thead>
+            <tr>
+                <th><input type="checkbox"/></th>
+                <th>Title ↓</th>
+                <th>Team size</th>
+                <th>Est. revenue</th>
+                <th>Actual revenue</th>
+                <th>Est. hours</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+
+            <th:block th:each="project : ${projects}">
+                <tr>
+                    <td><input type="checkbox"/></td>
+                    <td class="td-title">
+                        <a th:href="@{/projects/{id}(id=${project.projectId})}"
+                           th:text="${project.title}">Title</a>
+                    </td>
+                    <td>—</td>
+                    <td class="td-mono">—</td>
+                    <td class="td-mono">—</td>
+                    <td class="td-mono">—</td>
+                    <td>
+                        <!-- status + farver -->
+                        <span class="badge"
+                              th:classappend="${project.status == 'Actual Hours Done'} ? ' badge-green'
+                                           : (${project.status == 'Estimate in Progress'} ? ' badge-yellow'
+                                           : (${project.status == 'Rejected'} ? ' badge-red'
+                                           : (${project.status == 'Not Started'} ? ' badge-gray'
+                                           : ' badge-blue')))"
+                              th:text="${project.status}">Status</span>
+                    </td>
+                    <td>
+                        <!-- slet - burde virke ? -->
+                        <a th:href="@{/projects/{id}/edit(id=${project.projectId})}"
+                           style="font-size:12px; color:var(--gray-500); margin-right:8px;">Edit</a>
+                        <form th:action="@{/projects/{id}/delete(id=${project.projectId})}"
+                              method="post" style="display:inline;"
+                              onsubmit="return confirm('Slet dette projekt?')">
+                            <button type="submit" class="action-menu-btn">✕</button>
+                        </form>
+                    </td>
+                </tr>
+
+                <tr th:each="sub : ${project.subProjects}" class="subproject-row">
+                    <td><input type="checkbox"/></td>
+                    <td class="td-title">
+                        <a th:href="@{/projects/{id}(id=${sub.projectId})}"
+                           th:text="${sub.title}">Sub Title</a>
+                    </td>
+                    <td>—</td>
+                    <td class="td-mono">—</td>
+                    <td class="td-mono">—</td>
+                    <td class="td-mono">—</td>
+                    <td>
+                        <span class="badge"
+                              th:classappend="${sub.status == 'Actual Hours Done'} ? ' badge-green'
+                                           : (${sub.status == 'Estimate in Progress'} ? ' badge-yellow'
+                                           : (${sub.status == 'Rejected'} ? ' badge-red'
+                                           : (${sub.status == 'Not Started'} ? ' badge-gray'
+                                           : ' badge-blue')))"
+                              th:text="${sub.status}">Status</span>
+                    </td>
+                    <td>
+                        <a th:href="@{/projects/{id}/edit(id=${sub.projectId})}"
+                           style="font-size:12px; color:var(--gray-500);">Edit</a>
+                    </td>
+                </tr>
+            </th:block>
+
+            <tr th:if="${#lists.isEmpty(projects)}">
+                <td colspan="8" style="text-align:center; color:var(--gray-500); padding:40px;">
+                    Ingen projekter fundet.
+                </td>
+            </tr>
+
+            </tbody>
+        </table>
+    </div>
+    <!-- knapper til flere sider - virker ikke, fabrikeret -->
+    <div class="pagination">
+        <button class="page-btn-arrow" disabled>&#8249;</button>
+        <button class="page-btn active">1</button>
+        <button class="page-btn-arrow">&#8250;</button>
+    </div>
+
+</main>
 
 </body>
 </html>

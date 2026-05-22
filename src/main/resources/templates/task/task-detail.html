@@ -10,39 +10,6 @@
 
 <div th:replace="~{fragments :: taskModal(${task})}"></div>
 
-<h1 th:text="${task.title}">View Task</h1>
-
-
-<h3>Description</h3>
-<div th:text="${task.description}"></div>
-
-
-
-<div>
-    <p>Start Date: <span th:text="${task.startDate}"></span> </p>
-</div>
-
-<div>
-    <p>End Date: <span th:text="${task.endDate}"></span></p>
-</div>
-
-<div>
-    <p>Estimated Hours: <span th:text="${task.estimatedHours}"></span></p>
-</div>
-
-<div>
-    <p>Actual Hours: <span th:text="${task.actualHours}"></span></p>
-</div>
-
-<div>
-    <p>Assignees: <span th:text="${task.assignees}"></span></p>
-</div>
-
-<div>
-    <p>Competencies: <span th:text="${task.competencies}"></span></p>
-</div>
-
-
 
 </body>
 </html>

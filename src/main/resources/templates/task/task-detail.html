@@ -1,10 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="da">
 <head>
     <meta charset="UTF-8">
-    <title>View Task</title>
+    <title>task test</title>
+    <link rel="stylesheet" th:href="@{/main.css}"/>
 </head>
 <body>
+<button th:attr="popovertarget='task-' + ${task.taskId}">Click me</button>
+
+<div th:replace="~{fragments :: taskModal(${task})}"></div>
 
 <h1 th:text="${task.title}">View Task</h1>
 

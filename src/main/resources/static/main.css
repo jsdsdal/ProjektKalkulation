@@ -532,6 +532,33 @@ input[type="checkbox"] {
 }
 .subproject-row { background: #FAFAFA; }
 
+
+/* ── Popover Box ─────────────────────────────────────────────── */
+
+[popover].popup-modal {
+    position: relative;
+    width: 700px;
+    max-width: 90vw;
+    border: none;
+    border-radius: var(--radius-lg);
+    padding: 36px;
+    box-shadow: var(--shadow-md);
+}
+
+[popover].popup-modal::backdrop {
+    background: rgba(0, 0, 0, 0.45);
+}
+
+.modal-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: var(--gray-500);
+    cursor: pointer;
+}
 /* ── Responsive ─────────────────────────────────────────────── */
 @media (max-width: 900px) {
     .stat-cards { grid-template-columns: repeat(2, 1fr); }

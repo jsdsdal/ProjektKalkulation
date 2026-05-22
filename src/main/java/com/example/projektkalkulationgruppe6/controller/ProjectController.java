@@ -41,7 +41,6 @@ public class ProjectController {
     @GetMapping("/table")
     public String list(Model model, HttpSession session) {
         sessionHelper.isLoggedIn(session);
-
         model.addAttribute("projects", projectService.findAll());
         model.addAttribute("viewProjectUrl", "/projects/");
         model.addAttribute("createProjectUrl", "/projects/create-project");
@@ -49,6 +48,28 @@ public class ProjectController {
         model.addAttribute("deleteProjectUrl", "/projects/delete-project");
 
         return "projects/project-list";
+
+    }
+
+    @GetMapping("/{id}")
+    public String read(@PathVariable int id, HttpSession session, Model model) {
+        sessionHelper.isLoggedIn(session);
+
+        Project project = projectService.findById(id);
+
+        model.addAttribute("project", project);
+        model.addAttribute("readSubProjectUrl", "/projects/");
+        model.addAttribute("updateSubProjectUrl", "/edit-project/");
+        model.addAttribute("deleteSubProjectUrl", "/delete-project");
+        model.addAttribute("readTaskUrl", "/projects/");
+        //model.addAttribute("updateTaskUrl", "/edit-project/");
+        //model.addAttribute("delelteTaskUrl", "/delete-project");
+
+        if(project.getParentProjectId()== null) {
+            return "projects/project-detail";
+        }
+
+        return "projects/sub-project-detail";
     }
 
     @GetMapping("/create-project")

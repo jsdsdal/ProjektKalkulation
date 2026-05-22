@@ -64,13 +64,30 @@ public class ProjectController {
 
         Project project = projectService.findById(id);
 
+        int mainProjectId;
+
+        if (project.getParentProjectId() == null) {
+            mainProjectId = project.getProjectId();
+        } else {
+            mainProjectId = project.getParentProjectId();
+        }
+
         model.addAttribute("project", project);
-        model.addAttribute("readSubProjectUrl", "/projects/");
-        model.addAttribute("updateSubProjectUrl", "/edit-project/");
-        model.addAttribute("deleteSubProjectUrl", "/delete-project");
-        model.addAttribute("readTaskUrl", "/projects/");
-        //model.addAttribute("updateTaskUrl", "/edit-project/");
-        //model.addAttribute("delelteTaskUrl", "/delete-project");
+        model.addAttribute("mainProjectId", mainProjectId);
+        model.addAttribute("createSubProjectUrl", "/projects/" + id + "/create-project");
+
+        model.addAttribute("readSubProjectAndTaskBaseUrl", "/projects/");
+        model.addAttribute("readTaskUrlSegment", "/tasks/");
+
+        model.addAttribute("updateSubProjectUrlSegment", "/projects/" + id + "/edit-project/");
+        model.addAttribute("deleteSubProjectUrl", "/projects/" + id + "/delete-project");
+
+
+        model.addAttribute("createTaskUrl", "/projects/" + id + "/tasks/create-task");
+        model.addAttribute("updateTaskUrl", "/projects/" + id + "/tasks/edit-task");
+        model.addAttribute("deleteTaskUrl", "/projects/" + id + "/tasks/delete-task");
+
+        model.addAttribute("closeUrl", "/projects/" + mainProjectId);
 
         if(project.getParentProjectId()== null) {
             return "projects/project-detail";

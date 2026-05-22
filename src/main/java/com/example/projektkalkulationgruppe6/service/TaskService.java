@@ -1,13 +1,14 @@
 package com.example.projektkalkulationgruppe6.service;
 
-import com.example.projektkalkulationgruppe6.exception.DatabaseOperationException;
-import com.example.projektkalkulationgruppe6.exception.InvalidTaskException;
-import com.example.projektkalkulationgruppe6.exception.TaskNotFoundException;
+import com.example.projektkalkulationgruppe6.exception.*;
+import com.example.projektkalkulationgruppe6.model.Project;
 import com.example.projektkalkulationgruppe6.model.Task;
 import com.example.projektkalkulationgruppe6.repository.TaskRepository;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -171,6 +172,38 @@ public class TaskService {
         } catch (DataAccessException ex) {
             throw new DatabaseOperationException("Error: could not remove competence from task", ex);
         }
+    }
+
+    public int getCountOfAllTasksDueThisWeek(){
+        return taskRepository.findAllTasksDueThisWeek().size();
+    }
+
+    //Tag stilling til om denne skaber noget værdi
+    public String getDeadlineStatus(int id) {
+
+        Task task = taskRepository.findById(id);
+
+        if (task == null) {
+            throw new TaskNotFoundException(id);
+        }
+
+        if (task.getEndDate() == null) {
+            throw new InvalidTaskException("Project has no deadline.");
+        }
+
+        LocalDate today = LocalDate.now();
+        long daysRemaining =
+                ChronoUnit.DAYS.between(today, task.getEndDate());
+
+        if (daysRemaining < 0) {
+            return "Behind";
+        }
+
+        if (daysRemaining <= 2) {
+            return "Needs attention";
+        }
+
+        return "On time";
     }
 
 

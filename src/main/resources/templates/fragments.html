@@ -2,9 +2,30 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Fragments</title>
 </head>
 <body>
+<!-- SIDEBAR -->
+<aside th:fragment="sidebar" class="sidebar">
+    <div class="sidebar-logo">AlphaScope</div>
+    <nav class="sidebar-nav">
+        <!-- skal laves om til rigtige endpoints -->
+        <a th:href="@{/dashboard}" class="sidebar-link"
+           th:classappend="${activePage == 'dashboard'} ? ' active'">Dashboard</a>
+        <a th:href="@{/projects/table}" class="sidebar-link"
+           th:classappend="${activePage == 'projects'} ? ' active'">Projects</a>
+        <a th:href="@{/employees}" class="sidebar-link"
+           th:classappend="${activePage == 'employees'} ? ' active'">Employees</a>
+        <a th:href="@{/profile}" class="sidebar-link"
+           th:classappend="${activePage == 'profile'} ? ' active'">My Profile</a>
+    </nav>
+</aside>
+
+<!-- Page content -->
+<div class="content">
+    ..
+</div>
+
 
 </body>
 </html>

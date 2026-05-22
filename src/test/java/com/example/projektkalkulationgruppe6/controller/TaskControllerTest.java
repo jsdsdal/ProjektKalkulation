@@ -56,16 +56,14 @@ class TaskControllerTest {
     void listShouldReturnTaskListView() throws Exception {
         when(taskService.findAllTask()).thenReturn(List.of(mainTestTask));
 
-        mockMvc.perform(get("/task/list"))
-                .andExpect(status().isOk())
+        mockMvc.perform(get("/projects/1/tasks/list"))                 .andExpect(status().isOk())
                 .andExpect(view().name("task/task-list"))
                 .andExpect(model().attributeExists("tasks"));
     }
 
     @Test
     void getCreateFormShouldReturnFormView() throws Exception {
-        mockMvc.perform(get("/task/create"))
-                .andExpect(status().isOk())
+        mockMvc.perform(get("/projects/1/tasks/create-task"))                .andExpect(status().isOk())
                 .andExpect(view().name("task/task-form"))
                 .andExpect(model().attributeExists("task"))
                 .andExpect(model().attribute("formTitle", "Create task"))
@@ -80,8 +78,7 @@ class TaskControllerTest {
 
         when(taskService.create(any(Task.class), eq(1), any(), any())).thenReturn(mainTestTask);
 
-        mockMvc.perform(post("/task/create")
-                        .session(session)
+        mockMvc.perform(post("/projects/1/tasks/create-task")                        .session(session)
                         .param("projectId", "1")
                         .param("title", "Test Task")
                         .param("description", "Test Description")
@@ -90,8 +87,7 @@ class TaskControllerTest {
                         .param("estimatedHours", "11.00")
                         .param("actualHours", "20.00"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/task/list"));
-    }
+                .andExpect(redirectedUrl("/projects/1/tasks/list"));    }
 
     @Test
     void createInvalidTaskShouldReturnFormWithError() throws Exception {
@@ -101,7 +97,7 @@ class TaskControllerTest {
         when(taskService.create(any(Task.class), eq(1), any(), any()))
                 .thenThrow(new InvalidTaskException("Title is required"));
 
-        mockMvc.perform(post("/task/create")
+        mockMvc.perform(post("/projects/1/tasks/create-task")
                         .session(session)
                         .param("projectId", "1")
                         .param("title", "")
@@ -115,8 +111,8 @@ class TaskControllerTest {
 
     @Test
     void deleteTaskShouldRedirectToList() throws Exception {
-        mockMvc.perform(post("/task/1/delete"))
+        mockMvc.perform(post("/projects/1/tasks/1/delete"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/task/list"));
+                .andExpect(redirectedUrl("/projects/1/tasks/list"));
     }
 }

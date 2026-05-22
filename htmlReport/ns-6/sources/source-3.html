@@ -1,0 +1,248 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > TaskService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">com.example.projektkalkulationgruppe6.service</a>
+</div>
+
+<h1>Coverage Summary for Class: TaskService (com.example.projektkalkulationgruppe6.service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TaskService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    66,7%
+  </span>
+  <span class="absValue">
+    (8/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    60%
+  </span>
+  <span class="absValue">
+    (12/20)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    63,2%
+  </span>
+  <span class="absValue">
+    (24/38)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package com.example.projektkalkulationgruppe6.service;
+&nbsp;
+&nbsp;import com.example.projektkalkulationgruppe6.exception.DatabaseOperationException;
+&nbsp;import com.example.projektkalkulationgruppe6.exception.InvalidTaskException;
+&nbsp;import com.example.projektkalkulationgruppe6.exception.TaskNotFoundException;
+&nbsp;import com.example.projektkalkulationgruppe6.model.Task;
+&nbsp;import com.example.projektkalkulationgruppe6.repository.TaskRepository;
+&nbsp;import org.springframework.dao.DataAccessException;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;@Service
+&nbsp;public class TaskService {
+&nbsp;    private final TaskRepository taskRepository;
+&nbsp;
+<b class="fc">&nbsp;    public TaskService(TaskRepository taskRepository) {</b>
+<b class="fc">&nbsp;        this.taskRepository = taskRepository;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    public List&lt;Task&gt; findAllTask() {
+&nbsp;        try {
+<b class="fc">&nbsp;            return taskRepository.findAllTask();</b>
+&nbsp;        } catch (DataAccessException ex) {
+<b class="fc">&nbsp;            throw new DatabaseOperationException(&quot;Error: could not retrieve tasks&quot;, ex);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public Task findById(int id) {
+&nbsp;        try {
+<b class="nc">&nbsp;            Task task = taskRepository.findById(id);</b>
+<b class="nc">&nbsp;            if (task == null) {</b>
+<b class="nc">&nbsp;                throw new InvalidTaskException(&quot;Task with ID &quot; + id + &quot; was not found&quot;);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            return task;</b>
+&nbsp;        } catch (DataAccessException ex) {
+<b class="nc">&nbsp;            throw new InvalidTaskException(&quot;Error: Could not retrieve task with ID&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public Task create(Task task, int projectId) {
+<b class="fc">&nbsp;        validateTask(task);</b>
+&nbsp;        try {
+<b class="fc">&nbsp;            return taskRepository.insert(task, projectId);</b>
+&nbsp;        } catch (DataAccessException ex) {
+<b class="fc">&nbsp;            throw new DatabaseOperationException(&quot;Error: the task was not created.&quot;, ex);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public void deleteById(int taskId) {
+<b class="fc">&nbsp;        validateId(taskId);</b>
+&nbsp;        try {
+<b class="fc">&nbsp;            boolean deleted = taskRepository.deleteById(taskId);</b>
+<b class="pc">&nbsp;            if (!deleted) {</b>
+<b class="nc">&nbsp;                throw new TaskNotFoundException(taskId);</b>
+&nbsp;            }
+&nbsp;        } catch (DataAccessException ex) {
+<b class="fc">&nbsp;            throw new DatabaseOperationException(&quot;Error: Cannot delete task.&quot;, ex);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private void validateId(int id) {
+<b class="pc">&nbsp;        if (id &lt;= 0) {</b>
+<b class="nc">&nbsp;            throw new InvalidTaskException(&quot;ID must be a positive number&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private void validateTask(Task task) {
+&nbsp;
+<b class="pc">&nbsp;        if (task == null) {</b>
+<b class="nc">&nbsp;            throw new InvalidTaskException(&quot;Task is required&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        String title = task.getTitle();</b>
+<b class="fc">&nbsp;        if (title == null || title.isBlank()) {</b>
+<b class="fc">&nbsp;            throw new InvalidTaskException(&quot;Title is required&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="pc">&nbsp;        if (task.getStartDate() != null &amp;&amp; task.getEndDate() != null) {</b>
+<b class="fc">&nbsp;            if (task.getStartDate().isAfter(task.getEndDate())) {</b>
+<b class="fc">&nbsp;                throw new InvalidTaskException(&quot;Start date cannot be after end date&quot;);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="pc">&nbsp;        if (title.length() &gt; 50) {</b>
+<b class="nc">&nbsp;            throw new InvalidTaskException(&quot;Title cannot exceed 50 characters.&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    public void addAssigneeToTask(int taskId, int employeeId) {
+&nbsp;        try {
+<b class="fc">&nbsp;            taskRepository.addAssigneeToTask(taskId, employeeId);</b>
+&nbsp;        } catch (DataAccessException ex) {
+<b class="fc">&nbsp;            throw new DatabaseOperationException(&quot;Error: could not add assignee to task&quot;, ex);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public void removeAssigneeFromTask(int taskId, int employeeId) {
+&nbsp;        try {
+<b class="nc">&nbsp;            taskRepository.removeAssigneeFromTask(taskId, employeeId);</b>
+&nbsp;        } catch (DataAccessException ex) {
+<b class="nc">&nbsp;            throw new DatabaseOperationException(&quot;Error: could not remove assignee from task&quot;, ex);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public List&lt;String&gt; findAllCompetencies() {
+<b class="nc">&nbsp;        return taskRepository.findAllCompetencies();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void addCompetenceToTask(int taskId, int competenceId) {
+&nbsp;        try {
+<b class="fc">&nbsp;            taskRepository.addCompetenceToTask(taskId, competenceId);</b>
+&nbsp;        } catch (DataAccessException ex) {
+<b class="fc">&nbsp;            throw new DatabaseOperationException(&quot;Error: could not add competence to task&quot;, ex);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public void removeCompetenceFromTask(int taskId, int competenceId) {
+&nbsp;        try {
+<b class="nc">&nbsp;            taskRepository.removeCompetenceFromTask(taskId, competenceId);</b>
+&nbsp;        } catch (DataAccessException ex) {
+<b class="nc">&nbsp;            throw new DatabaseOperationException(&quot;Error: could not remove competence from task&quot;, ex);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;}
+&nbsp;
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2026-05-20 11:09</div>
+</div>
+</body>
+</html>

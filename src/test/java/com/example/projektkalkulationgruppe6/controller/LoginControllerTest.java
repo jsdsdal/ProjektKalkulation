@@ -115,7 +115,7 @@ public class LoginControllerTest {
         mockMvc.perform(post("/login")
                         .param("email", "test@alphasolutions.com")
                         .param("password", "test123"))
-                .andExpect(redirectedUrl("/home"));
+                .andExpect(redirectedUrl("/dashboard"));
 
 
     }

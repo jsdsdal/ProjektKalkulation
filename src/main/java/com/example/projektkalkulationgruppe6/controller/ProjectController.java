@@ -32,11 +32,6 @@ public class ProjectController {
         this.sessionHelper = sessionHelper;
     }
 
-    @GetMapping()
-    public String home(HttpSession session) {
-        sessionHelper.isLoggedIn(session);
-        return "home";
-    }
 
     // TODO: fjern debug endpoint
     @GetMapping("/debug/{id}")
@@ -52,10 +47,36 @@ public class ProjectController {
         sessionHelper.isLoggedIn(session);
 
         model.addAttribute("projects", projectService.findAll());
+        model.addAttribute("viewProjectUrl", "/projects/");
+        model.addAttribute("createProjectUrl", "/projects/create-project");
+        model.addAttribute("editProjectUrl", "/projects/edit-project");
+        model.addAttribute("deleteProjectUrl", "/projects/delete-project");
         model.addAttribute("tasksDueThisWeekCount", taskService.getCountOfAllTasksDueThisWeek());
 
 
         return "projects/project-list";
+
+    }
+
+    @GetMapping("/{id}")
+    public String read(@PathVariable int id, HttpSession session, Model model) {
+        sessionHelper.isLoggedIn(session);
+
+        Project project = projectService.findById(id);
+
+        model.addAttribute("project", project);
+        model.addAttribute("readSubProjectUrl", "/projects/");
+        model.addAttribute("updateSubProjectUrl", "/edit-project/");
+        model.addAttribute("deleteSubProjectUrl", "/delete-project");
+        model.addAttribute("readTaskUrl", "/projects/");
+        //model.addAttribute("updateTaskUrl", "/edit-project/");
+        //model.addAttribute("delelteTaskUrl", "/delete-project");
+
+        if(project.getParentProjectId()== null) {
+            return "projects/project-detail";
+        }
+
+        return "projects/sub-project-detail";
     }
 
     @GetMapping("/overview/{id}")
@@ -118,10 +139,51 @@ public class ProjectController {
         }
     }
 
+    @GetMapping("/{id}/edit")
+    public String showEditForm(@PathVariable int id, HttpSession session, Model model) {
+        sessionHelper.isLoggedIn(session);
 
+        Project project = projectService.findById(id);
 
-//    @PostMapping("/create-project")
-//    public
+        model.addAttribute("project", project);
+        model.addAttribute("formTitle", "Edit Project");
+        model.addAttribute("formAction", "/projects/" + id + "/edit");
+        model.addAttribute("submitLabel", "Save");
+        model.addAttribute("cancelUrl", "/projects/project-list");
+        model.addAttribute("statusList", projectService.findAllStatusList());
+        model.addAttribute("employees", employeeService.findAll());
+
+        return "projects/project-form";
+    }
+
+    @PostMapping("/{id}/edit")
+    public String edit(@PathVariable int id,
+                       @ModelAttribute Project project,
+                       HttpSession session,
+                       Model model) {
+        sessionHelper.isLoggedIn(session);
+
+        try {
+            int employeeId = (int) session.getAttribute("employeeId");
+            project.setProjectOwner(employeeService.findById(employeeId));
+            projectService.update(id, project);
+            return "redirect:/projects/project-list";
+        } catch (ProjectNotFoundException ex) {
+            model.addAttribute("errorMessage", ex.getMessage());
+            return "error/404";
+        } catch (InvalidProjectException ex) {
+            model.addAttribute("project", project);
+            model.addAttribute("formTitle", "Edit Project");
+            model.addAttribute("formAction", "/projects/" + id + "/edit");
+            model.addAttribute("submitLabel", "Save");
+            model.addAttribute("cancelUrl", "/projects/project-list");
+            model.addAttribute("statusList", projectService.findAllStatusList());
+            model.addAttribute("employees", employeeService.findAll());
+            model.addAttribute("errorMessage", ex.getMessage());
+            return "projects/project-form";
+        }
+    }
+
 
 
 

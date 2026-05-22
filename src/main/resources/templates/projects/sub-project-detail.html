@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>View Project</title>
+</head>
+<body>
+
+<h1 th:text="${project.title}">View Project</h1>
+
+
+<h3>Description</h3>
+<div th:text="${project.description}"></div>
+
+
+
+<div>
+  <p>Start Date: <span th:text="${project.startDate}"></span> </p>
+</div>
+
+<div>
+  <p>End Date: <span th:text="${project.endDate}"></span></p>
+</div>
+
+<div>
+  <p>Project Owner: <span th:text="${project.projectOwner}"></span></p>
+</div>
+
+<div>
+  <p>Hour Price: <span th:text="${project.hourPrice}"></span></p>
+</div>
+
+<div>
+  <p>Status: <span th:text="${project.status}"></span></p>
+</div>
+
+<div>
+
+</div>
+
+
+
+
+
+</body>
+</html>

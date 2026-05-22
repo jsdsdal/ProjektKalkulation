@@ -47,16 +47,19 @@ public class ProjectService {
     public Project findById(int id) {
         validateId(id);
 
-        Project project;
+        Project project = projectRepository.findById(id);
+        if (project == null) {
+            throw new ProjectNotFoundException(id);
+        }
+        
+        if (project.getParentProjectId() != null) {
+            return project;
+        }
 
         try {
             project = getTreeById(id);
         } catch (DataAccessException ex) {
             throw new DatabaseOperationException("Error: The Project could not be loaded.", ex);
-        }
-
-        if (project == null) {
-            throw new ProjectNotFoundException(id);
         }
 
         return project;

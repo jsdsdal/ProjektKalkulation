@@ -58,8 +58,8 @@ public class ProjectController {
         model.addAttribute("project", projectService.findById(id));
         model.addAttribute("readSubProjectUrl", "/projects/");
         model.addAttribute("updateSubProjectUrl", "/edit-project/");
-        model.addAttribute("delelteSubProjectUrl", "/delete-project");
-        model.addAttribute("readTaskUrl", "");
+        model.addAttribute("deleteSubProjectUrl", "/delete-project");
+        //model.addAttribute("readTaskUrl", "");
         //model.addAttribute("readTaskUrl", "/projects/" + id + );
         //model.addAttribute("updateTaskUrl", "/edit-project/");
         //model.addAttribute("delelteTaskUrl", "/delete-project");

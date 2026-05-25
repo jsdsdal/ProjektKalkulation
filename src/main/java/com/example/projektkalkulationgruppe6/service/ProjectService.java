@@ -9,6 +9,8 @@ import com.example.projektkalkulationgruppe6.repository.ProjectRepository;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -206,7 +208,17 @@ public class ProjectService {
     }
 
 
+    // STATS
 
+    // forventet indtægt til projekt
+    public BigDecimal getExpectedRevenueForProject(int projectId) {
+        Project project = projectRepository.findById(projectId);
+        if (project == null) throw new ProjectNotFoundException(projectId);
+        if (project.getHourPrice() == null) return BigDecimal.ZERO;
+
+        double totalHours = projectRepository.findTotalEstimatedHoursByProjectId(projectId);
+        return project.getHourPrice().multiply(BigDecimal.valueOf(totalHours));
+    }
 
 
 

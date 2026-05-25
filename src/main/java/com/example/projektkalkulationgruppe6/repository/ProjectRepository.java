@@ -206,7 +206,23 @@ public class ProjectRepository {
         return rowsUpdated > 0;
     }
 
+    public double findTotalEstimatedHoursByProjectId(int projectId) {
+        String sql = """
+            SELECT COALESCE(SUM(estimated_hours), 0)
+            FROM task
+            WHERE project_id = ?
+            """;
+        return jdbcTemplate.queryForObject(sql, Double.class, projectId);
+    }
 
+    public double findTotalActualHoursByProjectId(int projectId) {
+        String sql = """
+            SELECT COALESCE(SUM(actual_hours), 0)
+            FROM task
+            WHERE project_id = ?
+            """;
+        return jdbcTemplate.queryForObject(sql, Double.class, projectId);
+    }
 
 
 

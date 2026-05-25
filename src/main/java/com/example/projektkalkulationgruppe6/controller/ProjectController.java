@@ -6,25 +6,26 @@ import com.example.projektkalkulationgruppe6.model.Employee;
 import com.example.projektkalkulationgruppe6.model.Project;
 import com.example.projektkalkulationgruppe6.service.EmployeeService;
 import com.example.projektkalkulationgruppe6.service.ProjectService;
+import com.example.projektkalkulationgruppe6.service.TaskService;
 import com.example.projektkalkulationgruppe6.utility.SessionHelper;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Controller
 @RequestMapping("/projects")
 public class ProjectController {
     private final EmployeeService employeeService;
     private final ProjectService projectService;
+    private final TaskService taskService;
     private final SessionHelper sessionHelper;
 
-    public ProjectController(ProjectService projectService, EmployeeService employeeService, SessionHelper sessionHelper) {
+
+    public ProjectController(ProjectService projectService, EmployeeService employeeService, TaskService taskService, SessionHelper sessionHelper) {
         this.projectService = projectService;
         this.employeeService = employeeService;
+        this.taskService = taskService;
         this.sessionHelper = sessionHelper;
     }
 
@@ -43,8 +44,61 @@ public class ProjectController {
         sessionHelper.isLoggedIn(session);
 
         model.addAttribute("projects", projectService.findAll());
+        model.addAttribute("viewProjectUrl", "/projects/");
+        model.addAttribute("createProjectUrl", "/projects/create-project");
+        model.addAttribute("editProjectUrl", "/projects/edit-project");
+        model.addAttribute("deleteProjectUrl", "/projects/delete-project");
+        model.addAttribute("tasksDueThisWeekCount", taskService.getCountOfAllTasksDueThisWeek());
+        model.addAttribute("activeProjects", projectService.getActiveProjectCount());
+        model.addAttribute("needsAttention", projectService.getProjectsNeedingAttentionCount());
+        model.addAttribute("totalTasks", taskService.getAllTaskCount());
+        model.addAttribute("estimatedHoursThisWeek", taskService.getEstimatedHoursThisWeek());
+
 
         return "projects/project-list";
+
+    }
+
+    @GetMapping("/{id}")
+    public String read(@PathVariable int id, HttpSession session, Model model) {
+        sessionHelper.isLoggedIn(session);
+
+        Project project = projectService.findById(id);
+
+        int rootProjectId = projectService.findRootProjectIdById(id);
+
+        model.addAttribute("project", project);
+        model.addAttribute("rootProjectId", rootProjectId);
+        model.addAttribute("createSubProjectUrl", "/projects/" + id + "/create-project");
+
+        model.addAttribute("readSubProjectAndTaskBaseUrl", "/projects/");
+        model.addAttribute("readTaskUrlSegment", "/tasks/");
+
+        model.addAttribute("updateSubProjectUrlSegment", "/projects/" + id + "/edit-project/");
+        model.addAttribute("deleteSubProjectUrl", "/projects/" + id + "/delete-project");
+
+
+        model.addAttribute("createTaskUrl", "/projects/" + id + "/tasks/create-task");
+        model.addAttribute("updateTaskUrl", "/projects/" + id + "/tasks/edit-task");
+        model.addAttribute("deleteTaskUrl", "/projects/" + id + "/tasks/delete-task");
+
+        model.addAttribute("closeUrl", "/projects/" + rootProjectId);
+
+        if(project.getParentProjectId()== null) {
+            return "projects/project-detail";
+        }
+
+        return "projects/sub-project-detail";
+    }
+
+    @GetMapping("/{id}/overview")
+    public String overview(@PathVariable int id, Model model, HttpSession session){
+        model.addAttribute("daysUntilDeadline", projectService.getRemainingDaysTillDeadlineForProject(id));
+        model.addAttribute("totalTasks", taskService.getTaskCountByProjectId(id));
+        model.addAttribute("completedTasks", taskService.getCompletedTaskCountByProjectId(id));
+
+
+        return "projects/project-overview";
     }
 
     @GetMapping("/create-project")
@@ -144,10 +198,6 @@ public class ProjectController {
         }
     }
 
-
-
-//    @PostMapping("/create-project")
-//    public
 
 
 

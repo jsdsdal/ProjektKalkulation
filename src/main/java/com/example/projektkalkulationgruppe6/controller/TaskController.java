@@ -4,8 +4,10 @@ package com.example.projektkalkulationgruppe6.controller;
 import com.example.projektkalkulationgruppe6.exception.DatabaseOperationException;
 import com.example.projektkalkulationgruppe6.exception.InvalidTaskException;
 import com.example.projektkalkulationgruppe6.exception.TaskNotFoundException;
+import com.example.projektkalkulationgruppe6.model.Project;
 import com.example.projektkalkulationgruppe6.model.Task;
 import com.example.projektkalkulationgruppe6.service.EmployeeService;
+import com.example.projektkalkulationgruppe6.service.ProjectService;
 import com.example.projektkalkulationgruppe6.service.TaskService;
 import com.example.projektkalkulationgruppe6.utility.SessionHelper;
 import jakarta.servlet.http.HttpSession;
@@ -21,11 +23,13 @@ import java.util.ArrayList;
 public class TaskController {
 
     private final TaskService taskService;
+    private final ProjectService projectService;
     private final SessionHelper sessionHelper;
     private final EmployeeService employeeService;
 
-    public TaskController(TaskService taskService, SessionHelper sessionHelper, EmployeeService employeeService) {
+    public TaskController(TaskService taskService, ProjectService projectService, SessionHelper sessionHelper, EmployeeService employeeService) {
         this.taskService = taskService;
+        this.projectService = projectService;
         this.sessionHelper = sessionHelper;
         this.employeeService = employeeService;
     }
@@ -34,13 +38,21 @@ public class TaskController {
     public String list(@PathVariable int projectId, Model model) {
         model.addAttribute("tasks", taskService.findAllTask());
         model.addAttribute("projectId", projectId);
-        return "task/task-list";
+        return "tasks/task-list";
     }
 
     @GetMapping("/{taskId}")
     public String showTask(@PathVariable int projectId, @PathVariable int taskId, Model model) {
+
+        Project project = projectService.findById(projectId);
+
+        int rootProjectId = projectService.findRootProjectIdById(projectId);
+
         model.addAttribute("task", taskService.findById(taskId));
-        return "task/task-detail";
+
+        model.addAttribute("closeUrl", "/projects/" + rootProjectId);
+
+        return "tasks/task-detail";
     }
 
 
@@ -49,33 +61,77 @@ public class TaskController {
         sessionHelper.isLoggedIn(session);
         model.addAttribute("task", new Task());
         model.addAttribute("formTitle", "Create task");
-        model.addAttribute("formAction", "/task/create");
+        model.addAttribute("formAction", "/projects/" + projectId + "/tasks/create-task");
         model.addAttribute("submitLabel", "Create");
-        model.addAttribute("cancelUrl", "/home");
+        model.addAttribute("cancelUrl", "/projects/table");
         model.addAttribute("allCompetencies", taskService.findAllCompetencies());
         model.addAttribute("allEmployees", employeeService.findAll());
         model.addAttribute("projectId", projectId);
 
-        return "task/task-form";
+        return "tasks/task-form";
     }
 
+
     @PostMapping("/create-task")
-    public String create(@PathVariable int projectId, @ModelAttribute Task task, HttpSession session, Model model) {
+    public String createTask(@PathVariable int projectId, @ModelAttribute Task task, HttpSession session, Model model) {
         sessionHelper.isLoggedIn(session);
         try {
+            int rootProjectId = projectService.findRootProjectIdById(projectId);
             taskService.create(task, projectId, new ArrayList<>(), new ArrayList<>());
-            return "redirect:/projects/" + projectId + "/tasks/list";
+            return "redirect:/projects/" + rootProjectId;
         } catch (InvalidTaskException | DatabaseOperationException ex) {
             model.addAttribute("task", task);
             model.addAttribute("formTitle", "Create task");
-            model.addAttribute("formAction", "/projects/" + projectId + "/tasks/create-task");            model.addAttribute("submitLabel", "Create");
-            model.addAttribute("cancelUrl", "/home");
+            model.addAttribute("formAction", "/projects/" + projectId + "/tasks/create-task");
+            model.addAttribute("submitLabel", "Create");
+            model.addAttribute("cancelUrl", "/projects/table");
             model.addAttribute("allCompetencies", taskService.findAllCompetencies());
             model.addAttribute("allEmployees", employeeService.findAll());
             model.addAttribute("errorMessage", ex.getMessage());
             model.addAttribute("projectId", projectId);
 
-            return "task/task-form";
+            return "tasks/task-form";
+        }
+    }
+
+
+    @GetMapping("/{parentTaskId}/create-task")
+    public String showSubTaskCreateForm(@PathVariable int projectId, @PathVariable int parentTaskId, HttpSession session, Model model) {
+        sessionHelper.isLoggedIn(session);
+        model.addAttribute("task", new Task());
+        model.addAttribute("formTitle", "Create task");
+        model.addAttribute("formAction", "/projects/" + projectId + "/tasks/" + parentTaskId +  "/create-task");
+        model.addAttribute("submitLabel", "Create");
+        model.addAttribute("cancelUrl", "/projects/table");
+        model.addAttribute("allCompetencies", taskService.findAllCompetencies());
+        model.addAttribute("allEmployees", employeeService.findAll());
+        model.addAttribute("projectId", projectId);
+
+        return "tasks/task-form";
+    }
+
+    @PostMapping("/{parentTaskId}/create-task")
+    public String createSubTask(@PathVariable int projectId, @PathVariable int parentTaskId, @ModelAttribute Task task, HttpSession session, Model model) {
+        sessionHelper.isLoggedIn(session);
+        try {
+            int rootProjectId = projectService.findRootProjectIdById(projectId);
+
+            task.setParentTaskId(parentTaskId);
+            taskService.create(task, projectId, new ArrayList<>(), new ArrayList<>());
+
+            return "redirect:/projects/" + rootProjectId;
+        } catch (InvalidTaskException | DatabaseOperationException ex) {
+            model.addAttribute("task", task);
+            model.addAttribute("formTitle", "Create task");
+            model.addAttribute("formAction", "/projects/" + projectId + "/tasks/" + parentTaskId +  "/create-task");
+            model.addAttribute("submitLabel", "Create");
+            model.addAttribute("cancelUrl", "/projects/table");
+            model.addAttribute("allCompetencies", taskService.findAllCompetencies());
+            model.addAttribute("allEmployees", employeeService.findAll());
+            model.addAttribute("errorMessage", ex.getMessage());
+            model.addAttribute("projectId", projectId);
+
+            return "tasks/task-form";
         }
     }
 
@@ -90,7 +146,7 @@ public class TaskController {
             model.addAttribute("allCompetencies", taskService.findAllCompetencies());
             model.addAttribute("allEmployees", employeeService.findAll());
 
-            return "task/task-form";
+            return "tasks/task-form";
 
         } catch (InvalidTaskException | TaskNotFoundException ex) {
             return "redirect:/projects/" + projectId + "/tasks/list";
@@ -113,14 +169,15 @@ public class TaskController {
             model.addAttribute("allEmployees", employeeService.findAll());
             model.addAttribute("errorMessage", ex.getMessage());
 
-            return "task/task-form";
+            return "tasks/task-form";
         }
     }
 
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable int projectId, @PathVariable int id) {
         taskService.deleteById(id);
-        return "redirect:/projects/" + projectId + "/tasks/list";    }
+        return "redirect:/projects/" + projectId + "/tasks/list";
+    }
 
     @PostMapping("/{taskId}/assignee/add")
     public String addAssignee(@PathVariable int projectId, @PathVariable int taskId,
@@ -149,8 +206,6 @@ public class TaskController {
         taskService.removeCompetenceFromTask(taskId, competenceId);
         return "redirect:/projects/" + projectId + "/tasks/" + taskId + "/edit";
     }
-
-
 
 
 }

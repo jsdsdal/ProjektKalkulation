@@ -9,7 +9,7 @@
 
   <h1>Tasks</h1>
 
-  <a th:href="@{/task/create(projectId=${projectId})}">Create New Task</a>
+  <a th:href="@{/templates/tasks/create(projectId=${projectId})}">Create New Task</a>
 
   <table>
     <thead>
@@ -32,8 +32,8 @@
       <td th:text="${task.estimatedHours}"></td>
       <td th:text="${task.actualHours}"></td>
       <td>
-        <a th:href="@{/task/edit/{id}(id=${task.taskId})}">Edit</a>
-        <form th:action="@{/task/{id}/delete(id=${task.taskId})}" method="post">
+        <a th:href="@{/templates/tasks/edit/{id}(id=${task.taskId})}">Edit</a>
+        <form th:action="@{/templates/tasks/{id}/delete(id=${task.taskId})}" method="post">
           <button type="submit">Delete</button>
         </form>
       </td>

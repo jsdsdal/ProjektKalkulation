@@ -6,6 +6,7 @@ import com.example.projektkalkulationgruppe6.model.Project;
 import com.example.projektkalkulationgruppe6.repository.ProjectRepository;
 import com.example.projektkalkulationgruppe6.service.EmployeeService;
 import com.example.projektkalkulationgruppe6.service.ProjectService;
+import com.example.projektkalkulationgruppe6.service.TaskService;
 import com.example.projektkalkulationgruppe6.utility.SessionHelper;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -20,6 +21,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -42,6 +44,9 @@ class ProjectControllerTest {
     @MockitoBean
     private SessionHelper sessionHelper;
 
+    @MockitoBean
+    TaskService taskService;
+
     Project p1 = new Project(
             null,
             "Test1",
@@ -55,10 +60,43 @@ class ProjectControllerTest {
             null,
             null);
 
-//
-//    @Test
-//    void should
-//
+    Project p2 = new Project(
+            null,
+            "Test2",
+            "Beskrivelse2",
+            LocalDate.of(2026, 7, 1),
+            LocalDate.of(2026,11,1),
+            new Employee(1, "Lars", "test@test.dk", "1234", List.of("sql")),
+            new BigDecimal("1100.00"),
+            "Estimate In Progress",
+            null,
+            null,
+            null);
+
+
+    @Test
+    void shouldListProjects() throws Exception {
+        Project p1Return = p1;
+        p1Return.setProjectId(1);
+        Project p2Return = p2;
+        p2Return.setProjectId(2);
+
+        when(projectService.findAll()).thenReturn(
+                List.of(p1Return, p2Return));
+
+        mockMvc.perform(get("/projects/table"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("projects", hasSize(2)))
+                .andExpect(model().attribute("projects", hasItem(
+                        hasProperty("projectId", is(1)))))
+                .andExpect(model().attribute("projects", hasItem(
+                        hasProperty("projectId", is(2)))))
+                .andExpect(model().attribute("viewProjectUrl", "/projects/"))
+                .andExpect(model().attribute("createProjectUrl", "/projects/create-project"))
+                .andExpect(model().attribute("editProjectUrl", "/projects/edit-project"))
+                .andExpect(model().attribute("deleteProjectUrl", "/projects/delete-project"));
+    }
+
     @Test
     void shouldShowProjectForm() throws Exception {
 

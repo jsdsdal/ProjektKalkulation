@@ -6,6 +6,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
+
+import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -248,5 +250,63 @@ public class TaskRepository {
             t.setSubTask(subTasks);
         }
     }
+
+
+    public List<Task> findAllTasksDueThisWeek() {
+        String sql = """
+            SELECT task_id, title, description,
+                   start_date, end_date,
+                   estimated_hours, actual_hours,
+                   project_id, parent_task_id
+            FROM task
+            WHERE end_date BETWEEN
+                DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY)
+                AND
+                DATE_ADD(DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY), INTERVAL 6 DAY)
+            ORDER BY end_date ASC
+            """;
+        return jdbcTemplate.query(sql, taskRowMapper);
+    }
+
+    public int countAllTasks() {
+        String sql = """
+            SELECT COUNT(task_id)
+            FROM task
+            """;
+        return jdbcTemplate.queryForObject(sql, Integer.class);
+    }
+
+    public int countTasksByProjectId(int projectId) {
+        String sql = """
+            SELECT COUNT(task_id)
+            FROM task
+            WHERE project_id = ?
+            """;
+        return jdbcTemplate.queryForObject(sql, Integer.class, projectId);
+    }
+
+    public int countCompletedTasksByProjectId(int projectId) {
+        String sql = """
+            SELECT COUNT(task_id)
+            FROM task
+            WHERE project_id = ?
+            AND actual_hours IS NOT NULL
+            """;
+        return jdbcTemplate.queryForObject(sql, Integer.class, projectId);
+    }
+
+    public BigDecimal sumEstimatedHoursThisWeek() {
+        String sql = """
+            SELECT COALESCE(SUM(estimated_hours), 0)
+            FROM task
+            WHERE end_date BETWEEN
+                DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY)
+                AND
+                DATE_ADD(DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY), INTERVAL 6 DAY)
+            """;
+        return jdbcTemplate.queryForObject(sql, BigDecimal.class);
+    }
+
+
 }
 

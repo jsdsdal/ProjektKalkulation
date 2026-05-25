@@ -28,7 +28,6 @@ public class LoginController {
         return "auth/login";
     }
 
-
     @PostMapping()
     public String login (@RequestParam String email,
                          @RequestParam String password,

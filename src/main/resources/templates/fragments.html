@@ -1,10 +1,124 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="da">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Fragments</title>
+
 </head>
 <body>
+<!-- SIDEBAR -->
+<aside th:fragment="sidebar" class="sidebar">
+    <div class="sidebar-logo">AlphaScope</div>
+    <nav class="sidebar-nav">
+        <!-- skal laves om til rigtige endpoints -->
+        <a th:href="@{/dashboard}" class="sidebar-link"
+           th:classappend="${activePage == 'dashboard'} ? ' active'">Dashboard</a>
+        <a th:href="@{/projects/table}" class="sidebar-link"
+           th:classappend="${activePage == 'projects'} ? ' active'">Projects</a>
+        <a th:href="@{/employees}" class="sidebar-link"
+           th:classappend="${activePage == 'employees'} ? ' active'">Employees</a>
+        <a th:href="@{/profile}" class="sidebar-link"
+           th:classappend="${activePage == 'profile'} ? ' active'">My Profile</a>
+    </nav>
+</aside>
+<!-- POP-UP TASK -->
+<div th:fragment="taskModal(task)"
+     th:id="'task-' + ${task.taskId}"
+     popover
+     class="popup-modal">
+
+    <button th:attr="popovertarget='task-' + ${task.taskId}"
+            popovertargetaction="hide"
+            class="modal-close">×</button>
+
+    <h2 th:text="${task.title}">Title</h2>
+    <p th:text="${task.description}">Description</p>
+
+
+    <div>
+        <a Create Task th:href="@{/projects/__${task.projectId}__/tasks/__${task.taskId}__/create-task}">Create Task</a>
+    </div>
+
+    <div class="detail-grid">
+        <div>
+            <label>Start Date</label>
+            <span th:text="${task.startDate}">—</span>
+
+            <label>Estimated Hours</label>
+            <span th:text="${task.estimatedHours + ' hours'}">—</span>
+        </div>
+        <div>
+            <label>End Date</label>
+            <span th:text="${task.endDate}">—</span>
+
+            <label>Actual Hours</label>
+            <span th:text="${task.actualHours > 0 ? task.actualHours + ' hours' : '—'}">—</span>
+        </div>
+
+        <div>
+            <label>Assignes</label>
+            <span th:text="${task.assignees}">-</span>
+        </div>
+
+        <div>
+            <label>Competencies</label>
+            <span th:text="${task.competencies}">-</span>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- POP-UP SUB-PROJECT -->
+<div th:fragment="subProjectModal(sub)"
+     th:id="'subproject-' + ${sub.projectId}"
+     popover
+     class="popup-modal">
+
+    <button th:attr="popovertarget='subproject-' + ${sub.projectId}"
+            popovertargetaction="hide"
+            class="modal-close">×</button>
+
+    <h2 th:text="${sub.title}">Title</h2>
+    <p th:text="${sub.description}">Description</p>
+
+    <div>
+        <a Create Task th:href="@{/projects/__${sub.projectId}__/tasks/create-task}">Create Task</a>
+    </div>
+
+    <div class="detail-grid">
+        <div>
+            <label>Start Date</label>
+            <span th:text="${sub.startDate}">—</span>
+        </div>
+        <div>
+            <label>End Date</label>
+            <span th:text="${sub.endDate}">—</span>
+        </div>
+
+        <div>
+            <label>Project Owner</label>
+            <span th:text="${sub.projectOwner != null ? sub.projectOwner.name : '-'}">—</span>
+        </div>
+
+        <div>
+            <label>Hour Price</label>
+            <span th:text="${sub.hourPrice}"></span>
+        </div>
+
+        <div>
+            <label>Status</label>
+            <span th:text="${sub.status}"></span>
+        </div>
+    </div>
+
+</div>
+
+<!-- Page content -->
+<div class="content">
+    ..
+</div>
+
 
 </body>
 </html>

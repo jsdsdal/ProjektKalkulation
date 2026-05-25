@@ -133,6 +133,33 @@ class ProjectRepositoryTest {
     }
 
 
+    @Test
+    void calculateEstimatedHoursByProjectId() {
+
+        double estimatedHours;
+
+        estimatedHours = projectRepository.findTotalEstimatedHoursByProjectId(1);
+        assertEquals(96.00, estimatedHours);
+
+        estimatedHours = projectRepository.findTotalEstimatedHoursByProjectId(2);
+        assertEquals(56.00, estimatedHours);
+    }
+
+    @Test
+    void calculateActualHoursByProjectId() {
+
+        double actualHours;
+        double estimatedHours = projectRepository.findTotalActualHoursByProjectId(1);
+        assertEquals(103.00, estimatedHours);
+
+        actualHours = projectRepository.findTotalActualHoursByProjectId(2);
+        assertEquals(32.00, actualHours);
+
+    }
+
+
+
+
 
 
 

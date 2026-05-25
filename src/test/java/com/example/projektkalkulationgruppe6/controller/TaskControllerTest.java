@@ -3,6 +3,7 @@ package com.example.projektkalkulationgruppe6.controller;
 import com.example.projektkalkulationgruppe6.exception.InvalidTaskException;
 import com.example.projektkalkulationgruppe6.model.Task;
 import com.example.projektkalkulationgruppe6.service.EmployeeService;
+import com.example.projektkalkulationgruppe6.service.ProjectService;
 import com.example.projektkalkulationgruppe6.service.TaskService;
 import com.example.projektkalkulationgruppe6.utility.SessionHelper;
 import org.junit.jupiter.api.Test;
@@ -27,6 +28,9 @@ class TaskControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockitoBean
+    private ProjectService projectService;
 
     @MockitoBean
     private TaskService taskService;
@@ -57,14 +61,14 @@ class TaskControllerTest {
         when(taskService.findAllTask()).thenReturn(List.of(mainTestTask));
 
         mockMvc.perform(get("/projects/1/tasks/list"))                 .andExpect(status().isOk())
-                .andExpect(view().name("task/task-list"))
+                .andExpect(view().name("tasks/task-list"))
                 .andExpect(model().attributeExists("tasks"));
     }
 
     @Test
     void getCreateFormShouldReturnFormView() throws Exception {
         mockMvc.perform(get("/projects/1/tasks/create-task"))                .andExpect(status().isOk())
-                .andExpect(view().name("task/task-form"))
+                .andExpect(view().name("tasks/task-form"))
                 .andExpect(model().attributeExists("task"))
                 .andExpect(model().attribute("formTitle", "Create task"))
                 .andExpect(model().attribute("formAction", "/task/create"))
@@ -105,7 +109,7 @@ class TaskControllerTest {
                         .param("startDate", "2026-01-01")
                         .param("endDate", "2026-12-12"))
                 .andExpect(status().isOk())
-                .andExpect(view().name("task/task-form"))
+                .andExpect(view().name("tasks/task-form"))
                 .andExpect(model().attribute("errorMessage", "Title is required"));
     }
 

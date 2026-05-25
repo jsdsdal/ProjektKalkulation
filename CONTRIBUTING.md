@@ -55,7 +55,7 @@ Inden der stilles spørgsmål, anbefales der at man først tjekker eksisterende 
 Det anbefales at alle tekniske spørgsmål bliver søgt på nettet først.
 
 Hvis du laver et issue, har vi en forventning til at du følger disse trin:
-- Åbn en [issue](https://github.com/Wishlist-gruppe-1/Wishlist/issues/new](https://github.com/ProjektKalkulation-Gruppe-6/ProjektKalkulation/issues/new)).
+- Åbn en [issue](https://github.com/ProjektKalkulation-Gruppe-6/ProjektKalkulation/issues/new) .
 - Skriv så meget information du kan ned om det problem du støder ind i
 - Informer venligst om projekt og platform version, afhængigt af hvad der er relevant.
 

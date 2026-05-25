@@ -185,7 +185,7 @@ public class ProjectController {
 
         try {
             projectService.delete(id);
-            return "redirect:projects/project-detail";
+            return "redirect:/projects/table";
         } catch (ProjectNotFoundException ex) {
             model.addAttribute("errorMessage", ex.getMessage());
             return "error/404";
@@ -223,7 +223,7 @@ public class ProjectController {
             int employeeId = (int) session.getAttribute("employeeId");
             project.setProjectOwner(employeeService.findById(employeeId));
             projectService.update(id, project);
-            return "redirect:projects/project-detail";
+            return "redirect:/projects/" + id;
         } catch (ProjectNotFoundException ex) {
             model.addAttribute("errorMessage", ex.getMessage());
             return "error/404";

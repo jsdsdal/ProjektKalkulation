@@ -150,7 +150,7 @@ class ProjectControllerTest {
                 .param("status", "Not Started")
                 .param("projectOwnerId", "1"))
             .andExpect(status().is3xxRedirection())
-            .andExpect(redirectedUrl("/projects/project-list"));
+            .andExpect(redirectedUrl("/projects/table"));
 
         ArgumentCaptor<Project> captor = ArgumentCaptor.forClass(Project.class);
         verify(projectService).create(captor.capture());
@@ -217,7 +217,7 @@ class ProjectControllerTest {
         mockMvc.perform(post("/projects/1/delete")
                         .sessionAttr("employeeId", 1))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("projects/project-list"));
+                .andExpect(redirectedUrl("/projects/table"));
     }
 
 

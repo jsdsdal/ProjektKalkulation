@@ -71,19 +71,21 @@ class TaskControllerTest {
                 .andExpect(view().name("tasks/task-form"))
                 .andExpect(model().attributeExists("task"))
                 .andExpect(model().attribute("formTitle", "Create task"))
-                .andExpect(model().attribute("formAction", "/task/create"))
+                .andExpect(model().attribute("formAction", "/projects/1/tasks/create-task"))
                 .andExpect(model().attribute("submitLabel", "Create"));
     }
 
     @Test
     void createValidTaskShouldRedirectToList() throws Exception {
         MockHttpSession session = new MockHttpSession();
-        session.setAttribute("projectId", 1);
+       // session.setAttribute("projectId", 1);
 
         when(taskService.create(any(Task.class), eq(1), any(), any())).thenReturn(mainTestTask);
+        when(projectService.findRootProjectIdById(1)).thenReturn(1);
 
-        mockMvc.perform(post("/projects/1/tasks/create-task")                        .session(session)
+        mockMvc.perform(post("/projects/1/tasks/create-task")                      .session(session)
                         .param("projectId", "1")
+
                         .param("title", "Test Task")
                         .param("description", "Test Description")
                         .param("startDate", "2026-01-01")
@@ -91,7 +93,7 @@ class TaskControllerTest {
                         .param("estimatedHours", "11.00")
                         .param("actualHours", "20.00"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/projects/1/tasks/list"));    }
+                .andExpect(redirectedUrl("/projects/1"));    }
 
     @Test
     void createInvalidTaskShouldReturnFormWithError() throws Exception {

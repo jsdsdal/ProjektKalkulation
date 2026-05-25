@@ -603,6 +603,44 @@ input[type="checkbox"] {
     margin-bottom: 16px;
 }
 
+.error-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    text-align: center;
+    background: var(--white);
+    padding: 40px;
+    width: 100%
+}
+
+.error-icon {
+    margin-bottom: 32px;
+}
+
+.error-code {
+    font-size: 64px;
+    font-weight: 700;
+    color: var(--black);
+    margin-bottom: 8px;
+    letter-spacing: -.02em;
+}
+
+.error-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--black);
+    margin-bottom: 24px;
+}
+
+.error-message {
+    font-size: 14px;
+    color: var(--gray-500);
+    margin-bottom: 40px;
+    max-width: 480px;
+}
+
 /* ── Subproject rows ────────────────────────────────────────── */
 .subproject-row td.td-title { padding-left: 32px; }
 .subproject-row td.td-title::before {

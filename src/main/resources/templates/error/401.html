@@ -1,23 +1,24 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="da" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text="${status} + ' - ' + ${error}">401 - Unauthorized</title>
+    <title th:text="|${status} - ${error}|">401 - Unauthorized Access</title>
+    <link rel="stylesheet" th:href="@{/main.css}"/>
 </head>
 <body>
-<div class="container">
-    <h1 th:text="${status} + ' - ' + ${error}">401 - Unauthorized</h1>
 
-    <div class="error-box">
-        <p><strong>Error:</strong> <span th:text="${error}">Unauthorized</span></p>
-        <p><strong>Message:</strong> <span th:text="${message}">You need to be logged in to view this page.</span></p>
+<div class="error-page">
+    <div class="error-icon">
+        <img src="/icon/401.svg" width="100" height="100"/>
     </div>
 
-    <p>You need to be logged in to view this page.</p>
+    <h1 class="error-code" th:text="${status}">401</h1>
+    <h2 class="error-title" th:text="${error}">Unauthorized Access</h2>
 
-    <div class="actions">
-        <a th:href="@{/login}" class="button">Go back to the login page</a>
-    </div>
+    <p class="error-message" th:text="${message}">You need to be logged in to view this page.</p>
+
+    <a th:href="@{/login}" class="btn-primary">Go to the login page</a>
 </div>
+
 </body>
 </html>

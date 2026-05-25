@@ -5,6 +5,11 @@
     <title th:text="${project.title}">Project Detail</title>
 </head>
 <body>
+
+<div>
+    <a Create Task th:href="@{${createTaskUrl}}">Create Task</a>
+</div>
+
     <table>
         <thead>
         <tr>
@@ -21,8 +26,13 @@
             <tr>
 
                 <td>
-                        <a th:href="@{${readSubProjectAndTaskBaseUrl} + ${sub.projectId}}"
-                           th:text="${sub.title}">Subproject</a>
+
+                    <button th:attr="popovertarget='subproject-' + ${sub.projectId}" th:text="${sub.title}">View Sub Project</button>
+
+                    <div th:replace="~{fragments :: subProjectModal(${sub})}"></div>
+
+<!--                        <a th:href="@{${readSubProjectAndTaskBaseUrl} + ${sub.projectId}}"-->
+<!--                           th:text="${sub.title}">Subproject</a>-->
                 </td>
                 <td>Subproject</td>
                 <td th:text="${sub.startDate}"></td>
@@ -42,8 +52,12 @@
         <th:block th:each="task : ${tasks}">
             <tr>
                 <td th:style="'padding-left: ' + (${depth} * 30) + 'px'">
-                        <a th:href="@{${readSubProjectAndTaskBaseUrl} + ${task.projectId} + ${readTaskUrlSegment} + ${task.taskId}}"
-                           th:text="${task.title}">Task</a>
+
+
+                    <button th:attr="popovertarget='task-' + ${task.taskId}" th:text="${task.title}">View Task</button>
+
+                    <div th:replace="~{fragments :: taskModal(${task})}"></div>
+
                 </td>
                 <td th:text="${depth} == 0 ? 'Task' : 'Task'">Type</td>
                 <td th:text="${task.startDate}"></td>

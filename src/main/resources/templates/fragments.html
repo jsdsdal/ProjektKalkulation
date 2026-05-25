@@ -53,6 +53,51 @@
 
 </div>
 
+<!-- POP-UP SUB-PROJECT -->
+<div th:fragment="subProjectModal(sub)"
+     th:id="'subproject-' + ${sub.projectId}"
+     popover
+     class="popup-modal">
+
+    <button th:attr="popovertarget='subproject-' + ${sub.projectId}"
+            popovertargetaction="hide"
+            class="modal-close">×</button>
+
+    <h2 th:text="${sub.title}">Title</h2>
+    <p th:text="${sub.description}">Description</p>
+
+    <div>
+        <a Create Task th:href="@{/projects/__${sub.projectId}__/tasks/create-task}">Create Task</a>
+    </div>
+
+    <div class="detail-grid">
+        <div>
+            <label>Start Date</label>
+            <span th:text="${sub.startDate}">—</span>
+        </div>
+        <div>
+            <label>End Date</label>
+            <span th:text="${sub.endDate}">—</span>
+        </div>
+
+        <div>
+            <label>Project Owner</label>
+            <span th:text="${sub.projectOwner != null ? sub.projectOwner.name : '-'}">—</span>
+        </div>
+
+        <div>
+            <label>Hour Price</label>
+            <span th:text="${sub.hourPrice}"></span>
+        </div>
+
+        <div>
+            <label>Status</label>
+            <span th:text="${sub.status}"></span>
+        </div>
+    </div>
+
+</div>
+
 <!-- Page content -->
 <div class="content">
     ..

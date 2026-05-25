@@ -208,6 +208,13 @@ public class ProjectRepository {
 
     public double findTotalEstimatedHoursByProjectId(int projectId) {
         String sql = """
+                WITH RECURSIVE project_tree AS (
+                SELECT project_id FROM project WHERE project_id = ?
+                UNION ALL
+                SELECT p.project_id FROM project p 
+                JOIN project_tree pt ON p.parent_project_id = pt.project_id             
+                )
+   
             SELECT COALESCE(SUM(estimated_hours), 0)
             FROM task
             WHERE project_id = ?
@@ -217,6 +224,13 @@ public class ProjectRepository {
 
     public double findTotalActualHoursByProjectId(int projectId) {
         String sql = """
+             WITH RECURSIVE project_tree AS (
+                            SELECT project_id FROM project WHERE project_id = ?
+                            UNION ALL
+                            SELECT p.project_id FROM project p
+                            JOIN project_tree pt ON p.parent_project_id = pt.project_id
+                        )
+             
             SELECT COALESCE(SUM(actual_hours), 0)
             FROM task
             WHERE project_id = ?

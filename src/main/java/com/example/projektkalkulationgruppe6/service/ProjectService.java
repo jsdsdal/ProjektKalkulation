@@ -9,6 +9,8 @@ import com.example.projektkalkulationgruppe6.repository.ProjectRepository;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -208,6 +210,7 @@ public class ProjectService {
     }
 
 
+    // STATS
     public int getRemainingDaysTillDeadlineForProject(int id) {
         Project project = projectRepository.findById(id);
 
@@ -256,7 +259,74 @@ public class ProjectService {
 
 
 
+    // forventet indtægt til projekt
+    public BigDecimal getExpectedRevenueForProject(int projectId) {
+        Project project = projectRepository.findById(projectId);
+        if (project == null) throw new ProjectNotFoundException(projectId);
+        if (project.getHourPrice() == null) return BigDecimal.ZERO;
 
+        double totalHours = projectRepository.findTotalEstimatedHoursByProjectId(projectId);
+        return project.getHourPrice().multiply(BigDecimal.valueOf(totalHours));
+    }
 
+    // Hjælpemetode til kvartal
+    private boolean isInQuarter(LocalDate date, int year, int quarter) {
+        if (date == null) return false;
+        LocalDate start = LocalDate.of(year, (quarter - 1) * 3 + 1, 1);
+        LocalDate end = start.plusMonths(3).minusDays(1);
+        return !date.isBefore(start) && !date.isAfter(end);
+    }
+
+    // Est indkomst (kvartal)
+    public BigDecimal getQuarterlyEstimatedRevenue(int year, int quarter) {
+        List<Project> projects = projectRepository.findAll();
+        if (projects == null) return BigDecimal.ZERO;
+
+        BigDecimal estimated = BigDecimal.ZERO;
+
+        for (Project p : projects) {
+            if (p.getHourPrice() == null) continue;
+            if (!isInQuarter(p.getEndDate(), year, quarter)) continue;
+
+            double estHours = projectRepository.findTotalEstimatedHoursByProjectId(p.getProjectId());
+            estimated = estimated.add(p.getHourPrice().multiply(BigDecimal.valueOf(estHours)));
+        }
+
+        return estimated;
+    }
+
+    // Aktuelle indkomst (kvartal)
+    public BigDecimal getQuarterlyActualRevenue(int year, int quarter) {
+        List<Project> projects = projectRepository.findAll();
+        if (projects == null) return BigDecimal.ZERO;
+
+        BigDecimal actual = BigDecimal.ZERO;
+
+        for (Project p : projects) {
+            if (p.getHourPrice() == null) continue;
+            if (!isInQuarter(p.getEndDate(), year, quarter)) continue;
+
+            double actHours = projectRepository.findTotalActualHoursByProjectId(p.getProjectId());
+            actual = actual.add(p.getHourPrice().multiply(BigDecimal.valueOf(actHours)));
+        }
+
+        return actual;
+    }
+
+    // Årlig indtjening - alle projekter
+    public BigDecimal getAnnualRevenue(int year) {
+        List<Project> projects = projectRepository.findAll();
+        if (projects == null) return BigDecimal.ZERO;
+
+        return projects.stream()
+                .filter(p -> p.getStartDate() != null && p.getStartDate().getYear() == year
+                        || p.getEndDate() != null && p.getEndDate().getYear() == year)
+                .map(p -> {
+                    if (p.getHourPrice() == null) return BigDecimal.ZERO;
+                    double hours = projectRepository.findTotalEstimatedHoursByProjectId(p.getProjectId());
+                    return p.getHourPrice().multiply(BigDecimal.valueOf(hours));
+                })
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
 
 }

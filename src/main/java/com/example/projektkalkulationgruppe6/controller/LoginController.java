@@ -28,7 +28,6 @@ public class LoginController {
         return "auth/login";
     }
 
-
     @PostMapping()
     public String login (@RequestParam String email,
                          @RequestParam String password,
@@ -37,7 +36,7 @@ public class LoginController {
             Employee employee = employeeService.login(email, password);
             session.setAttribute("employeeId", employee.getEmployeeId());
             session.setMaxInactiveInterval(1800);
-            return "redirect:/dashboard";
+            return "redirect:/projects/table";
         } catch (InvalidEmployeeException ex) {
             model.addAttribute("errorMessage", ex.getMessage());
             return "auth/login";

@@ -49,6 +49,7 @@ body {
     color: var(--black);
     display: flex;
     min-height: 100vh;
+
 }
 /* her sørger vi bare for alle links (a) har vores layout og ikke default (blue underlined) */
 a { color: inherit; text-decoration: none; }
@@ -57,6 +58,7 @@ button { font-family: inherit; cursor: pointer; }
 /* samme */
 input, select, textarea { font-family: inherit; }
 /* tænk inherit = vi tvinger browser til at altid bruge vores, ikke default */
+
 
 /* ── Sidebar ────────────────────────────────────────────────── */
 .sidebar {
@@ -489,20 +491,35 @@ input[type="checkbox"] {
 /* ── Auth page ──────────────────────────────────────────────── */
 .auth-page {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    align-items: stretch;
     min-height: 100vh;
-    background: var(--gray-100);
     width: 100%;
 }
-.auth-wrapper { width: 100%; max-width: 400px; padding: 20px; }
-.auth-box {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 40px 36px;
+
+
+.auth-page-left {
+    width: 50%;
+    background-image: url('/images/login.png');
+    background-size: cover;
+    background-position: center;
 }
-.auth-box h1 { font-size: 22px; font-weight: 600; margin-bottom: 28px; }
+
+.auth-page-right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--gray-100);
+}
+
+.auth-page-right .auth-box {
+    border: none;
+    background: transparent;
+}
+
+.auth-wrapper { width: 100%; max-width: 560px; padding: 40px 36px; }
+
+.auth-box h1 { font-size: 32px; font-weight: 600; margin-bottom: 28px; }
 .password-wrap { position: relative; display: flex; }
 .password-wrap input { flex: 1; padding-right: 40px; }
 .toggle-password {
@@ -512,6 +529,39 @@ input[type="checkbox"] {
     color: var(--gray-500);
     display: flex; align-items: center;
 }
+
+.field-hint {
+    display: block;
+    font-size: 11px;
+    color: var(--gray-500);
+    margin-top: 4px;
+}
+
+.auth-options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 16px 0 20px;
+}
+
+.remember-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: var(--gray-700);
+    cursor: pointer;
+}
+
+.forgot-link {
+    font-size: 13px;
+    color: var(--red);
+    font-weight: 500;
+}
+
+.forgot-link:hover { text-decoration: underline; }
+
+
 
 /* ── Error banner ───────────────────────────────────────────── */
 .error-banner {

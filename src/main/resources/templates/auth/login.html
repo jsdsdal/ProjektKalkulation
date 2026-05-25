@@ -3,39 +3,66 @@
 <head>
   <meta charset="UTF-8"/>
   <title>Log ind</title>
+  <link rel="stylesheet" th:href="@{/main.css}"/>
 </head>
 <body>
-<div class="left-panel">
-  <div class="placeholder-image"></div>
-</div>
+
 
 <div class="auth-page">
 
-  <div class="auth-wrapper">
-    <div class="auth-box">
-      <h1>Log ind</h1>
+  <!-- VENSTRE PANEL -->
+  <div class="auth-page-left"></div>
 
-      <div class="error-banner" th:if="${errorMessage}" th:text="${errorMessage}"></div>
 
-      <form th:action="@{/login}" method="post">
+  <!-- HØJRE PANEL -->
+  <div class="auth-page-right">
+    <div class="auth-wrapper">
+      <div class="auth-box">
+        <h1>Log In</h1>
 
-        <div class="field">
-          <label for="email">Email</label>
-          <input id="email" type="email" name="email" placeholder="din@email.dk" autocomplete="email"/>
-        </div>
+        <div class="error-banner" th:if="${errorMessage}" th:text="${errorMessage}"></div>
 
-        <div class="field">
-          <label for="password">Password</label>
-          <div class="password-wrap">
-            <input id="password" type="password" name="password" placeholder="••••••••" autocomplete="current-password"/>
-            <button type="button" class="toggle-password" onclick="togglePw('password', this)" aria-label="Vis adgangskode">
-              <svg id="eye-password" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-            </button>
+        <form th:action="@{/login}" method="post">
+
+          <div class="field">
+            <label for="email">Email Address</label>
+            <input id="email" type="email" name="email"
+                   placeholder="your@email.com" autocomplete="email"/>
           </div>
-        </div>
 
-        <button type="submit" class="btn-primary btn-full">Log ind</button>
-      </form>
+          <div class="field">
+            <label for="password">Password</label>
+            <div class="password-wrap">
+              <input id="password" type="password" name="password"
+                     placeholder="••••••••" autocomplete="current-password"/>
+              <button type="button" class="toggle-password"
+                      onclick="togglePw('password', this)"
+                      aria-label="Vis adgangskode">
+                <svg width="18" height="18" viewBox="0 0 24 24"
+                     fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+            </div>
+            <span class="field-hint">It must be a combination of minimum 8 letters, numbers, and symbols.</span>
+          </div>
+
+          <div class="auth-options">
+            <label class="remember-label">
+              <input type="checkbox" name="remember"/>
+              Remember me
+            </label>
+            <a href="#" class="forgot-link">Forgot Password?</a>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn-primary btn-full">Log In</button>
+          </div>
+
+        </form>
+
+      </div>
     </div>
   </div>
 

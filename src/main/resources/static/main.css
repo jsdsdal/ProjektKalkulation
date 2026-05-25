@@ -528,7 +528,7 @@ input[type="checkbox"] {
 
 .auth-page-left {
     width: 50%;
-    background-image: url('/images/login.png');
+    background-image: url('/static/images/login.png');
     background-size: cover;
     background-position: center;
 }

@@ -52,6 +52,10 @@ public class ProjectController {
         model.addAttribute("editProjectUrl", "/projects/edit-project");
         model.addAttribute("deleteProjectUrl", "/projects/delete-project");
         model.addAttribute("tasksDueThisWeekCount", taskService.getCountOfAllTasksDueThisWeek());
+        model.addAttribute("activeProjects", projectService.getActiveProjectCount());
+        model.addAttribute("needsAttention", projectService.getProjectsNeedingAttentionCount());
+        model.addAttribute("totalTasks", taskService.getAllTaskCount());
+        model.addAttribute("estimatedHoursThisWeek", taskService.getEstimatedHoursThisWeek());
 
 
         return "projects/project-list";
@@ -99,6 +103,8 @@ public class ProjectController {
     @GetMapping("/{id}/overview")
     public String overview(@PathVariable int id, Model model, HttpSession session){
         model.addAttribute("daysUntilDeadline", projectService.getRemainingDaysTillDeadlineForProject(id));
+        model.addAttribute("totalTasks", taskService.getTaskCountByProjectId(id));
+        model.addAttribute("completedTasks", taskService.getCompletedTaskCountByProjectId(id));
 
 
         return "projects/project-overview";

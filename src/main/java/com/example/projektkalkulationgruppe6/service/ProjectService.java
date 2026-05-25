@@ -329,4 +329,14 @@ public class ProjectService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
+    public int getActiveProjectCount() {
+        return projectRepository.countActiveProjects();
+    }
+
+    public int getProjectsNeedingAttentionCount() {
+        return projectRepository.countProjectsNeedingAttention();
+    }
+
+
+
 }

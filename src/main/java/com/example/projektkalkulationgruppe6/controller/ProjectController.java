@@ -13,9 +13,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Controller
 @RequestMapping("/projects")
 public class ProjectController {
@@ -64,16 +61,10 @@ public class ProjectController {
 
         Project project = projectService.findById(id);
 
-        int mainProjectId;
-
-        if (project.getParentProjectId() == null) {
-            mainProjectId = project.getProjectId();
-        } else {
-            mainProjectId = project.getParentProjectId();
-        }
+        int rootProjectId = projectService.findRootProjectIdById(id);
 
         model.addAttribute("project", project);
-        model.addAttribute("mainProjectId", mainProjectId);
+        model.addAttribute("rootProjectId", rootProjectId);
         model.addAttribute("createSubProjectUrl", "/projects/" + id + "/create-project");
 
         model.addAttribute("readSubProjectAndTaskBaseUrl", "/projects/");
@@ -87,7 +78,7 @@ public class ProjectController {
         model.addAttribute("updateTaskUrl", "/projects/" + id + "/tasks/edit-task");
         model.addAttribute("deleteTaskUrl", "/projects/" + id + "/tasks/delete-task");
 
-        model.addAttribute("closeUrl", "/projects/" + mainProjectId);
+        model.addAttribute("closeUrl", "/projects/" + rootProjectId);
 
         if(project.getParentProjectId()== null) {
             return "projects/project-detail";

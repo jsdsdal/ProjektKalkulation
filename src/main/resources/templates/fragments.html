@@ -34,6 +34,11 @@
     <h2 th:text="${task.title}">Title</h2>
     <p th:text="${task.description}">Description</p>
 
+
+    <div>
+        <a Create Task th:href="@{/projects/__${task.projectId}__/tasks/__${task.taskId}__/create-task}">Create Task</a>
+    </div>
+
     <div class="detail-grid">
         <div>
             <label>Start Date</label>
@@ -49,6 +54,17 @@
             <label>Actual Hours</label>
             <span th:text="${task.actualHours > 0 ? task.actualHours + ' hours' : '—'}">—</span>
         </div>
+
+        <div>
+            <label>Assignes</label>
+            <span th:text="${task.assignees}">-</span>
+        </div>
+
+        <div>
+            <label>Competencies</label>
+            <span th:text="${task.competencies}">-</span>
+        </div>
+
     </div>
 
 </div>

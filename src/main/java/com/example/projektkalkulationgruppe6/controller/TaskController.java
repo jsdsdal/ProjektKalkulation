@@ -46,17 +46,11 @@ public class TaskController {
 
         Project project = projectService.findById(projectId);
 
-        int mainProjectId;
-
-        if (project.getParentProjectId() == null) {
-            mainProjectId = project.getProjectId();
-        } else {
-            mainProjectId = project.getParentProjectId();
-        }
+        int rootProjectId = projectService.findRootProjectIdById(projectId);
 
         model.addAttribute("task", taskService.findById(taskId));
 
-        model.addAttribute("closeUrl", "/projects/" + mainProjectId);
+        model.addAttribute("closeUrl", "/projects/" + rootProjectId);
 
         return "tasks/task-detail";
     }
@@ -67,9 +61,9 @@ public class TaskController {
         sessionHelper.isLoggedIn(session);
         model.addAttribute("task", new Task());
         model.addAttribute("formTitle", "Create task");
-        model.addAttribute("formAction", "/task/create");
+        model.addAttribute("formAction", "/projects/" + projectId + "/tasks/create-task");
         model.addAttribute("submitLabel", "Create");
-        model.addAttribute("cancelUrl", "/home");
+        model.addAttribute("cancelUrl", "/projects/table");
         model.addAttribute("allCompetencies", taskService.findAllCompetencies());
         model.addAttribute("allEmployees", employeeService.findAll());
         model.addAttribute("projectId", projectId);
@@ -77,18 +71,61 @@ public class TaskController {
         return "tasks/task-form";
     }
 
+
     @PostMapping("/create-task")
-    public String create(@PathVariable int projectId, @ModelAttribute Task task, HttpSession session, Model model) {
+    public String createTask(@PathVariable int projectId, @ModelAttribute Task task, HttpSession session, Model model) {
         sessionHelper.isLoggedIn(session);
         try {
+            int rootProjectId = projectService.findRootProjectIdById(projectId);
             taskService.create(task, projectId, new ArrayList<>(), new ArrayList<>());
-            return "redirect:/projects/" + projectId + "/tasks/list";
+            return "redirect:/projects/" + rootProjectId;
         } catch (InvalidTaskException | DatabaseOperationException ex) {
             model.addAttribute("task", task);
             model.addAttribute("formTitle", "Create task");
             model.addAttribute("formAction", "/projects/" + projectId + "/tasks/create-task");
             model.addAttribute("submitLabel", "Create");
-            model.addAttribute("cancelUrl", "/home");
+            model.addAttribute("cancelUrl", "/projects/table");
+            model.addAttribute("allCompetencies", taskService.findAllCompetencies());
+            model.addAttribute("allEmployees", employeeService.findAll());
+            model.addAttribute("errorMessage", ex.getMessage());
+            model.addAttribute("projectId", projectId);
+
+            return "tasks/task-form";
+        }
+    }
+
+
+    @GetMapping("/{parentTaskId}/create-task")
+    public String showSubTaskCreateForm(@PathVariable int projectId, @PathVariable int parentTaskId, HttpSession session, Model model) {
+        sessionHelper.isLoggedIn(session);
+        model.addAttribute("task", new Task());
+        model.addAttribute("formTitle", "Create task");
+        model.addAttribute("formAction", "/projects/" + projectId + "/tasks/" + parentTaskId +  "/create-task");
+        model.addAttribute("submitLabel", "Create");
+        model.addAttribute("cancelUrl", "/projects/table");
+        model.addAttribute("allCompetencies", taskService.findAllCompetencies());
+        model.addAttribute("allEmployees", employeeService.findAll());
+        model.addAttribute("projectId", projectId);
+
+        return "tasks/task-form";
+    }
+
+    @PostMapping("/{parentTaskId}/create-task")
+    public String createSubTask(@PathVariable int projectId, @PathVariable int parentTaskId, @ModelAttribute Task task, HttpSession session, Model model) {
+        sessionHelper.isLoggedIn(session);
+        try {
+            int rootProjectId = projectService.findRootProjectIdById(projectId);
+
+            task.setParentTaskId(parentTaskId);
+            taskService.create(task, projectId, new ArrayList<>(), new ArrayList<>());
+
+            return "redirect:/projects/" + rootProjectId;
+        } catch (InvalidTaskException | DatabaseOperationException ex) {
+            model.addAttribute("task", task);
+            model.addAttribute("formTitle", "Create task");
+            model.addAttribute("formAction", "/projects/" + projectId + "/tasks/" + parentTaskId +  "/create-task");
+            model.addAttribute("submitLabel", "Create");
+            model.addAttribute("cancelUrl", "/projects/table");
             model.addAttribute("allCompetencies", taskService.findAllCompetencies());
             model.addAttribute("allEmployees", employeeService.findAll());
             model.addAttribute("errorMessage", ex.getMessage());

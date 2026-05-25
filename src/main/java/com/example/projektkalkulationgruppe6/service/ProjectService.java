@@ -44,6 +44,20 @@ public class ProjectService {
         }
     }
 
+    public int findRootProjectIdById(int id) {
+
+        Project project = findById(id);
+
+        int rootProjectId;
+
+        if (project.getParentProjectId() == null) {
+            rootProjectId = project.getProjectId();
+        } else {
+            rootProjectId = project.getParentProjectId();
+        }
+        return rootProjectId;
+    }
+
     public Project findById(int id) {
         validateId(id);
 

@@ -1,4 +1,4 @@
-# Wish2Gather
+# AlphaScope
 
 > [Link til website](link)
 

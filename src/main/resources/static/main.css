@@ -121,10 +121,23 @@ input, select, textarea { font-family: inherit; }
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 28px;
+    margin-bottom: 20px;
 }
+
+.page-subheader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 40px;
+}
+
 .page-title {
-    font-size: 28px;
+    font-size: 38px;
+    font-weight: 600;
+    letter-spacing: -.02em;
+}
+.page-subtitle {
+    font-size: 20px;
     font-weight: 600;
     letter-spacing: -.02em;
 }

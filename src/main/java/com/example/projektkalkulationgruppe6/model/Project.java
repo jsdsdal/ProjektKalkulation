@@ -1,5 +1,7 @@
 package com.example.projektkalkulationgruppe6.model;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
@@ -8,7 +10,9 @@ public class Project {
     private Integer projectId;
     private String title;
     private String description;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate startDate;
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate endDate;
     private Employee projectOwner;
     private BigDecimal hourPrice;

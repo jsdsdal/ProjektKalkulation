@@ -224,6 +224,36 @@ public class ProjectRepository {
         return jdbcTemplate.queryForObject(sql, Double.class, projectId);
     }
 
+    public int countActiveProjects() {
+        String sql = """
+            SELECT COUNT(p.project_id)
+            FROM project p
+            JOIN status s ON p.status_id = s.status_id
+            WHERE s.title IN ('Estimate in Progress', 'Estimate Done', 'Not Started')
+            AND p.end_date >= CURDATE()
+            AND p.parent_project_id IS NULL
+            """;
+        return jdbcTemplate.queryForObject(sql, Integer.class);
+    }
+
+    public int countProjectsNeedingAttention() {
+        String sql = """
+            SELECT COUNT(DISTINCT p.project_id)
+            FROM project p
+            JOIN status s ON p.status_id = s.status_id
+            LEFT JOIN task t ON p.project_id = t.project_id
+            WHERE s.title IN ('Estimate in Progress', 'Estimate Done', 'Not Started')
+            AND p.parent_project_id IS NULL
+            AND (
+                p.end_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 14 DAY)
+                OR t.end_date < CURDATE() AND t.actual_hours IS NULL
+            )
+            """;
+        return jdbcTemplate.queryForObject(sql, Integer.class);
+    }
+
+
+
 
 
 }

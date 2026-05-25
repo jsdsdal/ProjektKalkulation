@@ -7,6 +7,7 @@ import com.example.projektkalkulationgruppe6.repository.TaskRepository;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -204,6 +205,22 @@ public class TaskService {
         }
 
         return "On time";
+    }
+
+    public int getAllTaskCount() {
+        return taskRepository.countAllTasks();
+    }
+
+    public int getTaskCountByProjectId(int projectId) {
+        return taskRepository.countTasksByProjectId(projectId);
+    }
+
+    public int getCompletedTaskCountByProjectId(int projectId) {
+        return taskRepository.countCompletedTasksByProjectId(projectId);
+    }
+
+    public BigDecimal getEstimatedHoursThisWeek() {
+        return taskRepository.sumEstimatedHoursThisWeek();
     }
 
 

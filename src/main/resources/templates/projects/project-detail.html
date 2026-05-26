@@ -74,19 +74,29 @@
                     : ${days} + ' days remaining'))">—</div>
         </div>
         <div class="stat-card">
-            <div class="stat-card-label">Total est. workload</div>
-            <div class="stat-card-value">0</div>
-            <div class="stat-card-sub">across all projects</div>
+            <div class="stat-card-label">Est. Hours Total</div>
+            <div class="stat-card-value" th:text="${totalEstimatedHours}">—</div>
+            <div class="stat-card-sub">across all tasks</div>
         </div>
         <div class="stat-card">
-            <div class="stat-card-label">Actual workload</div>
-            <div class="stat-card-value">0</div>
-            <div class="stat-card-sub">across all projects</div>
+            <div class="stat-card-label">Actual Hours Total</div>
+            <div class="stat-card-value" th:text="${totalActualHours}">—</div>
+            <div class="stat-card-sub">logged so far</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card"
+             th:classappend="${project.status == 'Actual Hours Done'}     ? ' success'
+                    : (${project.status == 'Rejected'}            ? ' danger'
+                    : (${project.status == 'Estimate in Progress'}? ' warning'
+                    :                                               ''))">
             <div class="stat-card-label">Status</div>
-            <div class="stat-card-value" th:text="${project.status}">Status Message</div>
-            <div class="stat-card-sub">across all projects</div>
+            <div class="stat-card-value" th:text="${project.status}">—</div>
+            <div class="stat-card-sub"
+                 th:text="${project.status == 'Actual Hours Done'}     ? 'Project complete'
+                : (${project.status == 'Rejected'}             ? 'Project cancelled'
+                : (${project.status == 'Estimate in Progress'} ? 'Estimation ongoing'
+                : (${project.status == 'Estimate Done'}        ? 'Ready for scheduling'
+                :                                                'Not yet started')))">
+            </div>
         </div>
     </div>
 

@@ -3,8 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+  <link rel="stylesheet" th:href="@{/main.css}"/>
 </head>
 <body>
+
+<!-- NAV -->
+<aside th:replace="~{fragments :: sidebar(activePage='projects')}"></aside>
+
 <div class="form-page">
 
 
@@ -21,43 +26,41 @@
 
       <div class="field">
         <label for="description">Description</label>
-        <textarea id="description" th:field="*{description}" maxlength="500" placeholder="Skriv venligst"></textarea>
+        <textarea id="description" class="description-field" th:field="*{description}" maxlength="500" placeholder="Skriv venligst"></textarea>
       </div>
 
-      <div class="field">
-        <label for="startDate">Start Date</label>
-        <input id="startDate" type="date" th:field="*{startDate}"/>
+      <div class="field-row">
+        <div class="field">
+          <label for="startDate">Start Date</label>
+          <input id="startDate" type="date" th:field="*{startDate}"/>
+        </div>
+
+        <div class="field">
+          <label for="endDate">End Date</label>
+          <input id="endDate" type="date" th:field="*{endDate}"/>
+        </div>
       </div>
 
-      <div class="field">
-        <label for="endDate">End Date</label>
-        <input id="endDate" type="date" th:field="*{endDate}"/>
-      </div>
+      <div class="field-row">
+        <div class="field">
+          <label for="hour_price">Hour Price</label>
+          <input id="hour_price" type="number" th:field="*{hourPrice}" placeholder="Indtast venligst" min="0" step="50.00"/>
+        </div>
 
-      <div class="field">
-        <label for="hour_price">Hour Price</label>
-        <input id="hour_price" type="number" th:field="*{hourPrice}" placeholder="Indtast venligst" min="0" step="50.00"/>
-      </div>
+        <div class="field">
+          <label for="status">Status</label>
+          <select id="status" th:field="*{status}">
+            <option th:each="s : ${statusList}" th:value="${s}" th:text="${s}"></option>
+          </select>
+        </div>
 
-      <div class="field">
-        <label for="status">Status</label>
-        <select id="status" th:field="*{status}">
-        <option th:each="s : ${statusList}" th:value="${s}" th:text="${s}"></option>
-        </select>
-      </div>
-
-      <div class="field">
-        <label for="projectOwnerId">Project Owner</label>
-        <select id="projectOwnerId" name="projectOwnerId">
-
-          <option value="" disabled selected>Vælg Project Owner</option>
-          <option
-                  th:each="e : ${employees}"
-                  th:value="${e.getEmployeeId}"
-                  th:text="${e.getName}">
-
-          </option>
-        </select>
+        <div class="field">
+          <label for="projectOwnerId">Project Owner</label>
+          <select id="projectOwnerId" name="projectOwnerId">
+            <option value="" disabled selected>Vælg Project Owner</option>
+            <option th:each="e : ${employees}" th:value="${e.getEmployeeId}" th:text="${e.getName}"></option>
+          </select>
+        </div>
       </div>
 
 

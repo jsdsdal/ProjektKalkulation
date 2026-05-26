@@ -121,10 +121,23 @@ input, select, textarea { font-family: inherit; }
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 28px;
+    margin-bottom: 20px;
 }
+
+.page-subheader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 40px;
+}
+
 .page-title {
-    font-size: 28px;
+    font-size: 38px;
+    font-weight: 600;
+    letter-spacing: -.02em;
+}
+.page-subtitle {
+    font-size: 20px;
     font-weight: 600;
     letter-spacing: -.02em;
 }
@@ -438,22 +451,27 @@ input[type="checkbox"] {
 /* ── Forms ──────────────────────────────────────────────────── */
 .form-page {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: center;
-    padding: 40px 20px;
-}
-.form-wrapper {
-    background: var(--white);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-lg);
-    padding: 36px 40px;
+    padding: 40px 60px;
+    margin-left: var(--sidebar-w);
     width: 100%;
-    max-width: 560px;
+    min-height: 100vh;
 }
+
+.form-wrapper {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    width: 100%;
+    max-width: 900px;
+}
+
 .form-wrapper h1 {
-    font-size: 20px;
+    font-size: 36px;
     font-weight: 600;
-    margin-bottom: 24px;
+    margin-bottom: 32px;
 }
 .field {
     display: flex;
@@ -462,8 +480,8 @@ input[type="checkbox"] {
     margin-bottom: 18px;
 }
 .field label {
-    font-size: 13px;
-    font-weight: 500;
+    font-size: 15px;
+    font-weight: 600;
     color: var(--gray-700);
 }
 .field input,
@@ -477,7 +495,9 @@ input[type="checkbox"] {
     background: var(--white);
     outline: none;
     transition: border-color .15s;
+    width: 100%;
 }
+
 .field input:focus,
 .field select:focus,
 .field textarea:focus { border-color: var(--black); }
@@ -485,7 +505,29 @@ input[type="checkbox"] {
 .form-actions {
     display: flex;
     gap: 12px;
-    margin-top: 24px;
+    margin-top: 96px;
+    justify-content: center;
+}
+
+.form-actions .btn-primary,
+.form-actions .btn-secondary {
+    min-width: 260px;
+    justify-content: center;
+}
+
+.field textarea.description-field {
+    min-height: 160px;
+}
+
+.field-row {
+    display: flex;
+    gap: 24px;
+    margin-bottom: 18px;
+}
+
+.field-row .field {
+    flex: 1;
+    margin-bottom: 0;
 }
 
 /* ── Auth page ──────────────────────────────────────────────── */
@@ -572,6 +614,44 @@ input[type="checkbox"] {
     border-radius: var(--radius-sm);
     font-size: 13px;
     margin-bottom: 16px;
+}
+
+.error-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    text-align: center;
+    background: var(--white);
+    padding: 40px;
+    width: 100%
+}
+
+.error-icon {
+    margin-bottom: 32px;
+}
+
+.error-code {
+    font-size: 64px;
+    font-weight: 700;
+    color: var(--black);
+    margin-bottom: 8px;
+    letter-spacing: -.02em;
+}
+
+.error-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--black);
+    margin-bottom: 24px;
+}
+
+.error-message {
+    font-size: 14px;
+    color: var(--gray-500);
+    margin-bottom: 40px;
+    max-width: 480px;
 }
 
 /* ── Subproject rows ────────────────────────────────────────── */

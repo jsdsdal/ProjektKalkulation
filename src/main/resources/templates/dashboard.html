@@ -1,18 +1,52 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="da" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta charset="UTF-8"/>
+    <title>Dashboard</title>
+    <link rel="stylesheet" th:href="@{/main.css}"/>
 </head>
+
 <body>
+<!-- NAV -->
+<aside th:replace="~{fragments :: sidebar(activePage='dashboard')}"></aside>
 
-<h1>Du er hjemme</h1>
+<!-- CONTENT -->
+<main class="main">
 
-<a th:href="@{/projects/create-project}">Opret projekt</a>
+    <div class="page-header">
+        <h1 class="page-title">Dashboard</h1>
+    </div>
 
-<form th:action="@{/login/logout}" method="post">
-<button type="submit">Log ud</button>
-</form>
+    <div class="page-subheader">
+        <h2 class="page-subtitle">Activity this financial quarter</h2>
+    </div>
 
+    <div class="stat-cards">
+        <div class="stat-card">
+            <div class="stat-card-label">Resource load this month</div>
+            <div class="stat-card-value">0</div>
+            <div class="stat-card-sub">across all projects</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-label">Forecasted revenue</div>
+            <div class="stat-card-value">0</div>
+            <div class="stat-card-sub">across all projects</div>
+        </div>
+        <div class="stat-card warning">
+            <div class="stat-card-label">Actual revenue</div>
+            <div class="stat-card-value">0</div>
+            <div class="stat-card-sub">0 deviation</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-label">Yearly revenue</div>
+            <div class="stat-card-value">0</div>
+            <div class="stat-card-sub">Across this years projects</div>
+        </div>
+    </div>
+
+
+</main>
 </body>
 </html>
+

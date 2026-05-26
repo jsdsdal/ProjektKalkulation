@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${status} + ' - ' + ${error}">400 - Bad Request</title>
+</head>
+<body>
+<div class="container">
+    <h1 th:text="${status} + ' - ' + ${error}">400 - Bad Request</h1>
+
+    <div class="error-box">
+        <p><strong>Error:</strong> <span th:text="${error}">Bad Request</span></p>
+        <p><strong>Message:</strong> <span th:text="${message}">Something was wrong with the URL you provided.</span></p>
+    </div>
+
+    <p>Something was wrong with the URL you provided</p>
+
+    <div class="actions">
+        <a th:href="@{/login}" class="button">Go back to the login page</a>
+    </div>
+</div>
+</body>
+</html>

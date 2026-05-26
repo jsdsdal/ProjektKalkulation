@@ -11,6 +11,7 @@ import com.example.projektkalkulationgruppe6.utility.SessionHelper;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.PathMatcher;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -20,13 +21,15 @@ public class ProjectController {
     private final ProjectService projectService;
     private final TaskService taskService;
     private final SessionHelper sessionHelper;
+    private final PathMatcher pathMatcher;
 
 
-    public ProjectController(ProjectService projectService, EmployeeService employeeService, TaskService taskService, SessionHelper sessionHelper) {
+    public ProjectController(ProjectService projectService, EmployeeService employeeService, TaskService taskService, SessionHelper sessionHelper, PathMatcher pathMatcher) {
         this.projectService = projectService;
         this.employeeService = employeeService;
         this.taskService = taskService;
         this.sessionHelper = sessionHelper;
+        this.pathMatcher = pathMatcher;
     }
 
 
@@ -123,7 +126,7 @@ public class ProjectController {
             Employee projectOwner = employeeService.findById(projectOwnerId);
             project.setProjectOwner(projectOwner);
             projectService.create(project);
-            return "redirect:/projects/project-list";
+            return "redirect:/projects/table";
         } catch (InvalidProjectException ex) {
             model.addAttribute("project", project);
             model.addAttribute("formTitle", "Create Project");
@@ -137,13 +140,52 @@ public class ProjectController {
         }
     }
 
+    @GetMapping("/{parentProjectId}/create-project")
+    public String showCreateSubProjectForm(Model model, HttpSession session, @PathVariable int parentProjectId) {
+        sessionHelper.isLoggedIn(session);
+
+        model.addAttribute("project", new Project());
+        model.addAttribute("formTitle", "Create Sub Project");
+        model.addAttribute("statusList", projectService.findAllStatusList());
+        model.addAttribute("employees", employeeService.findAll());
+        model.addAttribute("formAction", "/projects/" + parentProjectId + "/create-project");
+        model.addAttribute("submitLabel", "Create");
+        model.addAttribute("cancelUrl", "/projects/" + parentProjectId);
+        return "projects/project-form";
+    }
+
+    @PostMapping("/{parentProjectId}/create-project")
+    public String createSubProject(@ModelAttribute Project project, @PathVariable int parentProjectId,
+                                   @RequestParam int projectOwnerId, Model model, HttpSession session) {
+
+        sessionHelper.isLoggedIn(session);
+
+        try {
+            Employee projectOwner = employeeService.findById(projectOwnerId);
+            project.setProjectOwner(projectOwner);
+            project.setParentProjectId(parentProjectId);
+            projectService.create(project);
+            return "redirect:/projects/" + parentProjectId;
+        } catch (InvalidProjectException ex) {
+            model.addAttribute("project", project);
+            model.addAttribute("formTitle", "Create Sub Project");
+            model.addAttribute("statusList", projectService.findAllStatusList());
+            model.addAttribute("employees", employeeService.findAll());
+            model.addAttribute("formAction", "/projects/" + parentProjectId + "/create-project");
+            model.addAttribute("submitLabel", "Create");
+            model.addAttribute("errorMessage", ex.getMessage());
+            model.addAttribute("cancelUrl", "/projects/" + parentProjectId);
+            return "projects/project-form";
+        }
+    }
+
     @PostMapping("/{id}/delete")
     public String delete(@PathVariable int id, HttpSession session, Model model) {
         sessionHelper.isLoggedIn(session);
 
         try {
             projectService.delete(id);
-            return "redirect:projects/project-list";
+            return "redirect:/projects/table";
         } catch (ProjectNotFoundException ex) {
             model.addAttribute("errorMessage", ex.getMessage());
             return "error/404";
@@ -181,7 +223,7 @@ public class ProjectController {
             int employeeId = (int) session.getAttribute("employeeId");
             project.setProjectOwner(employeeService.findById(employeeId));
             projectService.update(id, project);
-            return "redirect:/projects/project-list";
+            return "redirect:/projects/" + id;
         } catch (ProjectNotFoundException ex) {
             model.addAttribute("errorMessage", ex.getMessage());
             return "error/404";

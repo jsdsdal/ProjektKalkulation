@@ -276,7 +276,9 @@ public class ProjectService {
     // forventet indtægt til projekt
     public BigDecimal getExpectedRevenueForProject(int projectId) {
         Project project = projectRepository.findById(projectId);
-        if (project == null) throw new ProjectNotFoundException(projectId);
+        if (project == null) {
+            throw new ProjectNotFoundException(projectId);
+        }
         if (project.getHourPrice() == null) return BigDecimal.ZERO;
 
         double totalHours = projectRepository.findTotalEstimatedHoursByProjectId(projectId);

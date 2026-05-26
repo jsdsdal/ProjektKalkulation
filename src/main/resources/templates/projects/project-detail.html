@@ -57,13 +57,21 @@
             <div class="stat-card-value">—</div>
             <div class="stat-card-sub">for now</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card"
+             th:with="days=${project.endDate != null} ? ${T(java.time.temporal.ChronoUnit).DAYS.between(T(java.time.LocalDate).now(), project.endDate)} : null"
+             th:classappend="${days == null}      ? ''
+                        : (${days < 0}        ? ' danger'
+                        : (${days <= 7}       ? ' danger'
+                        : (${days <= 30}      ? ' warning'
+                        :                       ' success')))">
             <div class="stat-card-label">Deadline</div>
             <div class="stat-card-value"
                  th:text="${project.endDate != null} ? ${project.endDate} : '—'">—</div>
             <div class="stat-card-sub"
-                 th:with="days=${project.endDate != null} ? ${T(java.time.temporal.ChronoUnit).DAYS.between(T(java.time.LocalDate).now(), project.endDate)} : null"
-                 th:text="${days != null and days >= 0} ? ${days} + ' days remaining' : 'Past deadline'">—</div>
+                 th:text="${days == null}   ? 'No deadline set'
+                    : (${days < 0}     ? 'Past deadline'
+                    : (${days == 0}    ? 'Due today'
+                    : ${days} + ' days remaining'))">—</div>
         </div>
         <div class="stat-card">
             <div class="stat-card-label">Total est. workload</div>

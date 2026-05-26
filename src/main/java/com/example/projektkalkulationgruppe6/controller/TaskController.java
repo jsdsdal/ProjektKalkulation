@@ -60,11 +60,12 @@ public class TaskController {
     @GetMapping("/create-task")
     public String showCreateForm(@PathVariable int projectId, HttpSession session, Model model) {
         sessionHelper.isLoggedIn(session);
+        int rootProjectId = projectService.findRootProjectIdById(projectId);
         model.addAttribute("task", new Task());
         model.addAttribute("formTitle", "Create task");
         model.addAttribute("formAction", "/projects/" + projectId + "/tasks/create-task");
         model.addAttribute("submitLabel", "Create");
-        model.addAttribute("cancelUrl", "/projects/table");
+        model.addAttribute("cancelUrl", "/projects/" + rootProjectId);
         model.addAttribute("allCompetencies", taskService.findAllCompetencies());
         model.addAttribute("allEmployees", employeeService.findAll());
         model.addAttribute("projectId", projectId);
@@ -85,11 +86,12 @@ public class TaskController {
                     employeeId != null ? employeeId : List.of());
             return "redirect:/projects/" + rootProjectId;
         } catch (InvalidTaskException | DatabaseOperationException ex) {
+            int rootProjectId = projectService.findRootProjectIdById(projectId);
             model.addAttribute("task", task);
             model.addAttribute("formTitle", "Create task");
             model.addAttribute("formAction", "/projects/" + projectId + "/tasks/create-task");
             model.addAttribute("submitLabel", "Create");
-            model.addAttribute("cancelUrl", "/projects/table");
+            model.addAttribute("cancelUrl", "/projects/" + rootProjectId);
             model.addAttribute("allCompetencies", taskService.findAllCompetencies());
             model.addAttribute("allEmployees", employeeService.findAll());
             model.addAttribute("errorMessage", ex.getMessage());
@@ -104,11 +106,12 @@ public class TaskController {
     public String showSubTaskCreateForm(@PathVariable int projectId, @PathVariable int parentTaskId,
                                         HttpSession session, Model model) {
         sessionHelper.isLoggedIn(session);
+        int rootProjectId = projectService.findRootProjectIdById(projectId);
         model.addAttribute("task", new Task());
         model.addAttribute("formTitle", "Create task");
         model.addAttribute("formAction", "/projects/" + projectId + "/tasks/" + parentTaskId +  "/create-task");
         model.addAttribute("submitLabel", "Create");
-        model.addAttribute("cancelUrl", "/projects/table");
+        model.addAttribute("cancelUrl", "/projects/" + rootProjectId);
         model.addAttribute("allCompetencies", taskService.findAllCompetencies());
         model.addAttribute("allEmployees", employeeService.findAll());
         model.addAttribute("projectId", projectId);
@@ -132,11 +135,12 @@ public class TaskController {
 
             return "redirect:/projects/" + rootProjectId;
         } catch (InvalidTaskException ex) {
+            int rootProjectId = projectService.findRootProjectIdById(projectId);
             model.addAttribute("task", task);
             model.addAttribute("formTitle", "Create task");
             model.addAttribute("formAction", "/projects/" + projectId + "/tasks/" + parentTaskId +  "/create-task");
             model.addAttribute("submitLabel", "Create");
-            model.addAttribute("cancelUrl", "/projects/table");
+            model.addAttribute("cancelUrl", "/projects/" + rootProjectId);
             model.addAttribute("allCompetencies", taskService.findAllCompetencies());
             model.addAttribute("allEmployees", employeeService.findAll());
             model.addAttribute("errorMessage", ex.getMessage());

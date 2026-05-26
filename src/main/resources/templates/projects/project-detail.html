@@ -13,7 +13,10 @@
 <!-- CONTENT -->
 <main class="main">
     <div class="page-header">
-        <h1 class="page-title" th:text="${project.title}">View Project</h1>
+        <div><h1 class="page-title" th:text="${project.title}">View Project</h1>
+        <p th:text="${project.description}">View Description</p>
+        <p style="color: #7A7A7A; font-size: 12px"> Project Owner:  <span th:text="${project.projectOwner.name}" style="color:#7A7A7A; font-size: 12px">Project Owner</span></p>
+        </div>
         <div>
         <a th:href="@{${createSubProjectUrl}}" class="btn-primary">+ NEW SUB PROJECT</a>
         <a th:href="@{${createTaskUrl}}" class="btn-primary">+ NEW TASK</a>
@@ -25,8 +28,7 @@
     <div class="tabs-row">
         <div class="tabs">
             <button class="tab active">Overview</button>
-            <button class="tab">Table</button>
-            <button class="tab">Employees</button>
+            <button class="tab">Team</button>
         </div>
         <div class="search-bar">
             <input type="text" placeholder="Search projects..."/>
@@ -35,9 +37,10 @@
     <!-- stats - fabrikeret / opsat -->
     <div class="stat-cards">
         <div class="stat-card">
-            <div class="stat-card-label">Active projects</div>
-            <div class="stat-card-value">0</div>
-            <div class="stat-card-sub">across all projects</div>
+            <div class="stat-card-label">Hourly Price</div>
+            <div class="stat-card-value"
+                 th:text="${project.hourPrice != null} ? ${#numbers.formatDecimal(project.hourPrice, 1, 0)} + ' DKK' : '—'">
+            </div>            <div class="stat-card-sub">Fixed-Price</div>
         </div>
         <div class="stat-card">
             <div class="stat-card-label">Tasks due this week</div>
@@ -45,14 +48,37 @@
             <div class="stat-card-sub">across all projects</div>
         </div>
         <div class="stat-card warning">
-            <div class="stat-card-label">Estimated hours this week</div>
+            <div class="stat-card-label">Forecasted Revenue</div>
             <div class="stat-card-value">—</div>
+            <div class="stat-card-sub">across all tasks</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-label">Actual Revenue</div>
+            <div class="stat-card-value">—</div>
+            <div class="stat-card-sub">for now</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-label">Deadline</div>
+            <div class="stat-card-value"
+                 th:text="${project.endDate != null} ? ${project.endDate} : '—'">—</div>
+            <div class="stat-card-sub"
+                 th:with="days=${project.endDate != null} ? ${T(java.time.temporal.ChronoUnit).DAYS.between(T(java.time.LocalDate).now(), project.endDate)} : null"
+                 th:text="${days != null and days >= 0} ? ${days} + ' days remaining' : 'Past deadline'">—</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-label">Total est. workload</div>
+            <div class="stat-card-value">0</div>
             <div class="stat-card-sub">across all projects</div>
         </div>
         <div class="stat-card">
-            <div class="stat-card-label">Over-allocated employees</div>
-            <div class="stat-card-value">—</div>
-            <div class="stat-card-sub">—</div>
+            <div class="stat-card-label">Actual workload</div>
+            <div class="stat-card-value">0</div>
+            <div class="stat-card-sub">across all projects</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-label">Status</div>
+            <div class="stat-card-value" th:text="${project.status}">Status Message</div>
+            <div class="stat-card-sub">across all projects</div>
         </div>
     </div>
 
@@ -89,7 +115,7 @@
 
                 </td>
 
-                <td class="td-mono">Subproject</td>
+                <td>Subproject</td>
                 <td>
                     <span class="badge"
                           th:classappend="${sub.status == 'Actual Hours Done'} ? ' badge-green'
@@ -100,10 +126,10 @@
                           th:text="${sub.status}">Status</span>
 
                 </td>
-                <td class="td-mono" th:text="${sub.startDate}">-</td>
-                <td class="td-mono" th:text="${sub.endDate}">-</td>
-                <td class="td-mono">-</td>
-                <td class="td-mono">-</td>
+                <td th:text="${sub.startDate}">-</td>
+                <td th:text="${sub.endDate}">-</td>
+                <td>-</td>
+                <td>-</td>
                 <td>
                     <!-- slet og rediger -->
                     <a th:href="@{${updateSubProjectUrl}(id=${sub.projectId})}"
@@ -119,19 +145,28 @@
             </th:block>
 
             <!-- Tasks direkte på projektet -->
-            <th:block th:replace="~{:: taskRows(${project.tasks}, 0)}" />
+            <th:block th:replace="~{:: taskRows(${project.tasks}, 0)}"/>
         <!-- Rekursivt fragment -->
         <th:block th:fragment="taskRows(tasks, depth)">
             <th:block th:each="task : ${tasks}">
                 <tr>
-                        <td class="td-title" th:style="'padding-left: ' + (${depth} * 30) + 'px'">
+                        <td class="td-title" th:style="'padding-left: ' + (14 + ${depth} * 30) + 'px'">
                             <button th:attr="popovertarget='task-' + ${task.taskId}" th:text="${task.title}">View Task</button>
                             <div th:replace="~{fragments :: taskModal(${task})}"></div>
                         </td>
 
                     <td th:text="${depth} == 0 ? 'Task' : 'Task'">Type</td>
-                    <td th:text="${task.endDate != null and task.endDate.isBefore(T(java.time.LocalDate).now())} ? 'Overdue' : 'On track'"></td>
-                    <td th:text="${task.startDate}"></td>
+                    <td>
+    <span class="badge"
+          th:with="status=${task.estimatedHours == 0 ? 'estimate' : (task.actualHours == 0 ? 'actual' : 'done')}"
+          th:classappend="${status == 'done'}     ? ' badge-green'
+                        : (${status == 'actual'}  ? ' badge-blue'
+                        :                          ' badge-yellow')"
+          th:text="${status == 'done'}    ? 'Done'
+                 : (${status == 'actual'} ? 'Needs Actual Hours'
+                 :                         'Needs Estimate')">
+    </span>
+                    </td>                    <td th:text="${task.startDate}"></td>
                     <td th:text="${task.endDate}"></td>
                     <td th:text="${task.estimatedHours}"></td>
                     <td th:text="${task.actualHours}">-</td>

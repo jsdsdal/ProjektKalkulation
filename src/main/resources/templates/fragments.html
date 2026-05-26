@@ -102,24 +102,6 @@
             <p th:if="${task.assignees == null or task.assignees.isEmpty()}"
                class="modal-missing">No team members assigned</p>
 
-            <div class="modal-dates">
-                <div>
-                    <p class="modal-label">Start Date</p>
-                    <p class="modal-value" th:text="${task.startDate}">—</p>
-                </div>
-                <div>
-                    <p class="modal-label">End Date</p>
-                    <p class="modal-value" th:text="${task.endDate}">—</p>
-                </div>
-                <div>
-                    <p class="modal-label">Estimated hours</p>
-                    <p class="modal-value" th:text="${task.estimatedHours > 0 ? task.estimatedHours + ' hours' : '—'}">—</p>
-                </div>
-                <div>
-                    <p class="modal-label">Actual hours</p>
-                    <p class="modal-value" th:text="${task.actualHours > 0 ? task.actualHours + ' hours' : '—'}">—</p>
-                </div>
-            </div>
         </div>
 
         <!-- HØJRE: Requirements -->
@@ -133,18 +115,42 @@
         </div>
     </div>
 
-    <!-- Deadline  -->
-    <div class="modal-status-bar">
-        <div class="modal-status-dot"
-             th:classappend="${task.endDate != null and task.endDate.isBefore(T(java.time.LocalDate).now())} ? ' modal-status-dot--overdue' : ' modal-status-dot--ok'">
+    <div class="modal-dates">
+        <div>
+            <p class="modal-label">Start Date</p>
+            <p class="modal-value" th:text="${task.startDate}">—</p>
         </div>
         <div>
+            <p class="modal-label">End Date</p>
+            <p class="modal-value" th:text="${task.endDate}">—</p>
+        </div>
+        <div>
+            <p class="modal-label">Estimated hours</p>
+            <p class="modal-value" th:text="${task.estimatedHours > 0 ? task.estimatedHours + ' hours' : '—'}">—</p>
+        </div>
+        <div>
+            <p class="modal-label">Actual hours</p>
+            <p class="modal-value" th:text="${task.actualHours > 0 ? task.actualHours + ' hours' : '—'}">—</p>
+        </div>
+    </div>
+
+    <!-- Status -->
+    <div class="modal-status-bar">
+        <div class="modal-status-dot"
+             th:with="status=${task.estimatedHours == 0 ? 'estimate' : (task.actualHours == 0 ? 'actual' : 'done')}"
+             th:classappend="${status == 'done'} ? ' modal-status-dot--ok' : ' modal-status-dot--overdue'">
+        </div>
+        <div th:with="status=${task.estimatedHours == 0 ? 'estimate' : (task.actualHours == 0 ? 'actual' : 'done')}">
             <p class="modal-status-label"
-               th:text="${task.endDate != null and task.endDate.isBefore(T(java.time.LocalDate).now())} ? 'Status: Overdue' : 'Status: On track'">
+               th:text="${status == 'estimate'} ? 'Needs an Estimate'
+                  : (${status == 'actual'} ? 'Needs Actual Hours'
+                  : 'Done')">
                 Status
             </p>
             <p class="modal-status-sub"
-               th:text="${task.endDate != null and task.endDate.isBefore(T(java.time.LocalDate).now())} ? 'Followup recommended' : ''">
+               th:text="${status == 'estimate'} ? 'Estimated hours not yet set'
+                  : (${status == 'actual'} ? 'Actual hours not yet logged'
+                  : '')">
             </p>
         </div>
     </div>
@@ -155,14 +161,14 @@
            class="modal-btn-edit">Edit</a>
         <form th:action="@{/projects/__${task.projectId}__/tasks/__${task.taskId}__/delete-task}"
               method="post" style="display:inline;"
-              onsubmit="return confirm('Slet denne opgave?')">
-            <button type="submit" class="btn-danger">Delete</button>
+              onsubmit="return confirm('Slet denne opgave?')" class="modal-btn-danger">
+            <button type="submit" class="modal-btn-danger">Delete</button>
         </form>
     </div>
 
 </div>
 
-<!-- POP-UP SUB-PROJECT -->
+<!-- SUBPROJECT POPUP -->
 <div th:fragment="subProjectModal(sub)"
      th:id="'subproject-' + ${sub.projectId}"
      popover
@@ -170,42 +176,124 @@
 
     <button th:attr="popovertarget='subproject-' + ${sub.projectId}"
             popovertargetaction="hide"
-            class="modal-close">×</button>
+            class="modal-close">&#x2715;</button>
 
-    <h2 th:text="${sub.title}">Title</h2>
-    <p th:text="${sub.description}">Description</p>
+    <h2 th:text="${sub.title}">Subproject Title</h2>
+    <p class="modal-description" th:text="${sub.description}">Description</p>
 
-    <div>
-        <a Create Task th:href="@{/projects/__${sub.projectId}__/tasks/create-task}">Create Task</a>
+    <div class="modal-body">
+
+        <!-- LEFT: Owner + dates -->
+        <div class="modal-left">
+            <h3 class="modal-section-title">Project Info</h3>
+
+            <div class="modal-assignee" th:if="${sub.projectOwner != null}">
+                <div class="modal-avatar">
+                    <span th:text="${#strings.substring(sub.projectOwner.name, 0, 1)}">?</span>
+                </div>
+                <div>
+                    <p class="modal-assignee-name" th:text="${sub.projectOwner.name}">Owner</p>
+                    <p class="modal-label">Project Owner</p>
+                </div>
+            </div>
+            <p th:if="${sub.projectOwner == null}" class="modal-missing">No project owner assigned</p>
+            <div>
+                <p class="modal-label">Tasks</p>
+                <p class="modal-value"
+                   th:text="${sub.tasks != null} ? ${#lists.size(sub.tasks)} + ' tasks' : '0 tasks'">0 tasks</p>
+            </div>
+        </div>
+
+        <!-- RIGHT: Status + tasks -->
+        <div class="modal-right">
+            <h3 class="modal-section-title">Overview</h3>
+            <div class="modal-dates">
+                <div>
+                    <p class="modal-label">Start Date</p>
+                    <p class="modal-value" th:text="${sub.startDate != null} ? ${sub.startDate} : '—'">—</p>
+                </div>
+                <div>
+                    <p class="modal-label">End Date</p>
+                    <p class="modal-value" th:text="${sub.endDate != null} ? ${sub.endDate} : '—'">—</p>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="detail-grid">
-        <div>
-            <label>Start Date</label>
-            <span th:text="${sub.startDate}">—</span>
+    <!-- Deadline status -->
+    <div class="modal-status-bar">
+        <div class="modal-status-dot"
+             th:classappend="${sub.status == 'Actual Hours Done'} ? ' modal-status-dot--ok' : ' modal-status-dot--overdue'">
         </div>
         <div>
-            <label>End Date</label>
-            <span th:text="${sub.endDate}">—</span>
+            <p class="modal-status-label" th:text="${sub.status}">Status</p>
+            <p class="modal-status-sub"
+               th:text="${sub.status == 'Actual Hours Done'}    ? 'All hours have been logged — project complete'
+                  : (${sub.status == 'Estimate Done'}       ? 'Estimates are ready — awaiting actual hours'
+                  : (${sub.status == 'Estimate in Progress'}? 'Hours are being estimated'
+                  : (${sub.status == 'Rejected'}            ? 'This subproject has been cancelled'
+                  : 'Work has not yet started')))">
+            </p>
         </div>
+    </div>
 
-        <div>
-            <label>Project Owner</label>
-            <span th:text="${sub.projectOwner != null ? sub.projectOwner.name : '-'}">—</span>
-        </div>
-
-        <div>
-            <label>Hour Price</label>
-            <span th:text="${sub.hourPrice}"></span>
-        </div>
-
-        <div>
-            <label>Status</label>
-            <span th:text="${sub.status}"></span>
-        </div>
+    <!-- Actions -->
+    <div class="modal-actions">
+        <a th:href="@{/projects/__${sub.projectId}__/edit-project}"
+           class="modal-btn-edit">Edit</a>
+        <form th:action="@{/projects/__${sub.projectId}__/delete-project}"
+              method="post" style="display:inline;"
+              onsubmit="return confirm('Slet dette subprojekt?')">
+            <button type="submit" class="btn-danger">Delete</button>
+        </form>
     </div>
 
 </div>
+
+<!--&lt;!&ndash; POP-UP SUB-PROJECT &ndash;&gt;-->
+<!--<div th:fragment="subProjectModal(sub)"-->
+<!--     th:id="'subproject-' + ${sub.projectId}"-->
+<!--     popover-->
+<!--     class="popup-modal">-->
+
+<!--    <button th:attr="popovertarget='subproject-' + ${sub.projectId}"-->
+<!--            popovertargetaction="hide"-->
+<!--            class="modal-close">×</button>-->
+
+<!--    <h2 th:text="${sub.title}">Title</h2>-->
+<!--    <p th:text="${sub.description}">Description</p>-->
+
+<!--    <div>-->
+<!--        <a Create Task th:href="@{/projects/__${sub.projectId}__/tasks/create-task}">Create Task</a>-->
+<!--    </div>-->
+
+<!--    <div class="detail-grid">-->
+<!--        <div>-->
+<!--            <label>Start Date</label>-->
+<!--            <span th:text="${sub.startDate}">—</span>-->
+<!--        </div>-->
+<!--        <div>-->
+<!--            <label>End Date</label>-->
+<!--            <span th:text="${sub.endDate}">—</span>-->
+<!--        </div>-->
+
+<!--        <div>-->
+<!--            <label>Project Owner</label>-->
+<!--            <span th:text="${sub.projectOwner != null ? sub.projectOwner.name : '-'}">—</span>-->
+<!--        </div>-->
+
+<!--        <div>-->
+<!--            <label>Hour Price</label>-->
+<!--            <span th:text="${sub.hourPrice}"></span>-->
+<!--        </div>-->
+
+<!--        <div>-->
+<!--            <label>Status</label>-->
+<!--            <span th:text="${sub.status}"></span>-->
+<!--        </div>-->
+<!--    </div>-->
+
+<!--</div>-->
 
 <!-- Page content -->
 <div class="content">

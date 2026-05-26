@@ -21,12 +21,12 @@
     <form th:action="${formAction}" th:object="${project}" method="post">
       <div class="field">
         <label for="title">Title</label>
-        <input id="title" type="text" th:field="*{title}" maxlength="50" placeholder="Indtast venligst"/>
+        <input id="title" type="text" th:field="*{title}" maxlength="50" placeholder="Title"/>
       </div>
 
       <div class="field">
         <label for="description">Description</label>
-        <textarea id="description" class="description-field" th:field="*{description}" maxlength="500" placeholder="Skriv venligst"></textarea>
+        <textarea id="description" class="description-field" th:field="*{description}" maxlength="500" placeholder="Type your description here…"></textarea>
       </div>
 
       <div class="field-row">
@@ -44,7 +44,7 @@
       <div class="field-row">
         <div class="field">
           <label for="hour_price">Hour Price</label>
-          <input id="hour_price" type="number" th:field="*{hourPrice}" placeholder="Indtast venligst" min="150"/>
+          <input id="hour_price" type="number" th:field="*{hourPrice}" placeholder="Enter an hourly price" min="150"/>
         </div>
 
         <div class="field">
@@ -58,16 +58,18 @@
           <label for="projectOwnerId">Project Owner</label>
           <select id="projectOwnerId" name="projectOwnerId">
             <option value="" disabled selected>Vælg Project Owner</option>
-            <option th:each="e : ${employees}" th:value="${e.getEmployeeId}" th:text="${e.getName}"></option>
+            <option th:each="e : ${employees}"
+                    th:value="${e.getEmployeeId}"
+                    th:text="${e.getName}"
+                    th:selected="${project.projectOwner != null and project.projectOwner.employeeId == e.employeeId}">
+            </option>
           </select>
         </div>
+
+        <div>
+          <input type="hidden" th:field="*{parentProjectId}"/>
+        </div>
       </div>
-
-
-
-
-
-
 
       <div class="form-actions">
         <button type="submit" class="btn-primary" th:text="${submitLabel}">Create</button>

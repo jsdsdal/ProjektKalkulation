@@ -20,12 +20,13 @@ import java.util.List;
 public class ProjectService {
     private final ProjectRepository projectRepository;
     private final TaskService taskService;
+    private final EmployeeService employeeService;
 
 
-
-    public ProjectService(ProjectRepository projectRepository, TaskService taskService) {
+    public ProjectService(ProjectRepository projectRepository, TaskService taskService, EmployeeService employeeService) {
         this.projectRepository = projectRepository;
         this.taskService = taskService;
+        this.employeeService = employeeService;
     }
 
     public List<Project> findAll() {
@@ -64,6 +65,9 @@ public class ProjectService {
         validateId(id);
 
         Project project = projectRepository.findById(id);
+        int employeeId = project.getProjectOwner().getEmployeeId();
+        project.setProjectOwner(employeeService.findById(employeeId));
+
         if (project == null) {
             throw new ProjectNotFoundException(id);
         }
@@ -103,6 +107,8 @@ public class ProjectService {
         for (Project p : projects) {
             List<Task> tasks = taskService.getTreesByProjectId(p.getProjectId());
             p.setTasks(tasks);
+            int employeeId = p.getProjectOwner().getEmployeeId();
+            p.setProjectOwner(employeeService.findById(employeeId));
         }
 
         Project parentProject = projects.getFirst();
@@ -352,6 +358,24 @@ public class ProjectService {
     public int getProjectsNeedingAttentionCount() {
         return projectRepository.countProjectsNeedingAttention();
     }
+
+    public double getTotalEstimatedHoursByProjectId(int projectId) {
+        validateId(projectId);
+        return projectRepository.findTotalEstimatedHoursByProjectId(projectId);
+    }
+
+    public double getTotalActualHoursByProjectId(int projectId) {
+        validateId(projectId);
+        return projectRepository.findTotalActualHoursByProjectId(projectId);
+    }
+
+    public double getRemainingHoursByProjectId(int projectId) {
+       validateId(projectId);
+        double estimatedHours = projectRepository.findTotalEstimatedHoursByProjectId(projectId);
+        double actualHours = projectRepository.findTotalActualHoursByProjectId(projectId);
+        return estimatedHours - actualHours;
+    }
+
 
 
 

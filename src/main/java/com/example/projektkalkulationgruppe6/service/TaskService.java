@@ -56,13 +56,13 @@ public class TaskService {
         try {
             Task savedTask = taskRepository.insert(task, projectId);
 
-            if (competenceIds !=null){
+            if (!competenceIds.isEmpty()){
                 for (int competenceId : competenceIds) {
                     taskRepository.addCompetenceToTask(savedTask.getTaskId(), competenceId);
                 }
             }
 
-            if (employeeIds !=null){
+            if (!employeeIds.isEmpty()){
                 for (int employeeId : employeeIds) {
                     taskRepository.addAssigneeToTask(savedTask.getTaskId(), employeeId);
                 }

@@ -234,7 +234,7 @@ input, select, textarea { font-family: inherit; }
 .stat-card.warning::before { background: var(--red); }
 
 .stat-card-label {
-    font-size: 12px;
+    font-size: 11px;
     color: var(--gray-500);
     font-weight: 400;
     margin-bottom: 6px;
@@ -242,8 +242,11 @@ input, select, textarea { font-family: inherit; }
     letter-spacing: .04em;
 }
 .stat-card-value {
-    font-size: 26px;
+    font-size: 18px;
     font-weight: 600;
+    padding-bottom: 2px;
+    padding-top: 2px;
+    padding-right: 2px;
     letter-spacing: -.02em;
     line-height: 1.1;
     margin-bottom: 4px;
@@ -602,7 +605,7 @@ input[type="checkbox"] {
 
 .auth-page-left {
     width: 50%;
-    background-image: url('/static/images/login.png');
+    background-image: url('/images/login.png');
     background-size: cover;
     background-position: center;
 }
@@ -690,6 +693,7 @@ input[type="checkbox"] {
 }
 
 .error-icon {
+    fill: var(--gray-500)
     margin-bottom: 32px;
 }
 
@@ -791,6 +795,7 @@ input[type="checkbox"] {
         grid-template-columns: 1fr 1fr;
         gap: 12px 24px;
         margin-top: 0;
+        margin-bottom: 20px;
     }
 
     h2 + .modal-description {

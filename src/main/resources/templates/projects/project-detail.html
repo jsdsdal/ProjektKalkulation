@@ -13,7 +13,10 @@
 <!-- CONTENT -->
 <main class="main">
     <div class="page-header">
-        <h1 class="page-title" th:text="${project.title}">View Project</h1>
+        <div><h1 class="page-title" th:text="${project.title}">View Project</h1>
+        <p th:text="${project.description}">View Description</p>
+        <p> af <span th:text="${project.projectOwner}">Project Owner</span></p>
+        </div>
         <div>
         <a th:href="@{${createSubProjectUrl}}" class="btn-primary">+ NEW SUB PROJECT</a>
         <a th:href="@{${createTaskUrl}}" class="btn-primary">+ NEW TASK</a>
@@ -35,9 +38,10 @@
     <!-- stats - fabrikeret / opsat -->
     <div class="stat-cards">
         <div class="stat-card">
-            <div class="stat-card-label">Active projects</div>
-            <div class="stat-card-value">0</div>
-            <div class="stat-card-sub">across all projects</div>
+            <div class="stat-card-label">Hourly Price</div>
+            <div class="stat-card-value"
+                 th:text="${project.hourPrice != null} ? ${#numbers.formatDecimal(project.hourPrice, 1, 0)} + ' DKK' : '—'">
+            </div>            <div class="stat-card-sub">Fixed-Price</div>
         </div>
         <div class="stat-card">
             <div class="stat-card-label">Tasks due this week</div>
@@ -53,6 +57,26 @@
             <div class="stat-card-label">Over-allocated employees</div>
             <div class="stat-card-value">—</div>
             <div class="stat-card-sub">—</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-label">Status</div>
+            <div class="stat-card-value" th:text="${project.status}">Status Message</div>
+            <div class="stat-card-sub">across all projects</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-label">Active projects</div>
+            <div class="stat-card-value">0</div>
+            <div class="stat-card-sub">across all projects</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-label">Active projects</div>
+            <div class="stat-card-value">0</div>
+            <div class="stat-card-sub">across all projects</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-label">Active projects</div>
+            <div class="stat-card-value">0</div>
+            <div class="stat-card-sub">across all projects</div>
         </div>
     </div>
 
@@ -89,7 +113,7 @@
 
                 </td>
 
-                <td class="td-mono">Subproject</td>
+                <td>Subproject</td>
                 <td>
                     <span class="badge"
                           th:classappend="${sub.status == 'Actual Hours Done'} ? ' badge-green'
@@ -100,10 +124,10 @@
                           th:text="${sub.status}">Status</span>
 
                 </td>
-                <td class="td-mono" th:text="${sub.startDate}">-</td>
-                <td class="td-mono" th:text="${sub.endDate}">-</td>
-                <td class="td-mono">-</td>
-                <td class="td-mono">-</td>
+                <td th:text="${sub.startDate}">-</td>
+                <td th:text="${sub.endDate}">-</td>
+                <td>-</td>
+                <td>-</td>
                 <td>
                     <!-- slet og rediger -->
                     <a th:href="@{${updateSubProjectUrl}(id=${sub.projectId})}"
@@ -119,7 +143,7 @@
             </th:block>
 
             <!-- Tasks direkte på projektet -->
-            <th:block th:replace="~{:: taskRows(${project.tasks}, 0)}" />
+            <th:block th:replace="~{:: taskRows(${project.tasks}, 0)}"/>
         <!-- Rekursivt fragment -->
         <th:block th:fragment="taskRows(tasks, depth)">
             <th:block th:each="task : ${tasks}">

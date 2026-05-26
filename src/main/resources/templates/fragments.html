@@ -155,8 +155,8 @@
            class="modal-btn-edit">Edit</a>
         <form th:action="@{/projects/__${task.projectId}__/tasks/__${task.taskId}__/delete-task}"
               method="post" style="display:inline;"
-              onsubmit="return confirm('Slet denne opgave?')">
-            <button type="submit" class="btn-danger">Delete</button>
+              onsubmit="return confirm('Slet denne opgave?')" class="modal-btn-danger">
+            <button type="submit" class="modal-btn-danger">Delete</button>
         </form>
     </div>
 

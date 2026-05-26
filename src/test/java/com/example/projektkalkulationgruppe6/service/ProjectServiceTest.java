@@ -17,6 +17,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -27,7 +28,11 @@ class ProjectServiceTest {
     @Mock
     private ProjectRepository projectRepository;
 
+    @Mock
+    private EmployeeService employeeService;
+
     @InjectMocks ProjectService projectService;
+
 
     Project mainTestProject = new Project(
             null,
@@ -52,7 +57,7 @@ class ProjectServiceTest {
     @Test
     void ThrowInvalidProjectExceptionDueToEmptyProject() {
         Project p = new Project();
-        assertThrows(InvalidProjectException.class, () -> projectService.create(p));
+        assertThrows(InvalidProjectException.class, () -> projectService.create(p, 1));
     }
 
 
@@ -60,35 +65,40 @@ class ProjectServiceTest {
     @Test
     void ThrowInvalidProjectExceptionDueToEmptyProjectTitle() {
         Project p = mainTestProject;
-        assertDoesNotThrow(() -> projectService.create(p));
+        assertDoesNotThrow(() -> projectService.create(p, 1));
 
         p.setTitle("");
-        assertThrows(InvalidProjectException.class, () -> projectService.create(p));
+        assertThrows(InvalidProjectException.class, () -> projectService.create(p, 1));
     }
 
     @Test
     void ThrowInvalidProjectExceptionDueToEmptyProjectStatus() {
         Project p = mainTestProject;
-        assertDoesNotThrow(() -> projectService.create(p));
+        when(employeeService.findById(1)).thenReturn(
+                new Employee(1, "Lars", "test@test.dk", "1234", List.of("sql"))
+        );
+        assertDoesNotThrow(() -> projectService.create(p, 1));
 
         p.setStatus("");
-        assertThrows(InvalidProjectException.class, () -> projectService.create(p));
+        assertThrows(InvalidProjectException.class, () -> projectService.create(p, 1));
     }
 
     @Test
     void ThrowInvalidProjectExceptionDueToEmptyProjectOwner() {
         Project p = mainTestProject;
-        assertDoesNotThrow(() -> projectService.create(p));
+        when(employeeService.findById(1)).thenReturn(
+                new Employee(1, "Test Bruger", "email", "password",
+                        List.of("Java", "SQL")));
+        assertDoesNotThrow(() -> projectService.create(p, 1));
 
-        p.setProjectOwner(new Employee());
-        assertThrows(InvalidProjectException.class, () -> projectService.create(p));
+        assertThrows(InvalidProjectException.class, () -> projectService.create(p,null));
     }
 
     @Test
     void ThrowDatabaseOperationExceptionOnDataAccessException() {
         Project p = mainTestProject;
         when(projectRepository.insert(p)).thenThrow(new EmptyResultDataAccessException(10));
-        assertThrows(DatabaseOperationException.class, () -> projectService.create(p));
+        assertThrows(DatabaseOperationException.class, () -> projectService.create(p, 1));
     }
 
 

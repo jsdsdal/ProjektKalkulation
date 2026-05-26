@@ -135,7 +135,7 @@ class ProjectControllerTest {
         Project p1Return = p1;
         p1Return.setProjectId(1);
 
-        when(projectService.create(any(Project.class))).thenReturn(p1Return);
+        when(projectService.create(any(Project.class), any(Integer.class))).thenReturn(p1Return);
         when(employeeService.findById(1)).thenReturn(
                 new Employee(1, "Lars", "test@test.dk", "1234", List.of("sql"))
         );
@@ -153,7 +153,8 @@ class ProjectControllerTest {
             .andExpect(redirectedUrl("/projects/table"));
 
         ArgumentCaptor<Project> captor = ArgumentCaptor.forClass(Project.class);
-        verify(projectService).create(captor.capture());
+        ArgumentCaptor<Integer> ownerIdCaptor = ArgumentCaptor.forClass(Integer.class);
+        verify(projectService).create(captor.capture(), ownerIdCaptor.capture());
 
         Project captured = captor.getValue();
         assertThat(captured.getTitle()).isEqualTo("Test1");
@@ -161,7 +162,7 @@ class ProjectControllerTest {
         assertThat(captured.getStartDate()).isEqualTo(LocalDate.of(2026,6,1));
         assertThat(captured.getEndDate()).isEqualTo(LocalDate.of(2026,12,1));
         assertThat(captured.getHourPrice()).isEqualByComparingTo(new BigDecimal("1200.00"));
-        assertThat(captured.getProjectOwner().getEmployeeId()).isEqualTo(1);
+        assertThat(ownerIdCaptor.getValue()).isEqualTo(1);
     }
 
     @Test
@@ -169,7 +170,8 @@ class ProjectControllerTest {
         Project p1Return = p1;
         p1Return.setProjectId(1);
 
-        doThrow(new InvalidProjectException("Project problem")).when(projectService).create(any(Project.class));
+        doThrow(new InvalidProjectException("Project problem")).when(projectService)
+                .create(any(Project.class), any(Integer.class));
 
         when(employeeService.findById(1)).thenReturn(
                 new Employee(1, "Lars", "test@test.dk", "1234", List.of("sql"))

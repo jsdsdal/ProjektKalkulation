@@ -38,7 +38,7 @@ public class DashboardController {
         model.addAttribute("forecastedRevenue", projectService.getQuarterlyEstimatedRevenue(year, quarter));
         model.addAttribute("actualRevenue", projectService.getQuarterlyActualRevenue(year, quarter));
         model.addAttribute("annualRevenue", projectService.getAnnualRevenue(year));
-        model.addAttribute("projectsNeedingAttention", projectService.getProjectsNeedingAttentionCount());
+        model.addAttribute("projectsNeedingAttention", projectService.getProjectsNeedingAttention());
 
         return "dashboard";
     }

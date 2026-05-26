@@ -14,6 +14,10 @@ import org.springframework.ui.Model;
 import org.springframework.util.PathMatcher;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @Controller
 @RequestMapping("/projects")
 public class ProjectController {
@@ -37,7 +41,21 @@ public class ProjectController {
     public String list(Model model, HttpSession session) {
         sessionHelper.isLoggedIn(session);
 
-        model.addAttribute("projects", projectService.findAll());
+        List<Project> projects = projectService.findAll();
+
+        // build per-project hour maps for the table
+        Map<Integer, Double> estimatedHoursByProject = new HashMap<>();
+        Map<Integer, Double> actualHoursByProject = new HashMap<>();
+        for (Project p : projects) {
+            estimatedHoursByProject.put(p.getProjectId(),
+                    projectService.getTotalEstimatedHoursByProjectId(p.getProjectId()));
+            actualHoursByProject.put(p.getProjectId(),
+                    projectService.getTotalActualHoursByProjectId(p.getProjectId()));
+        }
+
+        model.addAttribute("projects", projects);
+        model.addAttribute("estimatedHoursByProject", estimatedHoursByProject);
+        model.addAttribute("actualHoursByProject", actualHoursByProject);
         model.addAttribute("viewProjectUrl", "/projects/");
         model.addAttribute("createProjectUrl", "/projects/create-project");
         model.addAttribute("editProjectUrl", "/projects/{id}/edit-project");
@@ -48,9 +66,7 @@ public class ProjectController {
         model.addAttribute("totalTasks", taskService.getAllTaskCount());
         model.addAttribute("estimatedHoursThisWeek", taskService.getEstimatedHoursThisWeek());
 
-
         return "projects/project-list";
-
     }
 
     @GetMapping("/{id}")

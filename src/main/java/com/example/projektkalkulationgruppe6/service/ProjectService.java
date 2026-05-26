@@ -382,8 +382,18 @@ public class ProjectService {
         return projectRepository.countActiveProjects();
     }
 
-    public List<Project> getProjectsNeedingAttentionCount() {
+    // antal projekter
+    public int getProjectsNeedingAttentionCount() {
         return projectRepository.countProjectsNeedingAttention();
+    }
+
+    // liste af projekter
+    public List<Project> getProjectsNeedingAttention() {
+        try {
+            return projectRepository.findProjectsNeedingAttention();
+        } catch (DataAccessException ex) {
+            throw new DatabaseOperationException("Could not load projects needing attention.", ex);
+        }
     }
 
     public double getTotalEstimatedHoursByProjectId(int projectId) {

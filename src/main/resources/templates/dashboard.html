@@ -45,9 +45,25 @@
 
 
     <div class="dashboard-bottom">
-
         <div class="stat-card-table">
             <h3 class="stat-card-table-title">Projects requiring attention</h3>
+            <div th:if="${#lists.isEmpty(projectsNeedingAttention)}"
+                 style="padding: 20px 0; color: var(--gray-500); font-size: 13px;">
+                No projects currently need attention.
+            </div>
+            <div class="stat-card-table-row"
+                 th:each="project : ${projectsNeedingAttention}">
+                <a th:href="@{/projects/{id}(id=${project.projectId})}"
+                   th:text="${project.title}"
+                   style="font-weight: 500; font-size: 14px;">Project</a>
+                <span class="badge"
+                      th:classappend="${project.status == 'Actual Hours Done'} ? ' badge-green'
+                                     : (${project.status == 'Estimate in Progress'} ? ' badge-yellow'
+                                     : (${project.status == 'Rejected'} ? ' badge-red'
+                                     : (${project.status == 'Not Started'} ? ' badge-gray'
+                                     : ' badge-blue')))"
+                      th:text="${project.status}">Status</span>
+            </div>
         </div>
 
         <div class="stat-card-table">

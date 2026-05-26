@@ -382,7 +382,7 @@ public class ProjectService {
         return projectRepository.countActiveProjects();
     }
 
-    public int getProjectsNeedingAttentionCount() {
+    public List<Project> getProjectsNeedingAttentionCount() {
         return projectRepository.countProjectsNeedingAttention();
     }
 

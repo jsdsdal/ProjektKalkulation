@@ -21,7 +21,56 @@
            th:classappend="${activePage == 'profile'} ? ' active'">My Profile</a>
     </nav>
 </aside>
+<!--&lt;!&ndash; POP-UP TASK &ndash;&gt;-->
+<!--<div th:fragment="taskModal(task)"-->
+<!--     th:id="'task-' + ${task.taskId}"-->
+<!--     popover-->
+<!--     class="popup-modal">-->
+
+<!--    <button th:attr="popovertarget='task-' + ${task.taskId}"-->
+<!--            popovertargetaction="hide"-->
+<!--            class="modal-close">×</button>-->
+
+<!--    <h2 th:text="${task.title}">Title</h2>-->
+<!--    <p th:text="${task.description}">Description</p>-->
+
+
+<!--    <div>-->
+<!--        <a Create Task th:href="@{/projects/__${task.projectId}__/tasks/__${task.taskId}__/create-task}">Create Task</a>-->
+<!--    </div>-->
+
+<!--    <div class="detail-grid">-->
+<!--        <div>-->
+<!--            <label>Start Date</label>-->
+<!--            <span th:text="${task.startDate}">—</span>-->
+
+<!--            <label>Estimated Hours</label>-->
+<!--            <span th:text="${task.estimatedHours + ' hours'}">—</span>-->
+<!--        </div>-->
+<!--        <div>-->
+<!--            <label>End Date</label>-->
+<!--            <span th:text="${task.endDate}">—</span>-->
+
+<!--            <label>Actual Hours</label>-->
+<!--            <span th:text="${task.actualHours > 0 ? task.actualHours + ' hours' : '—'}">—</span>-->
+<!--        </div>-->
+
+<!--        <div>-->
+<!--            <label>Assignes</label>-->
+<!--            <span th:text="${task.assignees}">-</span>-->
+<!--        </div>-->
+
+<!--        <div>-->
+<!--            <label>Competencies</label>-->
+<!--            <span th:text="${task.competencies}">-</span>-->
+<!--        </div>-->
+
+<!--    </div>-->
+
+<!--</div>-->
+
 <!-- POP-UP TASK -->
+
 <div th:fragment="taskModal(task)"
      th:id="'task-' + ${task.taskId}"
      popover
@@ -31,40 +80,84 @@
             popovertargetaction="hide"
             class="modal-close">×</button>
 
-    <h2 th:text="${task.title}">Title</h2>
-    <p th:text="${task.description}">Description</p>
+    <h2 th:text="${task.title}">Task Title</h2>
+    <p class="modal-description" th:text="${task.description}">Description</p>
 
+    <div class="modal-body">
 
-    <div>
-        <a Create Task th:href="@{/projects/__${task.projectId}__/tasks/__${task.taskId}__/create-task}">Create Task</a>
+        <!-- VENSTRE: Team + dato -->
+        <div class="modal-left">
+            <h3 class="modal-section-title">Task Team</h3>
+
+            <div th:if="${task.assignees != null and !task.assignees.isEmpty()}">
+                <div th:each="assignee : ${task.assignees}" class="modal-assignee">
+                    <div class="modal-avatar">
+                        <span th:text="${#strings.substring(assignee.name, 0, 1)}">?</span>
+                    </div>
+                    <div>
+                        <p class="modal-assignee-name" th:text="${assignee.name}">Name</p>
+                    </div>
+                </div>
+            </div>
+            <p th:if="${task.assignees == null or task.assignees.isEmpty()}"
+               class="modal-missing">No team members assigned</p>
+
+            <div class="modal-dates">
+                <div>
+                    <p class="modal-label">Start Date</p>
+                    <p class="modal-value" th:text="${task.startDate}">—</p>
+                </div>
+                <div>
+                    <p class="modal-label">End Date</p>
+                    <p class="modal-value" th:text="${task.endDate}">—</p>
+                </div>
+                <div>
+                    <p class="modal-label">Estimated hours</p>
+                    <p class="modal-value" th:text="${task.estimatedHours > 0 ? task.estimatedHours + ' hours' : '—'}">—</p>
+                </div>
+                <div>
+                    <p class="modal-label">Actual hours</p>
+                    <p class="modal-value" th:text="${task.actualHours > 0 ? task.actualHours + ' hours' : '—'}">—</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- HØJRE: Requirements -->
+        <div class="modal-right">
+            <h3 class="modal-section-title">Requirements</h3>
+            <div th:if="${task.competencies != null and !task.competencies.isEmpty()}" class="modal-tags">
+                <span th:each="comp : ${task.competencies}" class="modal-tag" th:text="${comp}">Tag</span>
+            </div>
+            <p th:if="${task.competencies == null or task.competencies.isEmpty()}"
+               class="modal-missing">No requirements set</p>
+        </div>
     </div>
 
-    <div class="detail-grid">
-        <div>
-            <label>Start Date</label>
-            <span th:text="${task.startDate}">—</span>
-
-            <label>Estimated Hours</label>
-            <span th:text="${task.estimatedHours + ' hours'}">—</span>
+    <!-- Deadline  -->
+    <div class="modal-status-bar">
+        <div class="modal-status-dot"
+             th:classappend="${task.endDate != null and task.endDate.isBefore(T(java.time.LocalDate).now())} ? ' modal-status-dot--overdue' : ' modal-status-dot--ok'">
         </div>
         <div>
-            <label>End Date</label>
-            <span th:text="${task.endDate}">—</span>
-
-            <label>Actual Hours</label>
-            <span th:text="${task.actualHours > 0 ? task.actualHours + ' hours' : '—'}">—</span>
+            <p class="modal-status-label"
+               th:text="${task.endDate != null and task.endDate.isBefore(T(java.time.LocalDate).now())} ? 'Status: Overdue' : 'Status: On track'">
+                Status
+            </p>
+            <p class="modal-status-sub"
+               th:text="${task.endDate != null and task.endDate.isBefore(T(java.time.LocalDate).now())} ? 'Followup recommended' : ''">
+            </p>
         </div>
+    </div>
 
-        <div>
-            <label>Assignes</label>
-            <span th:text="${task.assignees}">-</span>
-        </div>
-
-        <div>
-            <label>Competencies</label>
-            <span th:text="${task.competencies}">-</span>
-        </div>
-
+    <!-- Actions -->
+    <div class="modal-actions">
+        <a th:href="@{/projects/__${task.projectId}__/tasks/__${task.taskId}__/edit-task}"
+           class="modal-btn-edit">Edit</a>
+        <form th:action="@{/projects/__${task.projectId}__/tasks/__${task.taskId}__/delete-task}"
+              method="post" style="display:inline;"
+              onsubmit="return confirm('Slet denne opgave?')">
+            <button type="submit" class="btn-danger">Delete</button>
+        </form>
     </div>
 
 </div>

@@ -108,6 +108,18 @@ input, select, textarea { font-family: inherit; }
 .sidebar-link-group .sidebar-link { justify-content: space-between; }
 .sidebar-chevron { margin-left: auto; }
 
+.logout-form {
+    margin-top: auto;
+}
+
+.sidebar-logout {
+    width: 100%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+}
+
 /* ── Main content area ──────────────────────────────────────── */
 .main {
     margin-left: var(--sidebar-w);
@@ -213,7 +225,7 @@ input, select, textarea { font-family: inherit; }
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 16px;
-    margin-bottom: 36px;
+    margin-bottom: 28px;
 }
 
 .stat-card {

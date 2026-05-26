@@ -26,53 +26,6 @@
         </form>
     </nav>
 </aside>
-<!--&lt;!&ndash; POP-UP TASK &ndash;&gt;-->
-<!--<div th:fragment="taskModal(task)"-->
-<!--     th:id="'task-' + ${task.taskId}"-->
-<!--     popover-->
-<!--     class="popup-modal">-->
-
-<!--    <button th:attr="popovertarget='task-' + ${task.taskId}"-->
-<!--            popovertargetaction="hide"-->
-<!--            class="modal-close">×</button>-->
-
-<!--    <h2 th:text="${task.title}">Title</h2>-->
-<!--    <p th:text="${task.description}">Description</p>-->
-
-
-<!--    <div>-->
-<!--        <a Create Task th:href="@{/projects/__${task.projectId}__/tasks/__${task.taskId}__/create-task}">Create Task</a>-->
-<!--    </div>-->
-
-<!--    <div class="detail-grid">-->
-<!--        <div>-->
-<!--            <label>Start Date</label>-->
-<!--            <span th:text="${task.startDate}">—</span>-->
-
-<!--            <label>Estimated Hours</label>-->
-<!--            <span th:text="${task.estimatedHours + ' hours'}">—</span>-->
-<!--        </div>-->
-<!--        <div>-->
-<!--            <label>End Date</label>-->
-<!--            <span th:text="${task.endDate}">—</span>-->
-
-<!--            <label>Actual Hours</label>-->
-<!--            <span th:text="${task.actualHours > 0 ? task.actualHours + ' hours' : '—'}">—</span>-->
-<!--        </div>-->
-
-<!--        <div>-->
-<!--            <label>Assignes</label>-->
-<!--            <span th:text="${task.assignees}">-</span>-->
-<!--        </div>-->
-
-<!--        <div>-->
-<!--            <label>Competencies</label>-->
-<!--            <span th:text="${task.competencies}">-</span>-->
-<!--        </div>-->
-
-<!--    </div>-->
-
-<!--</div>-->
 
 <!-- POP-UP TASK -->
 
@@ -257,56 +210,11 @@
         <form th:action="@{/projects/__${sub.projectId}__/delete-project}"
               method="post" style="display:inline;"
               onsubmit="return confirm('Slet dette subprojekt?')">
-            <button type="submit" class="btn-danger">Delete</button>
+            <button type="submit" class="modal-btn-danger">Delete</button>
         </form>
     </div>
 
 </div>
-
-<!--&lt;!&ndash; POP-UP SUB-PROJECT &ndash;&gt;-->
-<!--<div th:fragment="subProjectModal(sub)"-->
-<!--     th:id="'subproject-' + ${sub.projectId}"-->
-<!--     popover-->
-<!--     class="popup-modal">-->
-
-<!--    <button th:attr="popovertarget='subproject-' + ${sub.projectId}"-->
-<!--            popovertargetaction="hide"-->
-<!--            class="modal-close">×</button>-->
-
-<!--    <h2 th:text="${sub.title}">Title</h2>-->
-<!--    <p th:text="${sub.description}">Description</p>-->
-
-<!--    <div>-->
-<!--        <a Create Task th:href="@{/projects/__${sub.projectId}__/tasks/create-task}">Create Task</a>-->
-<!--    </div>-->
-
-<!--    <div class="detail-grid">-->
-<!--        <div>-->
-<!--            <label>Start Date</label>-->
-<!--            <span th:text="${sub.startDate}">—</span>-->
-<!--        </div>-->
-<!--        <div>-->
-<!--            <label>End Date</label>-->
-<!--            <span th:text="${sub.endDate}">—</span>-->
-<!--        </div>-->
-
-<!--        <div>-->
-<!--            <label>Project Owner</label>-->
-<!--            <span th:text="${sub.projectOwner != null ? sub.projectOwner.name : '-'}">—</span>-->
-<!--        </div>-->
-
-<!--        <div>-->
-<!--            <label>Hour Price</label>-->
-<!--            <span th:text="${sub.hourPrice}"></span>-->
-<!--        </div>-->
-
-<!--        <div>-->
-<!--            <label>Status</label>-->
-<!--            <span th:text="${sub.status}"></span>-->
-<!--        </div>-->
-<!--    </div>-->
-
-<!--</div>-->
 
 <!-- Page content -->
 <div class="content">

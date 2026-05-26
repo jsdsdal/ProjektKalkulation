@@ -35,6 +35,7 @@
                      name="competenceId"
                      th:value="${c.id}"
                      th:id="${'competence-' + c.id}"
+                     th:checked="${task.competencies != null and task.competencies.contains(c.title)}"
                      class="selector-checkbox"/>
               <label th:for="${'competence-' + c.id}"
                      class="selector-btn"
@@ -51,6 +52,7 @@
                      name="employeeId"
                      th:value="${e.employeeId}"
                      th:id="${'employee-' + e.employeeId}"
+                     th:checked="${task.assignees != null and task.assignees.![employeeId].contains(e.employeeId)}"
                      class="selector-checkbox"/>
               <label th:for="${'employee-' + e.employeeId}"
                      class="selector-btn"

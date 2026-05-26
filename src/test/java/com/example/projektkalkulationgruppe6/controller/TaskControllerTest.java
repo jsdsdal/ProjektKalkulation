@@ -117,8 +117,9 @@ class TaskControllerTest {
 
     @Test
     void deleteTaskShouldRedirectToList() throws Exception {
-        mockMvc.perform(post("/projects/1/tasks/1/delete"))
+        when(projectService.findRootProjectIdById(1)).thenReturn(1);
+        mockMvc.perform(post("/projects/1/tasks/1/delete-task"))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/projects/1/tasks/list"));
+                .andExpect(redirectedUrl("/projects/1"));
     }
 }

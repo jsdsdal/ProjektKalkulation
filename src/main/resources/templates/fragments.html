@@ -19,6 +19,11 @@
            th:classappend="${activePage == 'employees'} ? ' active'">Employees</a>
         <a th:href="@{/profile}" class="sidebar-link"
            th:classappend="${activePage == 'profile'} ? ' active'">My Profile</a>
+        <form th:action="@{/login/logout}" method="post" class="logout-form">
+            <button type="submit" class="sidebar-link sidebar-logout">
+                Log Out
+            </button>
+        </form>
     </nav>
 </aside>
 <!--&lt;!&ndash; POP-UP TASK &ndash;&gt;-->

@@ -163,7 +163,8 @@ public class ProjectService {
             throw new InvalidProjectException("Project Title cannot be longer than 50 characters");
         }
 
-        if (project.getDescription().length() > 500) {
+        String description = project.getDescription();
+        if (description != null && description.length() > 500) {
             throw new InvalidProjectException("Project Description cannot be longer than 500 characters");
         }
 
@@ -187,9 +188,6 @@ public class ProjectService {
         if (projectOwnerId == null) {
             throw new InvalidProjectException("Project Owner is a mandatory field");
         }
-
-        //OBS: Mangler validering af project Owner
-
     }
 
     @Transactional

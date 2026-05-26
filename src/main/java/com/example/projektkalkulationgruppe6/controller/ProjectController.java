@@ -33,15 +33,6 @@ public class ProjectController {
     }
 
 
-    // TODO: fjern debug endpoint
-    @GetMapping("/debug/{id}")
-    @ResponseBody
-    public String debug(@PathVariable int id) {
-        Project project = projectService.findById(id);
-        System.out.println(project);
-        return "<pre>" + project.toString() + "</pre>";
-    }
-
     @GetMapping("/table")
     public String list(Model model, HttpSession session) {
         sessionHelper.isLoggedIn(session);

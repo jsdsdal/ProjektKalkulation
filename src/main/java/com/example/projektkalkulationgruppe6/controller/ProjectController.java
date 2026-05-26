@@ -31,7 +31,7 @@ public class ProjectController {
         this.sessionHelper = sessionHelper;
         this.pathMatcher = pathMatcher;
     }
-
+//TEST
 
     // TODO: fjern debug endpoint
     @GetMapping("/debug/{id}")

@@ -158,6 +158,14 @@ public class ProjectService {
             throw new InvalidProjectException("Project Title is a mandatory field");
         }
 
+        if (title.length() > 50) {
+            throw new InvalidProjectException("Project Title cannot be longer than 50 characters");
+        }
+
+        if (project.getDescription().length() > 500) {
+            throw new InvalidProjectException("Project Description cannot be longer than 500 characters");
+        }
+
         String status = project.getStatus();
         if (status == null || status.isBlank() ) {
             throw new InvalidProjectException("Project Status is a mandatory field");

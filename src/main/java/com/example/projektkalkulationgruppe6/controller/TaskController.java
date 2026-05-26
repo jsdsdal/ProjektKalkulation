@@ -168,14 +168,43 @@ public class TaskController {
     }
 
     @PostMapping("/{id}/edit-task")
-    public String update(@PathVariable int projectId, @PathVariable int id, @ModelAttribute Task task, Model model) {
+    public String update(@PathVariable int projectId, @PathVariable int id,
+                         @ModelAttribute Task task,
+                         @RequestParam(required = false) List<Integer> competenceId,
+                         @RequestParam(required = false) List<Integer> employeeId,
+                         Model model) {
         task.setTaskId(id);
         int rootProjectId = projectService.findRootProjectIdById(projectId);
 
         try {
             taskService.update(task);
+
+            // Sync competencies
+            Task current = taskService.findById(id);
+            if (current.getCompetencies() != null) {
+                for (String title : current.getCompetencies()) {
+                    taskService.findAllCompetencies().stream()
+                            .filter(c -> c.title().equals(title))
+                            .findFirst()
+                            .ifPresent(c -> taskService.removeCompetenceFromTask(id, c.id()));
+                }
+            }
+            if (competenceId != null) {
+                for (int cId : competenceId) taskService.addCompetenceToTask(id, cId);
+            }
+
+            // Sync assignees
+            if (current.getAssignees() != null) {
+                for (var assignee : current.getAssignees()) {
+                    taskService.removeAssigneeFromTask(id, assignee.getEmployeeId());
+                }
+            }
+            if (employeeId != null) {
+                for (int eId : employeeId) taskService.addAssigneeToTask(id, eId);
+            }
+
             return "redirect:/projects/" + rootProjectId;
-        } catch (InvalidTaskException ex) {
+        } catch (InvalidTaskException | TaskNotFoundException | DatabaseOperationException ex) {
             model.addAttribute("task", task);
             model.addAttribute("formTitle", "Edit task");
             model.addAttribute("formAction", "/projects/" + projectId + "/tasks/" + id + "/edit-task");
@@ -184,7 +213,6 @@ public class TaskController {
             model.addAttribute("allCompetencies", taskService.findAllCompetencies());
             model.addAttribute("allEmployees", employeeService.findAll());
             model.addAttribute("errorMessage", ex.getMessage());
-
             return "tasks/task-form";
         }
     }

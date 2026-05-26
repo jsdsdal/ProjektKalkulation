@@ -126,6 +126,14 @@ public class TaskService {
             }
         }
 
+        if (task.getStartDate() == null) {
+            throw new InvalidTaskException("Start date is required.");
+        }
+
+        if (task.getEndDate() == null) {
+            throw new InvalidTaskException("End date is required.");
+        }
+
         if (task.getEstimatedHours() < 0) {
             throw new InvalidTaskException("Estimated hours cannot be negative");
         }

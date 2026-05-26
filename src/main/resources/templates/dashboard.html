@@ -65,12 +65,19 @@
                       th:text="${project.status}">Status</span>
             </div>
         </div>
-
         <div class="stat-card-table">
             <h3 class="stat-card-table-title">Resource load per employee</h3>
-            <div class="stat-card-table-row" th:each="row : ${resourceLoad}">
-                <span class="td-title" th:text="${#strings.arraySplit(row, '|')[0]}"></span>
-                <span class="td-mono" th:text="${#strings.arraySplit(row, '|')[1] + '%'}"></span>
+            <div th:if="${#lists.isEmpty(resourceLoad)}"
+                 style="padding: 20px 0; color: var(--gray-500); font-size: 13px;">
+                No employees allocated this month.
+            </div>
+            <div class="stat-card-table-row"
+                 th:each="row, iter : ${resourceLoad}"
+                 th:if="${iter.index < 5}">
+                <span class="td-title"
+                      th:text="${#strings.arraySplit(row, '|')[0]}"></span>
+                <span class="td-mono"
+                      th:text="${#strings.arraySplit(row, '|')[1]} + '%'"></span>
             </div>
         </div>
 

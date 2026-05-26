@@ -69,12 +69,15 @@ public class ProjectService {
         validateId(id);
 
         Project project = projectRepository.findById(id);
-        int employeeId = project.getProjectOwner().getEmployeeId();
-        project.setProjectOwner(employeeService.findById(employeeId));
 
         if (project == null) {
             throw new ProjectNotFoundException(id);
         }
+
+        int employeeId = project.getProjectOwner().getEmployeeId();
+        project.setProjectOwner(employeeService.findById(employeeId));
+
+
         
         if (project.getParentProjectId() != null) {
             return project;
@@ -87,22 +90,16 @@ public class ProjectService {
         }
 
         return project;
-
-
     }
 
     private Project getTreeById(int id) {
-        List<Project> projects = new ArrayList<>();
-
-
+        List<Project> projects;
 
         try {
             projects = projectRepository.findParentAndChildrenById(id);
         } catch (DataAccessException ex) {
             throw new DatabaseOperationException("Error: The Project could not be loaded.", ex);
         }
-
-
 
         if (projects.isEmpty()) {
             throw new ProjectNotFoundException(id);

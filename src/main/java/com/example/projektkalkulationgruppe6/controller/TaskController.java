@@ -199,34 +199,34 @@ public class TaskController {
         int rootProjectId = projectService.findRootProjectIdById(projectId);
         return "redirect:/projects/" + rootProjectId;
     }
-
-    @PostMapping("/{taskId}/assignee/add")
-    public String addAssignee(@PathVariable int projectId, @PathVariable int taskId,
-                              @RequestParam int employeeId) {
-        taskService.addAssigneeToTask(taskId, employeeId);
-        return "redirect:/projects/" + projectId + "/tasks/" + taskId + "/edit";
-    }
-
-    @PostMapping("/{taskId}/assignee/remove")
-    public String removeAssignee(@PathVariable int projectId, @PathVariable int taskId,
-                                 @RequestParam int employeeId) {
-        taskService.removeAssigneeFromTask(taskId, employeeId);
-        return "redirect:/projects/" + projectId + "/tasks/" + taskId + "/edit";
-    }
-
-    @PostMapping("/{taskId}/competence/add")
-    public String addCompetence(@PathVariable int projectId, @PathVariable int taskId,
-                                @RequestParam int competenceId) {
-        taskService.addCompetenceToTask(taskId, competenceId);
-        return "redirect:/projects/" + projectId + "/tasks/" + taskId + "/edit";
-    }
-
-    @PostMapping("/{taskId}/competence/remove")
-    public String removeCompetence(@PathVariable int projectId, @PathVariable int taskId,
-                                   @RequestParam int competenceId) {
-        taskService.removeCompetenceFromTask(taskId, competenceId);
-        return "redirect:/projects/" + projectId + "/tasks/" + taskId + "/edit";
-    }
+//
+//    @PostMapping("/{taskId}/assignee/add")
+//    public String addAssignee(@PathVariable int projectId, @PathVariable int taskId,
+//                              @RequestParam int employeeId) {
+//        taskService.addAssigneeToTask(taskId, employeeId);
+//        return "redirect:/projects/" + projectId + "/tasks/" + taskId + "/edit-task";
+//    }
+//
+//    @PostMapping("/{taskId}/assignee/remove")
+//    public String removeAssignee(@PathVariable int projectId, @PathVariable int taskId,
+//                                 @RequestParam int employeeId) {
+//        taskService.removeAssigneeFromTask(taskId, employeeId);
+//        return "redirect:/projects/" + projectId + "/tasks/" + taskId + "/edit-task";
+//    }
+//
+//    @PostMapping("/{taskId}/competence/add")
+//    public String addCompetence(@PathVariable int projectId, @PathVariable int taskId,
+//                                @RequestParam int competenceId) {
+//        taskService.addCompetenceToTask(taskId, competenceId);
+//        return "redirect:/projects/" + projectId + "/tasks/" + taskId + "/edit-task";
+//    }
+//
+//    @PostMapping("/{taskId}/competence/remove")
+//    public String removeCompetence(@PathVariable int projectId, @PathVariable int taskId,
+//                                   @RequestParam int competenceId) {
+//        taskService.removeCompetenceFromTask(taskId, competenceId);
+//        return "redirect:/projects/" + projectId + "/tasks/" + taskId + "/edit-task";
+//    }
 
 
 }

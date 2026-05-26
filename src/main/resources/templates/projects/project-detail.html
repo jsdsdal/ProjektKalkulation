@@ -12,15 +12,14 @@
 
 <!-- CONTENT -->
 <main class="main">
-
     <div class="page-header">
         <h1 class="page-title" th:text="${project.title}">View Project</h1>
+        <div>
         <a th:href="@{${createSubProjectUrl}}" class="btn-primary">+ NEW SUB PROJECT</a>
+        <a th:href="@{${createTaskUrl}}" class="btn-primary">+ NEW TASK</a>
+        </div>
     </div>
 
-    <div class="page-header">
-        <a th:href="@{${createTaskUrl}}" class="btn-primary">+ NEW TASK</a>
-    </div>
 
     <!-- tabs - navigationspanel -->
     <div class="tabs-row">
@@ -56,13 +55,12 @@
             <div class="stat-card-sub">—</div>
         </div>
     </div>
+
     <!-- også fabrikeret sort -->
     <div class="section-header">
         <span class="section-title">Table view</span>
         <button class="sort-btn">Sort by... ▾</button>
     </div>
-
-
 
 
     <div class="table-wrap">
@@ -76,6 +74,7 @@
                 <th>End Date</th>
                 <th>Est. Hours</th>
                 <th>Actual Hours</th>
+                <th></th>
             </tr>
             </thead>
             <tbody>
@@ -121,9 +120,6 @@
 
             <!-- Tasks direkte på projektet -->
             <th:block th:replace="~{:: taskRows(${project.tasks}, 0)}" />
-            </tbody>
-        </table>
-
         <!-- Rekursivt fragment -->
         <th:block th:fragment="taskRows(tasks, depth)">
             <th:block th:each="task : ${tasks}">
@@ -133,12 +129,12 @@
                             <div th:replace="~{fragments :: taskModal(${task})}"></div>
                         </td>
 
-                    <td class="td-mono" th:text="${depth} == 0 ? 'Task' : 'Task'">Type</td>
-                    <td>-</td>
-                    <td class="td-mono" th:text="${task.startDate}"></td>
-                    <td class="td-mono" th:text="${task.endDate}"></td>
-                    <td class="td-mono" th:text="${task.estimatedHours}"></td>
-                    <td class="td-mono" th:text="${task.actualHours}">-</td>
+                    <td th:text="${depth} == 0 ? 'Task' : 'Task'">Type</td>
+                    <td th:text="${task.endDate != null and task.endDate.isBefore(T(java.time.LocalDate).now())} ? 'Overdue' : 'On track'"></td>
+                    <td th:text="${task.startDate}"></td>
+                    <td th:text="${task.endDate}"></td>
+                    <td th:text="${task.estimatedHours}"></td>
+                    <td th:text="${task.actualHours}">-</td>
                     <td>
                         <!-- slet og rediger -->
                         <a th:href="@{${updateTaskUrl}(id=${task.taskId})}"
@@ -155,6 +151,8 @@
                           th:replace="~{:: taskRows(${task.subTask}, ${depth} + 1)}" />
             </th:block>
         </th:block>
+            </tbody>
+        </table>
     </div>
 
     <!-- knapper til flere sider - virker ikke, fabrikeret -->

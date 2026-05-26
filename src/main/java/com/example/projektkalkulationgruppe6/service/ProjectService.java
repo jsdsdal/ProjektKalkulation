@@ -354,23 +354,17 @@ public class ProjectService {
     }
 
     public double getTotalEstimatedHoursByProjectId(int projectId) {
-        if (projectId <= 0) {
-            throw new InvalidProjectException("ProjectID needs to be a positive number");
-        }
+        validateId(projectId);
         return projectRepository.findTotalEstimatedHoursByProjectId(projectId);
     }
 
     public double getTotalActualHoursByProjectId(int projectId) {
-        if (projectId <= 0) {
-            throw new InvalidProjectException("ProjectID needs to be a positive number");
-        }
+        validateId(projectId);
         return projectRepository.findTotalActualHoursByProjectId(projectId);
     }
 
     public double getRemainingHoursByProjectId(int projectId) {
-        if (projectId <= 0) {
-            throw new InvalidProjectException("ProjectID needs to be a positive number");
-        }
+       validateId(projectId);
         double estimatedHours = projectRepository.findTotalEstimatedHoursByProjectId(projectId);
         double actualHours = projectRepository.findTotalActualHoursByProjectId(projectId);
         return estimatedHours - actualHours;

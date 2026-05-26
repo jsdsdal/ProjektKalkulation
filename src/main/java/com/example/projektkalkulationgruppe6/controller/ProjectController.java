@@ -31,7 +31,7 @@ public class ProjectController {
         this.sessionHelper = sessionHelper;
         this.pathMatcher = pathMatcher;
     }
-
+//TEST
 
     @GetMapping("/table")
     public String list(Model model, HttpSession session) {
@@ -235,7 +235,13 @@ public class ProjectController {
             int employeeId = (int) session.getAttribute("employeeId");
             project.setProjectOwner(employeeService.findById(employeeId));
             projectService.update(id, project);
-            return "redirect:/projects/" + id;
+
+            if (rootProjectId != id) {
+                return "redirect:/projects/" + rootProjectId;
+            } else {
+                return "redirect:/projects/table";
+            }
+
         } catch (ProjectNotFoundException ex) {
             model.addAttribute("errorMessage", ex.getMessage());
             return "error/404";

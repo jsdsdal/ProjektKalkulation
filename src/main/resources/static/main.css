@@ -307,11 +307,15 @@ tbody tr {
     border-bottom: 1px solid var(--border);
     transition: background .1s;
 }
-tbody tr:last-child { border-bottom: none; }
+tbody tr:last-child {
+        border-bottom: none;
+        white-space: nowrap;
+        padding-right: 20px;
+    }
 tbody tr:hover { background: var(--gray-100); }
 
 tbody td {
-    padding: 13px 16px;
+    padding: 16px 16px;
     color: var(--gray-900);
     vertical-align: middle;
 }
@@ -326,6 +330,21 @@ tbody td:first-child { padding-left: 14px; }
 .td-mono {
     font-family: var(--font-mono);
     font-size: 13px;
+}
+.td-title button {
+    background: none;
+    border: none;
+    padding: 8px;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+    text-align: left;
+    display: block;
+    width: 100%;
+}
+
+.td-title button:hover {
+    color: var(--red);
 }
 
 /* ── Status badge ───────────────────────────────────────────── */
@@ -664,6 +683,17 @@ input[type="checkbox"] {
 
 
 /* ── Popover Box ─────────────────────────────────────────────── */
+
+[popover].popup-modal::backdrop {
+    background: rgba(0, 0, 0, 0.45);
+}
+
+[popover].popup-modal {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 20px;
+}
 
 .modal-description {
     font-size: 13px;

@@ -55,7 +55,7 @@
             <div class="stat-card-sub">—</div>
         </div>
     </div>
-    
+
     <!-- også fabrikeret sort -->
     <div class="section-header">
         <span class="section-title">Table view</span>
@@ -129,11 +129,11 @@
                             <div th:replace="~{fragments :: taskModal(${task})}"></div>
                         </td>
 
-                    <td  th:text="${depth} == 0 ? 'Task' : 'Task'">Type</td>
-                    <td>-</td>
+                    <td th:text="${depth} == 0 ? 'Task' : 'Task'">Type</td>
+                    <td th:text="${task.endDate != null and task.endDate.isBefore(T(java.time.LocalDate).now())} ? 'Overdue' : 'On track'"></td>
                     <td th:text="${task.startDate}"></td>
-                    <td  th:text="${task.endDate}"></td>
-                    <td  th:text="${task.estimatedHours}"></td>
+                    <td th:text="${task.endDate}"></td>
+                    <td th:text="${task.estimatedHours}"></td>
                     <td th:text="${task.actualHours}">-</td>
                     <td>
                         <!-- slet og rediger -->

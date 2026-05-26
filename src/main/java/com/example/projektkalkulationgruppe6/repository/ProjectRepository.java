@@ -1,6 +1,7 @@
 package com.example.projektkalkulationgruppe6.repository;
 
 import com.example.projektkalkulationgruppe6.exception.InvalidProjectException;
+import com.example.projektkalkulationgruppe6.model.Employee;
 import com.example.projektkalkulationgruppe6.model.Project;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,6 +19,12 @@ public class ProjectRepository {
     private RowMapper<Project> projectRowMapper = (rs, rowNum) -> {
         java.sql.Date sqlStartDate = rs.getDate("start_date");
         java.sql.Date sqlEndDate = rs.getDate("end_date");
+        Employee owner = null;
+        int employeeId = rs.getInt("employee_id");
+        if (!rs.wasNull()) {
+            owner = new Employee();
+            owner.setEmployeeId(employeeId);
+        }
 
         return new Project(
                 rs.getInt("project_id"),
@@ -25,7 +32,7 @@ public class ProjectRepository {
                 rs.getString("description"),
                 sqlStartDate != null ? sqlStartDate.toLocalDate() : null,
                 sqlEndDate != null ? sqlEndDate.toLocalDate() : null,
-                null, // employee sættes bagefter
+                owner,
                 rs.getBigDecimal("hour_price"),
                 rs.getString("status_title"),
                 (Integer) rs.getObject("parent_project_id"),
@@ -265,6 +272,8 @@ public class ProjectRepository {
             """;
         return jdbcTemplate.queryForObject(sql, Integer.class);
     }
+
+
 
 
 

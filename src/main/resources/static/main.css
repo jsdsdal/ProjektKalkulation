@@ -602,7 +602,7 @@ input[type="checkbox"] {
 
 .auth-page-left {
     width: 50%;
-    background-image: url('/static/images/login.png');
+    background-image: url('/images/login.png');
     background-size: cover;
     background-position: center;
 }
@@ -791,6 +791,7 @@ input[type="checkbox"] {
         grid-template-columns: 1fr 1fr;
         gap: 12px 24px;
         margin-top: 0;
+        margin-bottom: 20px;
     }
 
     h2 + .modal-description {

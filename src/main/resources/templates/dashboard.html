@@ -42,8 +42,6 @@
             <div class="stat-card-sub">Across this years projects</div>
         </div>
     </div>
-
-
     <div class="dashboard-bottom">
 
         <div class="stat-card-table">
@@ -58,6 +56,33 @@
             </div>
         </div>
 
+    </div>
+    <!-- Gantt Chart -->
+    <div class="gantt-wrap">
+        <div class="gantt">
+            <div class="gantt__row gantt__row--months">
+                <div class="gantt__row-first"></div>
+                <span>Jan</span><span>Feb</span><span>Mar</span>
+                <span>Apr</span><span>May</span><span>Jun</span>
+                <span>Jul</span><span>Aug</span><span>Sep</span>
+                <span>Oct</span><span>Nov</span><span>Dec</span>
+            </div>
+            <div class="gantt__row gantt__row--lines">
+                <span></span><span></span><span></span>
+                <span></span><span></span><span></span>
+                <span></span><span class="marker"></span><span></span>
+                <span></span><span></span><span></span>
+            </div>
+            <div class="gantt__row" th:each="project : ${projects}"
+                 th:if="${project.startDate != null and project.endDate != null}">
+                <div class="gantt__row-first" th:text="${project.title}"></div>
+                <ul class="gantt__row-bars">
+                    <li th:style="'grid-column: ' + ${project.startDate.monthValue} + '/' + ${project.endDate.monthValue + 1} + '; background-color: #111111;'"
+                        th:text="${project.title}">
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
 
 </main>

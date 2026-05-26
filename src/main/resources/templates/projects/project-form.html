@@ -61,6 +61,10 @@
             <option th:each="e : ${employees}" th:value="${e.getEmployeeId}" th:text="${e.getName}"></option>
           </select>
         </div>
+
+        <div>
+          <input type="hidden" th:field="*{parentProjectId}"/>
+        </div>
       </div>
 
 

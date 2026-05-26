@@ -8,6 +8,10 @@ import com.example.projektkalkulationgruppe6.model.Employee;
 import com.example.projektkalkulationgruppe6.repository.EmployeeRepository;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -93,5 +97,31 @@ public class EmployeeService {
 
     }
 
+
+    private BigDecimal calculateWorkloadPercentage(BigDecimal totalHours) {
+        if (totalHours == null || totalHours.compareTo(BigDecimal.ZERO) == 0) {
+            return BigDecimal.ZERO;
+        }
+        return totalHours
+                .divide(new BigDecimal("160"), 1, RoundingMode.HALF_UP)
+                .multiply(new BigDecimal("100"));
+    }
+
+    public List<String> getResourceLoadCurrentMonth() {
+        int year = LocalDate.now().getYear();
+        int month = LocalDate.now().getMonthValue();
+
+        List<Employee> employees = employeeRepository.findAllWithTasksCurrentMonth();
+        List<String> result = new ArrayList<>();
+
+        for (Employee e : employees) {
+            BigDecimal totalHours = employeeRepository.sumEstimatedHoursByEmployeeAndMonth(
+                    e.getEmployeeId(), year, month);
+            BigDecimal percentage = calculateWorkloadPercentage(totalHours);
+            result.add(e.getName() + "|" + percentage);
+        }
+
+        return result;
+    }
 
 }

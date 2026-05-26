@@ -296,7 +296,14 @@ public class ProjectService {
         return "On time";
     }
 
-
+    // aktuel indkomst
+    public BigDecimal getActualRevenueForProject(int projectId) {
+        Project project = projectRepository.findById(projectId);
+        if (project == null) throw new ProjectNotFoundException(projectId);
+        if (project.getHourPrice() == null) return BigDecimal.ZERO;
+        double actualHours = projectRepository.findTotalActualHoursByProjectId(projectId);
+        return project.getHourPrice().multiply(BigDecimal.valueOf(actualHours));
+    }
 
 
     // forventet indtægt til projekt

@@ -110,7 +110,8 @@
 
                 <td class="td-title">
 
-                    <button th:attr="popovertarget='subproject-' + ${sub.projectId}" th:text="${sub.title}">View Sub Project</button>
+                    <button class="popup-open-btn"
+                            th:attr="popovertarget='subproject-' + ${sub.projectId}" th:text="${sub.title}">View Sub Project</button>
                     <div th:replace="~{fragments :: subProjectModal(${sub})}"></div>
 
                 </td>
@@ -151,7 +152,8 @@
             <th:block th:each="task : ${tasks}">
                 <tr>
                         <td class="td-title" th:style="'padding-left: ' + (14 + ${depth} * 30) + 'px'">
-                            <button th:attr="popovertarget='task-' + ${task.taskId}" th:text="${task.title}">View Task</button>
+                            <button class="popup-open-btn"
+                                    th:attr="popovertarget='task-' + ${task.taskId}" th:text="${task.title}">View Task</button>
                             <div th:replace="~{fragments :: taskModal(${task})}"></div>
                         </td>
 

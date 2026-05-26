@@ -108,6 +108,18 @@ input, select, textarea { font-family: inherit; }
 .sidebar-link-group .sidebar-link { justify-content: space-between; }
 .sidebar-chevron { margin-left: auto; }
 
+.logout-form {
+    margin-top: auto;
+}
+
+.sidebar-logout {
+    width: 100%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+}
+
 /* ── Main content area ──────────────────────────────────────── */
 .main {
     margin-left: var(--sidebar-w);
@@ -213,7 +225,7 @@ input, select, textarea { font-family: inherit; }
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 16px;
-    margin-bottom: 36px;
+    margin-bottom: 28px;
 }
 
 .stat-card {
@@ -256,6 +268,52 @@ input, select, textarea { font-family: inherit; }
     font-size: 12px;
     color: var(--gray-500);
 }
+/* ── Dashboard bottom grid ──────────────────────────────────── */
+.dashboard-bottom {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 36px;
+}
+
+
+.stat-card-table {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--black);
+    border-radius: var(--radius-md);
+    padding: 20px 22px;
+    position: relative;
+}
+
+.stat-card-table::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--black);
+}
+
+.stat-card-table-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+}
+
+.stat-card-table-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.stat-card-table-row:last-child {
+    border-bottom: none;
+}
+
 
 /* ── Section header ─────────────────────────────────────────── */
 .section-header {
@@ -334,7 +392,8 @@ tbody td:first-child { padding-left: 14px; }
     font-family: var(--font-mono);
     font-size: 13px;
 }
-.td-title button {
+
+.td-title > .popup-open-btn {
     background: none;
     border: none;
     padding: 8px;
@@ -346,7 +405,7 @@ tbody td:first-child { padding-left: 14px; }
     width: 100%;
 }
 
-.td-title button:hover {
+.td-title > .popup-open-btn:hover {
     color: var(--red);
 }
 
@@ -693,7 +752,7 @@ input[type="checkbox"] {
 }
 
 .error-icon {
-    fill: var(--gray-500)
+    fill: var(--gray-500);
     margin-bottom: 32px;
 }
 
@@ -729,6 +788,21 @@ input[type="checkbox"] {
 
 
 /* ── Popover Box ─────────────────────────────────────────────── */
+.popup-open-btn {
+    background:none;
+    border:none;
+    padding:8px;
+    font:inherit;
+    color:inherit;
+    cursor:pointer;
+    text-align:left;
+    display:block;
+    width:100%;
+}
+
+.popup-open-btn:hover {
+    color:var(--red);
+}
 
 [popover].popup-modal::backdrop {
     background: rgba(0, 0, 0, 0.45);
@@ -749,7 +823,7 @@ input[type="checkbox"] {
     margin: 0;
 }
 
-.modal-close {
+    .modal-close {
     position: absolute;
     display: block; width: 24px; height: 24px;
     top: 16px;
@@ -764,7 +838,7 @@ input[type="checkbox"] {
     z-index: 10;
 }
 
-.modal-close:hover {
+    .modal-close:hover {
     color: var(--black);
 }
 
@@ -919,6 +993,31 @@ input[type="checkbox"] {
         gap: 12px;
     }
 
+    .modal-create-group {
+        display: flex;
+        gap: 8px;
+        margin-right: auto;
+    }
+
+    .modal-btn-create {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 14px;
+        background: var(--white);
+        color: var(--black);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: background .15s;
+    }
+
+    .modal-btn-create:hover {
+        background: var(--gray-100);
+    }
+
     .modal-btn-edit {
         font-size: 14px;
         font-weight: 500;
@@ -932,8 +1031,11 @@ input[type="checkbox"] {
     .modal-btn-edit:hover {
         text-decoration: underline;
     }
-
-    .modal-btn-danger {
+.modal-btn-danger {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 14px;
+    border-radius: var(--radius-sm);
     font-size: 14px;
     font-weight: 500;
     color: var(--white);
@@ -943,10 +1045,11 @@ input[type="checkbox"] {
     text-decoration: none;
     transition: .35s;
 }
-    .modal-btn-danger:hover {
+
+.modal-btn-danger:hover {
     background: var(--white);
     color: var(--red);
-    text-decoration: underline;
+    border: 1px solid var(--red);
 }
 
     .modal-btn-edit:hover {

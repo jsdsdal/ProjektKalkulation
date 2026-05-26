@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="da" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -8,10 +7,8 @@
 </head>
 
 <body>
-<!-- NAV -->
 <aside th:replace="~{fragments :: sidebar(activePage='dashboard')}"></aside>
 
-<!-- CONTENT -->
 <main class="main">
 
     <div class="page-header">
@@ -22,6 +19,7 @@
         <h2 class="page-subtitle">Activity this financial quarter</h2>
     </div>
 
+    <!-- Stat cards -->
     <div class="stat-cards">
         <div class="stat-card">
             <div class="stat-card-label">Resource load this month</div>
@@ -46,7 +44,22 @@
     </div>
 
 
+    <div class="dashboard-bottom">
+
+        <div class="stat-card-table">
+            <h3 class="stat-card-table-title">Projects requiring attention</h3>
+        </div>
+
+        <div class="stat-card-table">
+            <h3 class="stat-card-table-title">Resource load per employee</h3>
+            <div class="stat-card-table-row" th:each="row : ${resourceLoad}">
+                <span class="td-title" th:text="${#strings.arraySplit(row, '|')[0]}"></span>
+                <span class="td-mono" th:text="${#strings.arraySplit(row, '|')[1] + '%'}"></span>
+            </div>
+        </div>
+
+    </div>
+
 </main>
 </body>
 </html>
-

@@ -1,12 +1,11 @@
 package com.example.projektkalkulationgruppe6.repository;
 
 import com.example.projektkalkulationgruppe6.model.Employee;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.util.Arrays;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Repository
@@ -98,9 +97,39 @@ public class EmployeeRepository {
             e.setCompetencies(competence);
         }
 
-
-
     }
+
+    public BigDecimal sumEstimatedHoursByEmployeeAndMonth(int employeeId, int year, int month) {
+        String sql = """
+            SELECT COALESCE(SUM(t.estimated_hours), 0)
+            FROM task t
+            JOIN task_employee te ON t.task_id = te.task_id
+            WHERE te.employee_id = ?
+            AND MONTH(t.start_date) = ?
+            AND YEAR(t.start_date) = ?
+            """;
+        return jdbcTemplate.queryForObject(sql, BigDecimal.class, employeeId, month, year);
+    }
+
+    public List<Employee> findAllWithTasksCurrentMonth() {
+        String sql = """
+            SELECT DISTINCT e.employee_id, e.name, e.email, e.password
+            FROM employee e
+            JOIN task_employee te ON e.employee_id = te.employee_id
+            JOIN task t ON te.task_id = t.task_id
+            WHERE MONTH(t.start_date) = MONTH(CURDATE())
+            AND YEAR(t.start_date) = YEAR(CURDATE())
+            ORDER BY e.name
+            """;
+        return jdbcTemplate.query(sql, (rs, rowNum) -> new Employee(
+                rs.getInt("employee_id"),
+                rs.getString("name"),
+                rs.getString("email"),
+                rs.getString("password"),
+                null
+        ));
+    }
+
 
 
 }

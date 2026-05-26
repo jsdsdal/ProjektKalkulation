@@ -61,7 +61,6 @@
         <table>
             <thead>
             <tr>
-                <th><input type="checkbox"/></th>
                 <th>Title ↓</th>
                 <th>Team size</th>
                 <th>Est. revenue</th>
@@ -75,7 +74,6 @@
 
             <th:block th:each="project : ${projects}">
                 <tr>
-                    <td><input type="checkbox"/></td>
                     <td class="td-title">
                         <a th:href="@{/projects/{id}(id=${project.projectId})}"
                            th:text="${project.title}">Title</a>
@@ -95,7 +93,7 @@
                               th:text="${project.status}">Status</span>
                     </td>
                     <td>
-                        <!-- slet - burde virke ? -->
+                        <!-- slet og rediger -->
                         <a th:href="@{${editProjectUrl}(id=${project.projectId})}"
                            style="font-size:12px; color:var(--gray-500); margin-right:8px;">Edit</a>
                         <form th:action="@{${deleteProjectUrl}(id=${project.projectId})}"

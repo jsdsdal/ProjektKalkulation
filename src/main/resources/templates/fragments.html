@@ -102,24 +102,6 @@
             <p th:if="${task.assignees == null or task.assignees.isEmpty()}"
                class="modal-missing">No team members assigned</p>
 
-            <div class="modal-dates">
-                <div>
-                    <p class="modal-label">Start Date</p>
-                    <p class="modal-value" th:text="${task.startDate}">—</p>
-                </div>
-                <div>
-                    <p class="modal-label">End Date</p>
-                    <p class="modal-value" th:text="${task.endDate}">—</p>
-                </div>
-                <div>
-                    <p class="modal-label">Estimated hours</p>
-                    <p class="modal-value" th:text="${task.estimatedHours > 0 ? task.estimatedHours + ' hours' : '—'}">—</p>
-                </div>
-                <div>
-                    <p class="modal-label">Actual hours</p>
-                    <p class="modal-value" th:text="${task.actualHours > 0 ? task.actualHours + ' hours' : '—'}">—</p>
-                </div>
-            </div>
         </div>
 
         <!-- HØJRE: Requirements -->
@@ -130,6 +112,25 @@
             </div>
             <p th:if="${task.competencies == null or task.competencies.isEmpty()}"
                class="modal-missing">No requirements set</p>
+        </div>
+    </div>
+
+    <div class="modal-dates">
+        <div>
+            <p class="modal-label">Start Date</p>
+            <p class="modal-value" th:text="${task.startDate}">—</p>
+        </div>
+        <div>
+            <p class="modal-label">End Date</p>
+            <p class="modal-value" th:text="${task.endDate}">—</p>
+        </div>
+        <div>
+            <p class="modal-label">Estimated hours</p>
+            <p class="modal-value" th:text="${task.estimatedHours > 0 ? task.estimatedHours + ' hours' : '—'}">—</p>
+        </div>
+        <div>
+            <p class="modal-label">Actual hours</p>
+            <p class="modal-value" th:text="${task.actualHours > 0 ? task.actualHours + ' hours' : '—'}">—</p>
         </div>
     </div>
 

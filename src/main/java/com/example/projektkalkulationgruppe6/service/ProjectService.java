@@ -353,6 +353,24 @@ public class ProjectService {
         return projectRepository.countProjectsNeedingAttention();
     }
 
+    public double getTotalEstimatedHoursByProjectId(int projectId) {
+        validateId(projectId);
+        return projectRepository.findTotalEstimatedHoursByProjectId(projectId);
+    }
+
+    public double getTotalActualHoursByProjectId(int projectId) {
+        validateId(projectId);
+        return projectRepository.findTotalActualHoursByProjectId(projectId);
+    }
+
+    public double getRemainingHoursByProjectId(int projectId) {
+       validateId(projectId);
+        double estimatedHours = projectRepository.findTotalEstimatedHoursByProjectId(projectId);
+        double actualHours = projectRepository.findTotalActualHoursByProjectId(projectId);
+        return estimatedHours - actualHours;
+    }
+
+
 
 
 }

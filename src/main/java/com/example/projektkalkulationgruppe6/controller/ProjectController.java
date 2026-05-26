@@ -78,6 +78,10 @@ public class ProjectController {
 
         model.addAttribute("closeUrl", "/projects/" + rootProjectId);
 
+        model.addAttribute("totalEstimatedHours", projectService.getTotalEstimatedHoursByProjectId(id));
+        model.addAttribute("totalActualHours", projectService.getTotalActualHoursByProjectId(id));
+        model.addAttribute("remainingHours", projectService.getRemainingHoursByProjectId(id));
+
         if(project.getParentProjectId()== null) {
             return "projects/project-detail";
         }

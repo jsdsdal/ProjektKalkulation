@@ -53,6 +53,7 @@ public class ProjectService {
         }
     }
 
+    @Transactional(readOnly = true)
     public int findRootProjectIdById(int id) {
         Project project = findById(id);
         int rootProjectId;

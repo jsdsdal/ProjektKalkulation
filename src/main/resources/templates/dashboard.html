@@ -45,6 +45,14 @@
         </div>
     </div>
 
+    <div class="resource-load">
+        <h3>Employee Resource load </h3>
+        <div th:each="row : ${resourceLoad}">
+            <span th:text="${#strings.arraySplit(row, '|')[0]}"></span>
+            <span th:text="${#strings.arraySplit(row, '|')[1] + '%'}"></span>
+        </div>
+    </div>
+
 
 </main>
 </body>

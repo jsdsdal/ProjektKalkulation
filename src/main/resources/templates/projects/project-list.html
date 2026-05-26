@@ -61,7 +61,6 @@
         <table>
             <thead>
             <tr>
-                <th><input type="checkbox"/></th>
                 <th>Title ↓</th>
                 <th>Team size</th>
                 <th>Est. revenue</th>
@@ -75,15 +74,14 @@
 
             <th:block th:each="project : ${projects}">
                 <tr>
-                    <td><input type="checkbox"/></td>
                     <td class="td-title">
                         <a th:href="@{/projects/{id}(id=${project.projectId})}"
                            th:text="${project.title}">Title</a>
                     </td>
                     <td>—</td>
-                    <td class="td-mono">—</td>
-                    <td class="td-mono">—</td>
-                    <td class="td-mono">—</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
                     <td>
                         <!-- status + farver -->
                         <span class="badge"
@@ -95,7 +93,7 @@
                               th:text="${project.status}">Status</span>
                     </td>
                     <td>
-                        <!-- slet - burde virke ? -->
+                        <!-- slet og rediger -->
                         <a th:href="@{${editProjectUrl}(id=${project.projectId})}"
                            style="font-size:12px; color:var(--gray-500); margin-right:8px;">Edit</a>
                         <form th:action="@{${deleteProjectUrl}(id=${project.projectId})}"
@@ -103,31 +101,6 @@
                               onsubmit="return confirm('Slet dette projekt?')">
                             <button type="submit" class="action-menu-btn">✕</button>
                         </form>
-                    </td>
-                </tr>
-
-                <tr th:each="sub : ${project.subProjects}" class="subproject-row">
-                    <td><input type="checkbox"/></td>
-                    <td class="td-title">
-                        <a th:href="@{/projects/{id}(id=${sub.projectId})}"
-                           th:text="${sub.title}">Sub Title</a>
-                    </td>
-                    <td>—</td>
-                    <td class="td-mono">—</td>
-                    <td class="td-mono">—</td>
-                    <td class="td-mono">—</td>
-                    <td>
-                        <span class="badge"
-                              th:classappend="${sub.status == 'Actual Hours Done'} ? ' badge-green'
-                                           : (${sub.status == 'Estimate in Progress'} ? ' badge-yellow'
-                                           : (${sub.status == 'Rejected'} ? ' badge-red'
-                                           : (${sub.status == 'Not Started'} ? ' badge-gray'
-                                           : ' badge-blue')))"
-                              th:text="${sub.status}">Status</span>
-                    </td>
-                    <td>
-                        <a th:href="@{/projects/{id}/edit(id=${sub.projectId})}"
-                           style="font-size:12px; color:var(--gray-500);">Edit</a>
                     </td>
                 </tr>
             </th:block>

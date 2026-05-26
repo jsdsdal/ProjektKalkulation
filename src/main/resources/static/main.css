@@ -689,10 +689,38 @@ input[type="checkbox"] {
 }
 
 [popover].popup-modal {
+    position: relative;
+    width: 700px;
+    max-width: 90vw;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 36px;
+    box-shadow: var(--shadow-md);
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    margin: 20px;
+    margin: 0;
+}
+
+.modal-close {
+    position: absolute;
+    display: block; width: 24px; height: 24px;
+    top: 16px;
+    left: 93%;
+    right: 16px;
+    background: none;
+    border: none;
+    font-size: 20px;
+    font-family: var(--font-body);
+    line-height: 1;
+    color: var(--red) important!;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.modal-close:hover {
+    color: var(--black);
 }
 
 .modal-description {
@@ -706,6 +734,26 @@ input[type="checkbox"] {
     grid-template-columns: 1fr 1fr;
     gap: 24px;
     margin-bottom: 20px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+}
+
+.modal-left,
+.modal-right {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.modal-dates {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px 24px;
+    margin-top: 0;
+}
+
+h2 + .modal-description {
+    margin-top: 8px;
 }
 
 .modal-section-title {

@@ -114,13 +114,13 @@ public class ProjectController {
     }
 
     @PostMapping("/create-project")
-    public String create(@ModelAttribute Project project, @RequestParam int projectOwnerId, Model model, HttpSession session) {
+    public String create(@ModelAttribute Project project, @RequestParam(required = false) Integer projectOwnerId,
+                         Model model, HttpSession session) {
+
         sessionHelper.isLoggedIn(session);
 
         try {
-            Employee projectOwner = employeeService.findById(projectOwnerId);
-            project.setProjectOwner(projectOwner);
-            projectService.create(project);
+            projectService.create(project, projectOwnerId);
             return "redirect:/projects/table";
         } catch (InvalidProjectException ex) {
             model.addAttribute("project", project);
@@ -151,15 +151,12 @@ public class ProjectController {
 
     @PostMapping("/{parentProjectId}/create-project")
     public String createSubProject(@ModelAttribute Project project, @PathVariable int parentProjectId,
-                                   @RequestParam int projectOwnerId, Model model, HttpSession session) {
+                                   @RequestParam(required = false) Integer projectOwnerId, Model model, HttpSession session) {
 
         sessionHelper.isLoggedIn(session);
 
         try {
-            Employee projectOwner = employeeService.findById(projectOwnerId);
-            project.setProjectOwner(projectOwner);
-            project.setParentProjectId(parentProjectId);
-            projectService.create(project);
+            projectService.createSubproject(project, parentProjectId, projectOwnerId);
             return "redirect:/projects/" + parentProjectId;
         } catch (InvalidProjectException ex) {
             model.addAttribute("project", project);
@@ -167,6 +164,9 @@ public class ProjectController {
             model.addAttribute("statusList", projectService.findAllStatusList());
             model.addAttribute("employees", employeeService.findAll());
             model.addAttribute("formAction", "/projects/" + parentProjectId + "/create-project");
+            if(projectOwnerId != null) {
+                project.setProjectOwner(employeeService.findById(projectOwnerId));
+            }
             model.addAttribute("submitLabel", "Create");
             model.addAttribute("errorMessage", ex.getMessage());
             model.addAttribute("cancelUrl", "/projects/" + parentProjectId);
@@ -226,15 +226,14 @@ public class ProjectController {
     public String edit(@PathVariable int id,
                        @ModelAttribute Project project,
                        HttpSession session,
-                       Model model) {
+                       Model model, @RequestParam(required = false) Integer projectOwnerId) {
         sessionHelper.isLoggedIn(session);
 
         int rootProjectId = projectService.findRootProjectIdById(id);
 
         try {
-            int employeeId = (int) session.getAttribute("employeeId");
-            project.setProjectOwner(employeeService.findById(employeeId));
-            projectService.update(id, project);
+
+            projectService.update(id, project, projectOwnerId);
 
             if (rootProjectId != id) {
                 return "redirect:/projects/" + rootProjectId;
@@ -255,6 +254,10 @@ public class ProjectController {
                 model.addAttribute("cancelUrl", "/projects/" + rootProjectId);
             } else {
                 model.addAttribute("cancelUrl", "/projects/table");
+            }
+
+            if(projectOwnerId != null) {
+                project.setProjectOwner(employeeService.findById(projectOwnerId));
             }
 
             model.addAttribute("statusList", projectService.findAllStatusList());

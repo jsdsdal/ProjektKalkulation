@@ -3,6 +3,7 @@ package com.example.projektkalkulationgruppe6.service;
 import com.example.projektkalkulationgruppe6.exception.DatabaseOperationException;
 import com.example.projektkalkulationgruppe6.exception.InvalidProjectException;
 import com.example.projektkalkulationgruppe6.exception.ProjectNotFoundException;
+import com.example.projektkalkulationgruppe6.model.Employee;
 import com.example.projektkalkulationgruppe6.model.Project;
 import com.example.projektkalkulationgruppe6.model.Task;
 import com.example.projektkalkulationgruppe6.repository.ProjectRepository;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,8 +39,10 @@ public class ProjectService {
         }
     }
 
-    public Project create(Project project) {
-        validateProject(project);
+    public Project create(Project project, Integer projectOwnerId) {
+        validateProject(project, projectOwnerId);
+        Employee projectOwner = employeeService.findById(projectOwnerId);
+        project.setProjectOwner(projectOwner);
 
         try {
             return projectRepository.insert(project);
@@ -147,7 +151,7 @@ public class ProjectService {
 
     }
 
-    private void validateProject(Project project) {
+    private void validateProject(Project project, Integer projectOwnerId) {
         if (project == null) {
             throw new InvalidProjectException("Project is mandatory");
         }
@@ -162,7 +166,19 @@ public class ProjectService {
             throw new InvalidProjectException("Project Status is a mandatory field");
         }
 
-        if (project.getProjectOwner().getEmployeeId() == null) {
+        if (project.getStartDate() == null) {
+            throw new InvalidProjectException("Start Date is required");
+        }
+
+        if (project.getEndDate() == null) {
+            throw new InvalidProjectException("End date is required");
+        }
+
+        if(project.getEndDate().isBefore(project.getStartDate())) {
+            throw new InvalidProjectException("End Date cannot be before Start Date");
+        }
+
+        if (projectOwnerId == null) {
             throw new InvalidProjectException("Project Owner is a mandatory field");
         }
 
@@ -170,7 +186,7 @@ public class ProjectService {
 
     }
 
-    public Project createSubproject(Project subproject, int parentProjectId) {
+    public Project createSubproject(Project subproject, int parentProjectId, Integer projectOwnerId) {
         Project parent = projectRepository.findById(parentProjectId);
 
         // tjek om projekt findes
@@ -186,17 +202,19 @@ public class ProjectService {
         // må ikke starte før parent project
         if (parent.getStartDate() != null && subproject.getStartDate() != null
         && subproject.getStartDate().isBefore(parent.getStartDate())) {
-            throw new InvalidProjectException("Subproject cannot start before the parent project.");
+            throw new InvalidProjectException("Subproject cannot start before the parent project. Parent project " +
+                    "start date is " + parent.getStartDate().format(DateTimeFormatter.ofPattern("dd-MM-uuuu")));
         }
 
         // må ikke slutte efter parent project
         if (parent.getEndDate() != null && subproject.getEndDate() != null
             && subproject.getEndDate().isAfter(parent.getEndDate())) {
-            throw new InvalidProjectException("Subproject cannot end after the parent project.");
+            throw new InvalidProjectException("Subproject cannot end after the parent project. Parent project " +
+                    "end date is " + parent.getEndDate().format(DateTimeFormatter.ofPattern("dd-MM-uuuu")));
         }
 
         subproject.setParentProjectId(parentProjectId);
-        return create(subproject);
+        return create(subproject, projectOwnerId);
     }
 
     public void delete(int projectId){
@@ -213,12 +231,14 @@ public class ProjectService {
     }
 
 
-    public Project update(int projectId, Project project) {
-        if (projectId <= 0) {
-            throw new InvalidProjectException("ProjectID needs to be a positive number");
-        }
+    public Project update(int projectId, Project project, Integer projectOwnerId) {
+        validateId(projectId);
 
-        validateProject(project);
+        validateProject(project, projectOwnerId);
+
+
+        Employee projectOwner = employeeService.findById(projectOwnerId);
+        project.setProjectOwner(projectOwner);
 
         boolean updated = projectRepository.updateById(projectId, project);
 

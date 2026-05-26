@@ -156,11 +156,15 @@
 
     <!-- Actions -->
     <div class="modal-actions">
+        <div class="modal-create-group">
+            <a th:href="@{/projects/__${task.projectId}__/tasks/__${task.taskId}__/create-task}"
+               class="modal-btn-create">+ New Subtask</a>
+        </div>
         <a th:href="@{/projects/__${task.projectId}__/tasks/__${task.taskId}__/edit-task}"
            class="modal-btn-edit">Edit</a>
         <form th:action="@{/projects/__${task.projectId}__/tasks/__${task.taskId}__/delete-task}"
               method="post" style="display:inline;"
-              onsubmit="return confirm('Slet denne opgave?')" class="modal-btn-danger">
+              onsubmit="return confirm('Slet denne opgave?')">
             <button type="submit" class="modal-btn-danger">Delete</button>
         </form>
     </div>
@@ -238,6 +242,10 @@
 
     <!-- Actions -->
     <div class="modal-actions">
+        <div class="modal-create-group">
+            <a th:href="@{/projects/__${sub.projectId}__/tasks/create-task}"
+               class="modal-btn-create">+ New Task</a>
+        </div>
         <a th:href="@{/projects/__${sub.projectId}__/edit-project}"
            class="modal-btn-edit">Edit</a>
         <form th:action="@{/projects/__${sub.projectId}__/delete-project}"

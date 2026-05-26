@@ -914,6 +914,31 @@ input[type="checkbox"] {
         gap: 12px;
     }
 
+    .modal-create-group {
+        display: flex;
+        gap: 8px;
+        margin-right: auto;
+    }
+
+    .modal-btn-create {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 7px 14px;
+        background: var(--white);
+        color: var(--black);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        font-size: 13px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: background .15s;
+    }
+
+    .modal-btn-create:hover {
+        background: var(--gray-100);
+    }
+
     .modal-btn-edit {
         font-size: 14px;
         font-weight: 500;

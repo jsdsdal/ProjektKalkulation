@@ -40,23 +40,33 @@
             <div class="stat-card-label">Hourly Price</div>
             <div class="stat-card-value"
                  th:text="${project.hourPrice != null} ? ${#numbers.formatDecimal(project.hourPrice, 1, 0)} + ' DKK' : '—'">
-            </div>            <div class="stat-card-sub">Fixed-Price</div>
+            </div>
+            <div class="stat-card-sub">Fixed-Price</div>
         </div>
         <div class="stat-card">
             <div class="stat-card-label">Tasks due this week</div>
             <div class="stat-card-value">—</div>
             <div class="stat-card-sub">across all projects</div>
         </div>
-        <div class="stat-card warning">
-            <div class="stat-card-label">Forecasted Revenue</div>
-            <div class="stat-card-value">—</div>
-            <div class="stat-card-sub">across all tasks</div>
-        </div>
         <div class="stat-card">
-            <div class="stat-card-label">Actual Revenue</div>
-            <div class="stat-card-value">—</div>
-            <div class="stat-card-sub">for now</div>
+            <div class="stat-card-label">Forecasted Revenue</div>
+            <div class="stat-card-value"
+                 th:text="${#numbers.formatDecimal(forecastedRevenue, 1, 'POINT', 0, 'NONE')} + ' DKK'">—</div>
+            <div class="stat-card-sub">based on estimated hours</div>
+        </div><div class="stat-card"
+                   th:with="dev=${forecastedRevenue != null and actualRevenue != null} ? ${actualRevenue.subtract(forecastedRevenue)} : null"
+                   th:classappend="${dev == null} ? '' : (${dev.compareTo(T(java.math.BigDecimal).ZERO) < 0} ? ' danger' : ' success')">
+        <div class="stat-card-label">Actual Revenue</div>
+        <div class="stat-card-value"
+             th:text="${actualRevenue != null} ? ${#numbers.formatDecimal(actualRevenue, 1, 'POINT', 0, 'NONE')} + ' DKK' : '—'">—</div>
+        <div class="stat-card-sub"
+             th:with="dev=${forecastedRevenue != null and actualRevenue != null} ? ${actualRevenue.subtract(forecastedRevenue)} : null"
+             th:text="${dev == null}                                          ? 'logged so far'
+                : (${dev.compareTo(T(java.math.BigDecimal).ZERO) == 0}  ? 'On budget'
+                : (${dev.compareTo(T(java.math.BigDecimal).ZERO) > 0}   ? '+' + ${#numbers.formatDecimal(dev, 1, 'POINT', 0, 'NONE')} + ' DKK above forecast'
+                :                                                          ${#numbers.formatDecimal(dev, 1, 'POINT', 0, 'NONE')} + ' DKK below forecast'))">
         </div>
+    </div>
         <div class="stat-card"
              th:with="days=${project.endDate != null} ? ${T(java.time.temporal.ChronoUnit).DAYS.between(T(java.time.LocalDate).now(), project.endDate)} : null"
              th:classappend="${days == null}      ? ''

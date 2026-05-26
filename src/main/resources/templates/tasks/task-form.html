@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Task</title>
-
-
+  <link rel="stylesheet" th:href="@{/main.css}"/>
 </head>
 <body>
 <div class="form-page">
@@ -27,32 +26,41 @@
         <textarea id="description" th:field="*{description}" maxlength="500" placeholder="Type your description here…"></textarea>
       </div>
 
-      <div class="field">
-        <label>Competencies</label>
-        <div th:each="c : ${allCompetencies}">
-          <input type="checkbox"
-                 name="competenceId"
-                 th:value="${c.id}"
-                 th:id="${'competence-' + c.id}"
-                 th:checked="${task.competencies != null and task.competencies.contains(c.title)}"/>
-          <label th:for="${'competence-' + c.id}" th:text="${c.title}"></label>
+      <div class="field-row">
+        <div class="field">
+          <label>Competencies</label>
+          <div class="selector-grid">
+            <div th:each="c : ${allCompetencies}">
+              <input type="checkbox"
+                     name="competenceId"
+                     th:value="${c.id}"
+                     th:id="${'competence-' + c.id}"
+                     class="selector-checkbox"/>
+              <label th:for="${'competence-' + c.id}"
+                     class="selector-btn"
+                     th:text="${c.title}">Tag</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Assignees</label>
+          <div class="selector-grid">
+            <div th:each="e : ${allEmployees}">
+              <input type="checkbox"
+                     name="employeeId"
+                     th:value="${e.employeeId}"
+                     th:id="${'employee-' + e.employeeId}"
+                     class="selector-checkbox"/>
+              <label th:for="${'employee-' + e.employeeId}"
+                     class="selector-btn"
+                     th:text="${e.name}">Name</label>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div class="field">
-        <label>Assignees</label>
-        <div th:each="e : ${allEmployees}">
-          <label>
-            <input type="checkbox"
-                   name="employeeId"
-                   th:value="${e.employeeId}"
-                   th:id="${'employee-' + e.employeeId}"
-                    th:checked="${task.assignees != null and task.assignees.?[employeeId == #root.e.employeeId].size() > 0}"/>
-          </label>
-          <label th:for="${'employee-' + e.employeeId}" th:text="${e.name}"></label>
-        </div>
-      </div>
-
+      <div class ="field-row">
       <div class="field">
         <label for="startDate">Start Date</label>
         <input id="startDate" type="date" th:field="*{startDate}"/>
@@ -72,7 +80,7 @@
         <label for="actualHours">Actual Hours</label>
         <input id="actualHours" type="number" th:field="*{actualHours}" placeholder="e.g. 10.00" min="0" step="0.50"/>
       </div>
-
+      </div>
       <div class="form-actions">
         <button type="submit" class="btn-primary" th:text="${submitLabel}">Create Task</button>
         <a th:href="${cancelUrl}" class="btn-secondary">Cancel</a>

@@ -226,7 +226,8 @@ public class ProjectRepository {
             FROM task
             WHERE project_id IN (SELECT project_id FROM project_tree)
             """;
-        return jdbcTemplate.queryForObject(sql, Double.class, projectId);
+        Double result = jdbcTemplate.queryForObject(sql, Double.class, projectId);
+        return result != null ? result : 0.0;
     }
 
     public double findTotalActualHoursByProjectId(int projectId) {
@@ -242,7 +243,8 @@ public class ProjectRepository {
             FROM task
             WHERE project_id IN (SELECT project_id FROM project_tree)
             """;
-        return jdbcTemplate.queryForObject(sql, Double.class, projectId);
+        Double result = jdbcTemplate.queryForObject(sql, Double.class, projectId);
+        return result != null ? result : 0.0;
     }
 
     public int countActiveProjects() {
@@ -254,7 +256,8 @@ public class ProjectRepository {
             AND p.end_date >= CURDATE()
             AND p.parent_project_id IS NULL
             """;
-        return jdbcTemplate.queryForObject(sql, Integer.class);
+        Integer result = jdbcTemplate.queryForObject(sql, Integer.class);
+        return result != null ? result : 0;
     }
 
     public int countProjectsNeedingAttention() {
@@ -270,7 +273,8 @@ public class ProjectRepository {
                 OR t.end_date < CURDATE() AND t.actual_hours IS NULL
             )
             """;
-        return jdbcTemplate.queryForObject(sql, Integer.class);
+        Integer result = jdbcTemplate.queryForObject(sql, Integer.class);
+        return result != null ? result : 0;
     }
 
 

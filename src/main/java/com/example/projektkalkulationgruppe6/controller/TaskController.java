@@ -15,6 +15,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
+import java.util.List;
 
 
 @Controller
@@ -73,11 +74,15 @@ public class TaskController {
 
 
     @PostMapping("/create-task")
-    public String createTask(@PathVariable int projectId, @ModelAttribute Task task, HttpSession session, Model model) {
+    public String createTask(@PathVariable int projectId, @ModelAttribute Task task, HttpSession session, Model model,
+                             @RequestParam(required = false) List<Integer> competenceId,
+                             @RequestParam(required = false) List<Integer> employeeId) {
         sessionHelper.isLoggedIn(session);
         try {
             int rootProjectId = projectService.findRootProjectIdById(projectId);
-            taskService.create(task, projectId, new ArrayList<>(), new ArrayList<>());
+            taskService.create(task, projectId,
+                    competenceId != null ? competenceId : List.of(),
+                    employeeId != null ? employeeId : List.of());
             return "redirect:/projects/" + rootProjectId;
         } catch (InvalidTaskException | DatabaseOperationException ex) {
             model.addAttribute("task", task);
@@ -96,7 +101,8 @@ public class TaskController {
 
 
     @GetMapping("/{parentTaskId}/create-task")
-    public String showSubTaskCreateForm(@PathVariable int projectId, @PathVariable int parentTaskId, HttpSession session, Model model) {
+    public String showSubTaskCreateForm(@PathVariable int projectId, @PathVariable int parentTaskId,
+                                        HttpSession session, Model model) {
         sessionHelper.isLoggedIn(session);
         model.addAttribute("task", new Task());
         model.addAttribute("formTitle", "Create task");
@@ -111,13 +117,18 @@ public class TaskController {
     }
 
     @PostMapping("/{parentTaskId}/create-task")
-    public String createSubTask(@PathVariable int projectId, @PathVariable int parentTaskId, @ModelAttribute Task task, HttpSession session, Model model) {
+    public String createSubTask(@PathVariable int projectId, @PathVariable int parentTaskId, @ModelAttribute Task task,
+                                HttpSession session, Model model,
+                                @RequestParam(required = false) List<Integer> competenceId,
+                                @RequestParam(required = false) List<Integer> employeeId) {
         sessionHelper.isLoggedIn(session);
         try {
             int rootProjectId = projectService.findRootProjectIdById(projectId);
 
             task.setParentTaskId(parentTaskId);
-            taskService.create(task, projectId, new ArrayList<>(), new ArrayList<>());
+            taskService.create(task, projectId,
+                competenceId != null ? competenceId : List.of(),
+                    employeeId != null ? employeeId : List.of());
 
             return "redirect:/projects/" + rootProjectId;
         } catch (InvalidTaskException | DatabaseOperationException ex) {
@@ -151,7 +162,7 @@ public class TaskController {
 
             return "tasks/task-form";
 
-        } catch (InvalidTaskException | TaskNotFoundException ex) {
+        } catch (InvalidTaskException ex) {
             return "redirect:/projects/" + rootProjectId;
         }
     }
@@ -164,7 +175,7 @@ public class TaskController {
         try {
             taskService.update(task);
             return "redirect:/projects/" + rootProjectId;
-        } catch (InvalidTaskException | TaskNotFoundException | DatabaseOperationException ex) {
+        } catch (InvalidTaskException ex) {
             model.addAttribute("task", task);
             model.addAttribute("formTitle", "Edit task");
             model.addAttribute("formAction", "/projects/" + projectId + "/tasks/" + id + "/edit-task");

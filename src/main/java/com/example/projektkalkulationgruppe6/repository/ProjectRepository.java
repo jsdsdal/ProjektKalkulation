@@ -120,7 +120,8 @@ public class ProjectRepository {
                 SELECT status_id FROM status WHERE title = ?
                 """;
         try {
-            int id = jdbcTemplate.queryForObject(sql, Integer.class, title);
+            Integer id = jdbcTemplate.queryForObject(sql, Integer.class, title);
+            if (id == null) throw new InvalidProjectException("Ugyldig status: " + title);
             return id;
         } catch (EmptyResultDataAccessException e) {
             throw new InvalidProjectException("Ugyldig status: " + title);

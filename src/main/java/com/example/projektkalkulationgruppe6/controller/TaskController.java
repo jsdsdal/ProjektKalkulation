@@ -135,36 +135,41 @@ public class TaskController {
         }
     }
 
-    @GetMapping("/{id}/edit")
+    @GetMapping("/{id}/edit-task")
     public String showEditForm(@PathVariable int projectId, @PathVariable int id, HttpSession session, Model model) {
+
+        int rootProjectId = projectService.findRootProjectIdById(projectId);
+
         try {
             model.addAttribute("task", taskService.findById(id));
             model.addAttribute("formTitle", "Edit task");
-            model.addAttribute("formAction", "/projects/" + projectId + "/tasks/edit/" + id);
+            model.addAttribute("formAction", "/projects/" + projectId + "/tasks/" + id + "/edit-task");
             model.addAttribute("submitLabel", "Save");
-            model.addAttribute("cancelUrl", "/task");
+            model.addAttribute("cancelUrl", "/projects/" + rootProjectId);
             model.addAttribute("allCompetencies", taskService.findAllCompetencies());
             model.addAttribute("allEmployees", employeeService.findAll());
 
             return "tasks/task-form";
 
         } catch (InvalidTaskException | TaskNotFoundException ex) {
-            return "redirect:/projects/" + projectId + "/tasks/list";
+            return "redirect:/projects/" + rootProjectId;
         }
     }
 
-    @PostMapping("/edit/{id}")
+    @PostMapping("/{id}/edit-task")
     public String update(@PathVariable int projectId, @PathVariable int id, @ModelAttribute Task task, Model model) {
         task.setTaskId(id);
+        int rootProjectId = projectService.findRootProjectIdById(projectId);
+
         try {
             taskService.update(task);
-            return "redirect:/projects/" + projectId + "/tasks/list";
+            return "redirect:/projects/" + rootProjectId;
         } catch (InvalidTaskException | TaskNotFoundException | DatabaseOperationException ex) {
             model.addAttribute("task", task);
             model.addAttribute("formTitle", "Edit task");
-            model.addAttribute("formAction", "/projects/" + projectId + "/tasks/edit/" + id);
+            model.addAttribute("formAction", "/projects/" + projectId + "/tasks/" + id + "/edit-task");
             model.addAttribute("submitLabel", "Save");
-            model.addAttribute("cancelUrl", "/task");
+            model.addAttribute("cancelUrl", "/projects/" + rootProjectId);
             model.addAttribute("allCompetencies", taskService.findAllCompetencies());
             model.addAttribute("allEmployees", employeeService.findAll());
             model.addAttribute("errorMessage", ex.getMessage());
@@ -173,10 +178,11 @@ public class TaskController {
         }
     }
 
-    @PostMapping("/{id}/delete")
+    @PostMapping("/{id}/delete-task")
     public String delete(@PathVariable int projectId, @PathVariable int id) {
         taskService.deleteById(id);
-        return "redirect:/projects/" + projectId + "/tasks/list";
+        int rootProjectId = projectService.findRootProjectIdById(projectId);
+        return "redirect:/projects/" + rootProjectId;
     }
 
     @PostMapping("/{taskId}/assignee/add")

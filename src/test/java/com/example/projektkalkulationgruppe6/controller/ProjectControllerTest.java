@@ -93,8 +93,8 @@ class ProjectControllerTest {
                         hasProperty("projectId", is(2)))))
                 .andExpect(model().attribute("viewProjectUrl", "/projects/"))
                 .andExpect(model().attribute("createProjectUrl", "/projects/create-project"))
-                .andExpect(model().attribute("editProjectUrl", "/projects/edit-project"))
-                .andExpect(model().attribute("deleteProjectUrl", "/projects/delete-project"));
+                .andExpect(model().attribute("editProjectUrl", "/projects/{id}/edit-project"))
+                .andExpect(model().attribute("deleteProjectUrl", "/projects/{id}/delete-project"));
     }
 
     @Test
@@ -214,7 +214,8 @@ class ProjectControllerTest {
 
     @Test
     void deleteValidIdRedirectsToHome() throws Exception {
-        mockMvc.perform(post("/projects/1/delete")
+        when(projectService.findRootProjectIdById(1)).thenReturn(1);
+        mockMvc.perform(post("/projects/1/delete-project")
                         .sessionAttr("employeeId", 1))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/projects/table"));

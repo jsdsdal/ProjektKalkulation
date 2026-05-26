@@ -1,80 +1,170 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title th:text="${project.title}">Project Detail</title>
+    <link rel="stylesheet" th:href="@{/main.css}"/>
 </head>
 <body>
 
-<div>
-    <a Create Sub Project th:href="@{${createSubProjectUrl}}">Create Sub Project</a>
-</div>
+<!-- NAV -->
+<aside th:replace="~{fragments :: sidebar(activePage='projects')}"></aside>
 
-<div>
-    <a Create Task th:href="@{${createTaskUrl}}">Create Task</a>
-</div>
+<!-- CONTENT -->
+<main class="main">
 
-    <table>
-        <thead>
-        <tr>
-            <th>Title</th>
-            <th>Type</th>
-            <th>Start Date</th>
-            <th>End Date</th>
-            <th>Est. Hours</th>
-            <th>Actual Hours</th>
-        </tr>
-        </thead>
-        <tbody>
-        <!-- Subprojects -->
-        <th:block th:each="sub : ${project.subProjects}">
+    <div class="page-header">
+        <h1 class="page-title" th:text="${project.title}">View Project</h1>
+        <a th:href="@{${createSubProjectUrl}}" class="btn-primary">+ NEW SUB PROJECT</a>
+    </div>
+
+    <div class="page-header">
+        <a th:href="@{${createTaskUrl}}" class="btn-primary">+ NEW TASK</a>
+    </div>
+
+    <!-- tabs - navigationspanel -->
+    <div class="tabs-row">
+        <div class="tabs">
+            <button class="tab active">Overview</button>
+            <button class="tab">Table</button>
+            <button class="tab">Employees</button>
+        </div>
+        <div class="search-bar">
+            <input type="text" placeholder="Search projects..."/>
+        </div>
+    </div>
+    <!-- stats - fabrikeret / opsat -->
+    <div class="stat-cards">
+        <div class="stat-card">
+            <div class="stat-card-label">Active projects</div>
+            <div class="stat-card-value">0</div>
+            <div class="stat-card-sub">across all projects</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-label">Tasks due this week</div>
+            <div class="stat-card-value">—</div>
+            <div class="stat-card-sub">across all projects</div>
+        </div>
+        <div class="stat-card warning">
+            <div class="stat-card-label">Estimated hours this week</div>
+            <div class="stat-card-value">—</div>
+            <div class="stat-card-sub">across all projects</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-card-label">Over-allocated employees</div>
+            <div class="stat-card-value">—</div>
+            <div class="stat-card-sub">—</div>
+        </div>
+    </div>
+    <!-- også fabrikeret sort -->
+    <div class="section-header">
+        <span class="section-title">Table view</span>
+        <button class="sort-btn">Sort by... ▾</button>
+    </div>
+
+
+
+
+    <div class="table-wrap">
+        <table>
+            <thead>
             <tr>
+                <th>Title</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Start Date ↓</th>
+                <th>End Date</th>
+                <th>Est. Hours</th>
+                <th>Actual Hours</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Subprojects -->
+            <th:block th:each="sub : ${project.subProjects}">
+                <tr>
 
-                <td>
+                <td class="td-title">
 
                     <button th:attr="popovertarget='subproject-' + ${sub.projectId}" th:text="${sub.title}">View Sub Project</button>
-
                     <div th:replace="~{fragments :: subProjectModal(${sub})}"></div>
 
-<!--                        <a th:href="@{${readSubProjectAndTaskBaseUrl} + ${sub.projectId}}"-->
-<!--                           th:text="${sub.title}">Subproject</a>-->
                 </td>
-                <td>Subproject</td>
-                <td th:text="${sub.startDate}"></td>
-                <td th:text="${sub.endDate}"></td>
-                <td></td>
-            </tr>
-            <th:block th:replace="~{:: taskRows(${sub.tasks}, 1)}" />
-        </th:block>
 
-        <!-- Tasks direkte på projektet -->
-        <th:block th:replace="~{:: taskRows(${project.tasks}, 0)}" />
-        </tbody>
-    </table>
-
-    <!-- Rekursivt fragment -->
-    <th:block th:fragment="taskRows(tasks, depth)">
-        <th:block th:each="task : ${tasks}">
-            <tr>
-                <td th:style="'padding-left: ' + (${depth} * 30) + 'px'">
-
-
-                    <button th:attr="popovertarget='task-' + ${task.taskId}" th:text="${task.title}">View Task</button>
-
-                    <div th:replace="~{fragments :: taskModal(${task})}"></div>
+                <td class="td-mono">Subproject</td>
+                <td>
+                    <span class="badge"
+                          th:classappend="${sub.status == 'Actual Hours Done'} ? ' badge-green'
+                                           : (${sub.status == 'Estimate in Progress'} ? ' badge-yellow'
+                                           : (${sub.status == 'Rejected'} ? ' badge-red'
+                                           : (${sub.status == 'Not Started'} ? ' badge-gray'
+                                           : ' badge-blue')))"
+                          th:text="${sub.status}">Status</span>
 
                 </td>
-                <td th:text="${depth} == 0 ? 'Task' : 'Task'">Type</td>
-                <td th:text="${task.startDate}"></td>
-                <td th:text="${task.endDate}"></td>
-                <td th:text="${task.estimatedHours}"></td>
-                <td th:text="${task.actualHours}"></td>
-            </tr>
-            <th:block th:if="${task.subTask != null and !task.subTask.isEmpty()}"
-                      th:replace="~{:: taskRows(${task.subTask}, ${depth} + 1)}" />
+                <td class="td-mono" th:text="${sub.startDate}">-</td>
+                <td class="td-mono" th:text="${sub.endDate}">-</td>
+                <td class="td-mono">-</td>
+                <td class="td-mono">-</td>
+                <td>
+                    <!-- slet og rediger -->
+                    <a th:href="@{${updateSubProjectUrl}(id=${sub.projectId})}"
+                       style="font-size:12px; color:var(--gray-500); margin-right:8px;">Edit</a>
+                    <form th:action="@{${deleteSubProjectUrl}(id=${sub.projectId})}"
+                          method="post" style="display:inline;"
+                          onsubmit="return confirm('Slet dette projekt?')">
+                        <button type="submit" class="action-menu-btn">✕</button>
+                    </form>
+                </td>
+                </tr>
+                <th:block th:replace="~{:: taskRows(${sub.tasks}, 1)}" />
+            </th:block>
+
+            <!-- Tasks direkte på projektet -->
+            <th:block th:replace="~{:: taskRows(${project.tasks}, 0)}" />
+            </tbody>
+        </table>
+
+        <!-- Rekursivt fragment -->
+        <th:block th:fragment="taskRows(tasks, depth)">
+            <th:block th:each="task : ${tasks}">
+                <tr>
+                        <td class="td-title" th:style="'padding-left: ' + (${depth} * 30) + 'px'">
+                            <button th:attr="popovertarget='task-' + ${task.taskId}" th:text="${task.title}">View Task</button>
+                            <div th:replace="~{fragments :: taskModal(${task})}"></div>
+                        </td>
+
+                    <td class="td-mono" th:text="${depth} == 0 ? 'Task' : 'Task'">Type</td>
+                    <td>-</td>
+                    <td class="td-mono" th:text="${task.startDate}"></td>
+                    <td class="td-mono" th:text="${task.endDate}"></td>
+                    <td class="td-mono" th:text="${task.estimatedHours}"></td>
+                    <td class="td-mono" th:text="${task.actualHours}">-</td>
+                    <td>
+                        <!-- slet og rediger -->
+                        <a th:href="@{${updateTaskUrl}(id=${task.taskId})}"
+                           style="font-size:12px; color:var(--gray-500); margin-right:8px;">Edit</a>
+                        <form th:action="@{${deleteTaskUrl}(id=${task.taskId})}"
+                              method="post" style="display:inline;"
+                              onsubmit="return confirm('Slet dette projekt?')">
+                            <button type="submit" class="action-menu-btn">✕</button>
+                        </form>
+                    </td>
+
+                </tr>
+                <th:block th:if="${task.subTask != null and !task.subTask.isEmpty()}"
+                          th:replace="~{:: taskRows(${task.subTask}, ${depth} + 1)}" />
+            </th:block>
         </th:block>
-    </th:block>
+    </div>
+
+    <!-- knapper til flere sider - virker ikke, fabrikeret -->
+    <div class="pagination">
+        <button class="page-btn-arrow" disabled>&#8249;</button>
+        <button class="page-btn active">1</button>
+        <button class="page-btn-arrow">&#8250;</button>
+    </div>
 
 
+</main>
 </body>
 </html>

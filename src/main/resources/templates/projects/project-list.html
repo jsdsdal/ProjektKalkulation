@@ -96,9 +96,9 @@
                     </td>
                     <td>
                         <!-- slet - burde virke ? -->
-                        <a th:href="@{/projects/{id}/edit(id=${project.projectId})}"
+                        <a th:href="@{${editProjectUrl}(id=${project.projectId})}"
                            style="font-size:12px; color:var(--gray-500); margin-right:8px;">Edit</a>
-                        <form th:action="@{/projects/{id}/delete(id=${project.projectId})}"
+                        <form th:action="@{${deleteProjectUrl}(id=${project.projectId})}"
                               method="post" style="display:inline;"
                               onsubmit="return confirm('Slet dette projekt?')">
                             <button type="submit" class="action-menu-btn">✕</button>

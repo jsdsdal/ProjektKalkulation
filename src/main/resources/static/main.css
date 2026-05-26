@@ -234,7 +234,7 @@ input, select, textarea { font-family: inherit; }
 .stat-card.warning::before { background: var(--red); }
 
 .stat-card-label {
-    font-size: 12px;
+    font-size: 11px;
     color: var(--gray-500);
     font-weight: 400;
     margin-bottom: 6px;
@@ -242,8 +242,11 @@ input, select, textarea { font-family: inherit; }
     letter-spacing: .04em;
 }
 .stat-card-value {
-    font-size: 26px;
+    font-size: 18px;
     font-weight: 600;
+    padding-bottom: 2px;
+    padding-top: 2px;
+    padding-right: 2px;
     letter-spacing: -.02em;
     line-height: 1.1;
     margin-bottom: 4px;

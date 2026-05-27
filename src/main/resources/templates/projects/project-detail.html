@@ -28,7 +28,7 @@
     <div class="tabs-row">
         <div class="tabs">
             <button class="tab active">Overview</button>
-            <button class="tab">Team</button>
+            <a th:href="@{/projects/{id}/team(id=${project.projectId})}" class="tab">Team</a>
         </div>
         <div class="search-bar">
             <input type="text" placeholder="Search projects..."/>

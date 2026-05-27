@@ -5,6 +5,7 @@ import com.example.projektkalkulationgruppe6.exception.DatabaseOperationExceptio
 import com.example.projektkalkulationgruppe6.exception.EmployeeNotFoundException;
 import com.example.projektkalkulationgruppe6.exception.InvalidEmployeeException;
 import com.example.projektkalkulationgruppe6.model.Employee;
+import com.example.projektkalkulationgruppe6.model.Task;
 import com.example.projektkalkulationgruppe6.repository.EmployeeRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,14 +16,17 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Service
 public class EmployeeService {
 
     private final EmployeeRepository employeeRepository;
+    private final TaskService taskService;
 
-    public EmployeeService(EmployeeRepository employeeRepository) {
+    public EmployeeService(EmployeeRepository employeeRepository, TaskService taskService) {
         this.employeeRepository = employeeRepository;
+        this.taskService = taskService;
     }
 
     public List<Employee> findAll() {

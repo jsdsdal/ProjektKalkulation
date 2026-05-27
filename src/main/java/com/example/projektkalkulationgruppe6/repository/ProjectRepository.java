@@ -278,7 +278,23 @@ public class ProjectRepository {
         return result != null ? result : 0;
     }
 
-
+    public List<Project> findProjectsNeedingAttention() {
+        String sql = """
+        SELECT DISTINCT p.*, s.title AS status_title
+        FROM project p
+        JOIN status s ON p.status_id = s.status_id
+        LEFT JOIN task t ON p.project_id = t.project_id
+        WHERE s.title IN ('Estimate in Progress', 'Estimate Done', 'Not Started')
+        AND p.parent_project_id IS NULL
+        AND (
+            p.end_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 14 DAY)
+            OR t.end_date < CURDATE() AND t.actual_hours IS NULL
+        )
+        ORDER BY p.end_date ASC
+        LIMIT 5
+        """;
+        return jdbcTemplate.query(sql, projectRowMapper);
+    }
 
 
 

@@ -34,9 +34,16 @@ public class DashboardController {
     @GetMapping("/dashboard")
     public String dashboard(HttpSession session, Model model) {
         sessionHelper.isLoggedIn(session);
+
+        int year = LocalDate.now().getYear();
+        int quarter = (LocalDate.now().getMonthValue() - 1) / 3 + 1;
+
         model.addAttribute("resourceLoad", employeeService.getResourceLoadCurrentMonth());
-        model.addAttribute("projects", projectService.findAll());
-        model.addAttribute("projectsNeedingAttention", projectService.findProjectsNeedingAttention());
+        model.addAttribute("forecastedRevenue", projectService.getQuarterlyEstimatedRevenue(year, quarter));
+        model.addAttribute("actualRevenue", projectService.getQuarterlyActualRevenue(year, quarter));
+        model.addAttribute("annualRevenue", projectService.getAnnualRevenue(year));
+        model.addAttribute("projectsNeedingAttention", projectService.getProjectsNeedingAttention());
+
         return "dashboard";
     }
 

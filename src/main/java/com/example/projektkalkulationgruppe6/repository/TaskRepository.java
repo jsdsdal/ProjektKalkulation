@@ -278,20 +278,33 @@ public class TaskRepository {
 
     public int countTasksByProjectId(int projectId) {
         String sql = """
-            SELECT COUNT(task_id)
-            FROM task
-            WHERE project_id = ?
-            """;
+        WITH RECURSIVE project_tree(project_id) AS (
+            SELECT project_id FROM project WHERE project_id = ?
+            UNION ALL
+            SELECT p.project_id FROM project p
+            JOIN project_tree pt ON p.parent_project_id = pt.project_id
+        )
+        SELECT COUNT(task_id)
+        FROM task
+        WHERE project_id IN (SELECT project_id FROM project_tree)
+        """;
         return jdbcTemplate.queryForObject(sql, Integer.class, projectId);
     }
 
     public int countCompletedTasksByProjectId(int projectId) {
         String sql = """
-            SELECT COUNT(task_id)
-            FROM task
-            WHERE project_id = ?
-            AND actual_hours IS NOT NULL
-            """;
+        WITH RECURSIVE project_tree(project_id) AS (
+            SELECT project_id FROM project WHERE project_id = ?
+            UNION ALL
+            SELECT p.project_id FROM project p
+            JOIN project_tree pt ON p.parent_project_id = pt.project_id
+        )
+        SELECT COUNT(task_id)
+        FROM task
+        WHERE project_id IN (SELECT project_id FROM project_tree)
+        AND actual_hours IS NOT NULL
+        AND actual_hours > 0
+        """;
         return jdbcTemplate.queryForObject(sql, Integer.class, projectId);
     }
 

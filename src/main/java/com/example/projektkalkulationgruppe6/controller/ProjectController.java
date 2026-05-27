@@ -98,6 +98,8 @@ public class ProjectController {
         model.addAttribute("actualRevenue", projectService.getActualRevenueForProject(id));
 
         model.addAttribute("tasksDueThisWeek", taskService.getCountOfAllTasksDueThisWeek());
+        model.addAttribute("totalTasks", taskService.getTaskCountByProjectId(id));
+        model.addAttribute("completedTasks", taskService.getCompletedTaskCountByProjectId(id));
 
         model.addAttribute("totalEstimatedHours", projectService.getTotalEstimatedHoursByProjectId(id));
         model.addAttribute("totalActualHours", projectService.getTotalActualHoursByProjectId(id));

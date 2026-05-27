@@ -42,16 +42,11 @@
                  th:text="${project.hourPrice != null} ? ${#numbers.formatDecimal(project.hourPrice, 1, 0)} + ' DKK' : '—'">
             </div>
             <div class="stat-card-sub">Fixed-Price</div>
-        </div>
-        <div class="stat-card"
-             th:classappend="${tasksDueThisWeek > 0} ? ' warning' : ' success'">
-            <div class="stat-card-label">Tasks Due This Week</div>
-            <div class="stat-card-value" th:text="${tasksDueThisWeek}">—</div>
-            <div class="stat-card-sub"
-                 th:text="${tasksDueThisWeek == 0} ? 'Nothing due this week'
-                : (${tasksDueThisWeek == 1} ? '1 task needs attention'
-                : ${tasksDueThisWeek} + ' tasks need attention')">
-            </div>
+        </div><div class="stat-card">
+        <div class="stat-card-label">Task Progress</div>
+        <div class="stat-card-value"
+             th:text="${completedTasks} + ' / ' + ${totalTasks}">—</div>
+        <div class="stat-card-sub">tasks completed</div>
         </div>
         <div class="stat-card">
             <div class="stat-card-label">Forecasted Revenue</div>

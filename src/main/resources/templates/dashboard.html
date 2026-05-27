@@ -43,9 +43,36 @@
         </div>
     </div>
     <div class="dashboard-bottom">
-
         <div class="stat-card-table">
             <h3 class="stat-card-table-title">Projects requiring attention</h3>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>End date</th>
+                        <th>Status</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="project : ${projectsNeedingAttention}">
+                        <td class="td-title" th:text="${project.title}"></td>
+                        <td class="td-mono" th:text="${#temporals.format(project.endDate, 'MMM dd')}"></td>
+                        <td>
+                        <span class="badge"
+                              th:classappend="${project.endDate.isBefore(#temporals.createToday())} ? 'badge-red' : 'badge-yellow'"
+                              th:text="${project.endDate.isBefore(#temporals.createToday())} ? 'Overdue' : 'Due soon'">
+                        </span>
+                        </td>
+                    </tr>
+                    <tr th:if="${#lists.isEmpty(projectsNeedingAttention)}">
+                        <td colspan="3" style="text-align: center; color: var(--gray-500); padding: 20px;">
+                            No projects requiring attention
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
 
         <div class="stat-card-table">

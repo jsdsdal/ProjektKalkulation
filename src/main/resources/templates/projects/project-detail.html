@@ -28,7 +28,7 @@
     <div class="tabs-row">
         <div class="tabs">
             <button class="tab active">Overview</button>
-            <button class="tab">Team</button>
+            <a th:href="@{/projects/{id}/team(id=${project.projectId})}" class="tab">Team</a>
         </div>
         <div class="search-bar">
             <input type="text" placeholder="Search projects..."/>
@@ -40,45 +40,73 @@
             <div class="stat-card-label">Hourly Price</div>
             <div class="stat-card-value"
                  th:text="${project.hourPrice != null} ? ${#numbers.formatDecimal(project.hourPrice, 1, 0)} + ' DKK' : '—'">
-            </div>            <div class="stat-card-sub">Fixed-Price</div>
+            </div>
+            <div class="stat-card-sub">Fixed-Price</div>
+        </div><div class="stat-card">
+        <div class="stat-card-label">Task Progress</div>
+        <div class="stat-card-value"
+             th:text="${completedTasks} + ' / ' + ${totalTasks}">—</div>
+        <div class="stat-card-sub">tasks completed</div>
         </div>
         <div class="stat-card">
-            <div class="stat-card-label">Tasks due this week</div>
-            <div class="stat-card-value">—</div>
-            <div class="stat-card-sub">across all projects</div>
-        </div>
-        <div class="stat-card warning">
             <div class="stat-card-label">Forecasted Revenue</div>
-            <div class="stat-card-value">—</div>
-            <div class="stat-card-sub">across all tasks</div>
+            <div class="stat-card-value"
+                 th:text="${#numbers.formatDecimal(forecastedRevenue, 1, 'POINT', 0, 'NONE')} + ' DKK'">—</div>
+            <div class="stat-card-sub">based on estimated hours</div>
+        </div><div class="stat-card"
+                   th:with="dev=${forecastedRevenue != null and actualRevenue != null} ? ${actualRevenue.subtract(forecastedRevenue)} : null"
+                   th:classappend="${dev == null} ? '' : (${dev.compareTo(T(java.math.BigDecimal).ZERO) < 0} ? ' danger' : ' success')">
+        <div class="stat-card-label">Actual Revenue</div>
+        <div class="stat-card-value"
+             th:text="${actualRevenue != null} ? ${#numbers.formatDecimal(actualRevenue, 1, 'POINT', 0, 'NONE')} + ' DKK' : '—'">—</div>
+        <div class="stat-card-sub"
+             th:with="dev=${forecastedRevenue != null and actualRevenue != null} ? ${actualRevenue.subtract(forecastedRevenue)} : null"
+             th:text="${dev == null}                                          ? 'logged so far'
+                : (${dev.compareTo(T(java.math.BigDecimal).ZERO) == 0}  ? 'On budget'
+                : (${dev.compareTo(T(java.math.BigDecimal).ZERO) > 0}   ? '+' + ${#numbers.formatDecimal(dev, 1, 'POINT', 0, 'NONE')} + ' DKK above forecast'
+                :                                                          ${#numbers.formatDecimal(dev, 1, 'POINT', 0, 'NONE')} + ' DKK below forecast'))">
         </div>
-        <div class="stat-card">
-            <div class="stat-card-label">Actual Revenue</div>
-            <div class="stat-card-value">—</div>
-            <div class="stat-card-sub">for now</div>
-        </div>
-        <div class="stat-card">
+    </div>
+        <div class="stat-card"
+             th:with="days=${project.endDate != null} ? ${T(java.time.temporal.ChronoUnit).DAYS.between(T(java.time.LocalDate).now(), project.endDate)} : null"
+             th:classappend="${days == null}      ? ''
+                        : (${days < 0}        ? ' danger'
+                        : (${days <= 7}       ? ' danger'
+                        : (${days <= 30}      ? ' warning'
+                        :                       ' success')))">
             <div class="stat-card-label">Deadline</div>
             <div class="stat-card-value"
                  th:text="${project.endDate != null} ? ${project.endDate} : '—'">—</div>
             <div class="stat-card-sub"
-                 th:with="days=${project.endDate != null} ? ${T(java.time.temporal.ChronoUnit).DAYS.between(T(java.time.LocalDate).now(), project.endDate)} : null"
-                 th:text="${days != null and days >= 0} ? ${days} + ' days remaining' : 'Past deadline'">—</div>
+                 th:text="${days == null}   ? 'No deadline set'
+                    : (${days < 0}     ? 'Past deadline'
+                    : (${days == 0}    ? 'Due today'
+                    : ${days} + ' days remaining'))">—</div>
         </div>
         <div class="stat-card">
-            <div class="stat-card-label">Total est. workload</div>
-            <div class="stat-card-value">0</div>
-            <div class="stat-card-sub">across all projects</div>
+            <div class="stat-card-label">Est. Hours Total</div>
+            <div class="stat-card-value" th:text="${totalEstimatedHours}">—</div>
+            <div class="stat-card-sub">across all tasks</div>
         </div>
         <div class="stat-card">
-            <div class="stat-card-label">Actual workload</div>
-            <div class="stat-card-value">0</div>
-            <div class="stat-card-sub">across all projects</div>
+            <div class="stat-card-label">Actual Hours Total</div>
+            <div class="stat-card-value" th:text="${totalActualHours}">—</div>
+            <div class="stat-card-sub">logged so far</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card"
+             th:classappend="${project.status == 'Actual Hours Done'}     ? ' success'
+                    : (${project.status == 'Rejected'}            ? ' danger'
+                    : (${project.status == 'Estimate in Progress'}? ' warning'
+                    :                                               ''))">
             <div class="stat-card-label">Status</div>
-            <div class="stat-card-value" th:text="${project.status}">Status Message</div>
-            <div class="stat-card-sub">across all projects</div>
+            <div class="stat-card-value" th:text="${project.status}">—</div>
+            <div class="stat-card-sub"
+                 th:text="${project.status == 'Actual Hours Done'}     ? 'Project complete'
+                : (${project.status == 'Rejected'}             ? 'Project cancelled'
+                : (${project.status == 'Estimate in Progress'} ? 'Estimation ongoing'
+                : (${project.status == 'Estimate Done'}        ? 'Ready for scheduling'
+                :                                                'Not yet started')))">
+            </div>
         </div>
     </div>
 

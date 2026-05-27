@@ -8,21 +8,29 @@
 <body>
 <!-- SIDEBAR -->
 <aside th:fragment="sidebar" class="sidebar">
-    <div class="sidebar-logo">AlphaScope</div>
+    <div class="sidebar-logo">
+        <img th:src="@{/icon/logo.svg}" alt="AlphaScope logo">
+    </div>
     <nav class="sidebar-nav">
-        <!-- skal laves om til rigtige endpoints -->
         <a th:href="@{/dashboard}" class="sidebar-link"
-           th:classappend="${activePage == 'dashboard'} ? ' active'">Dashboard</a>
+           th:classappend="${activePage == 'dashboard'} ? ' active'">
+            <img th:src="@{/icon/dashboard.svg}" class="sidebar-icon" alt="">Dashboard</a>
+
         <a th:href="@{/projects/table}" class="sidebar-link"
-           th:classappend="${activePage == 'projects'} ? ' active'">Projects</a>
-        <a th:href="@{/employees}" class="sidebar-link"
-           th:classappend="${activePage == 'employees'} ? ' active'">Employees</a>
+           th:classappend="${activePage == 'projects'} ? ' active'">
+            <img th:src="@{/icon/projects.svg}" class="sidebar-icon" alt="">Projects</a>
+
+        <a th:href="@{/employees/list}" class="sidebar-link"
+           th:classappend="${activePage == 'employees'} ? ' active'">
+            <img th:src="@{/icon/employees.svg}" class="sidebar-icon" alt="">Employees</a>
+
         <a th:href="@{/profile}" class="sidebar-link"
-           th:classappend="${activePage == 'profile'} ? ' active'">My Profile</a>
+           th:classappend="${activePage == 'profile'} ? ' active'">
+            <img th:src="@{/icon/myprofile.svg}" class="sidebar-icon" alt="">My Profile</a>
+
         <form th:action="@{/login/logout}" method="post" class="logout-form">
             <button type="submit" class="sidebar-link sidebar-logout">
-                Log Out
-            </button>
+                <img th:src="@{/icon/logout.svg}" class="sidebar-icon" alt="">Log Out</button>
         </form>
     </nav>
 </aside>

@@ -1,11 +1,11 @@
 package com.example.projektkalkulationgruppe6.service;
 
 import com.example.projektkalkulationgruppe6.exception.*;
-import com.example.projektkalkulationgruppe6.model.Project;
 import com.example.projektkalkulationgruppe6.model.Task;
 import com.example.projektkalkulationgruppe6.repository.TaskRepository;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -29,6 +29,7 @@ public class TaskService {
         }
     }
 
+    @Transactional(readOnly = true)
     public List<Task> getTreesByProjectId(int projectId) {
         try {
             return taskRepository.findParentsAndChildrenByProjectId(projectId);
@@ -38,7 +39,7 @@ public class TaskService {
     }
 
 
-
+    @Transactional(readOnly = true)
     public Task findById(int id) {
         try {
             Task task = taskRepository.findById(id);
@@ -51,6 +52,7 @@ public class TaskService {
         }
     }
 
+    @Transactional
     public Task create(Task task, int projectId, List<Integer> competenceIds, List<Integer> employeeIds) {
         validateTask(task);
         try {
@@ -75,6 +77,7 @@ public class TaskService {
         }
     }
 
+    @Transactional
     public Task update (Task task) {
         validateTask(task);
         if (task.getTaskId() == null){
@@ -91,6 +94,7 @@ public class TaskService {
         }
     }
 
+    @Transactional
     public void deleteById(int taskId) {
         validateId(taskId);
         try {

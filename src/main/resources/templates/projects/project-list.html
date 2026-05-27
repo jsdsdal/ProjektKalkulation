@@ -20,7 +20,6 @@
     <div class="tabs-row">
         <div class="tabs">
             <button class="tab active">Overview</button>
-            <button class="tab">Team</button>
         </div>
         <div class="search-bar">
             <input type="text" placeholder="Search projects..."/>
@@ -31,22 +30,31 @@
         <div class="stat-card">
             <div class="stat-card-label">Active projects</div>
             <div class="stat-card-value" th:text="${activeProjects}">0</div>
-            <div class="stat-card-sub">across all projects</div>
+            <div class="stat-card-sub">counting all projects</div>
         </div>
-        <div class="stat-card">
+        <div class="stat-card"
+             th:classappend="${tasksDueThisWeekCount > 0} ? ' warning' : ' success'">
             <div class="stat-card-label">Tasks due this week</div>
-            <div class="stat-card-value">—</div>
-            <div class="stat-card-sub">across all projects</div>
-        </div>
-        <div class="stat-card warning">
-            <div class="stat-card-label">Estimated hours this week</div>
-            <div class="stat-card-value">—</div>
-            <div class="stat-card-sub">across all projects</div>
+            <div class="stat-card-value" th:text="${tasksDueThisWeekCount}">—</div>
+            <div class="stat-card-sub"
+                 th:text="${tasksDueThisWeekCount == 0} ? 'Nothing due this week'
+                         : ${tasksDueThisWeekCount} + ' tasks need attention'">
+            </div>
         </div>
         <div class="stat-card">
-            <div class="stat-card-label">Over-allocated employees</div>
-            <div class="stat-card-value">—</div>
-            <div class="stat-card-sub">—</div>
+            <div class="stat-card-label">Est. hours this week</div>
+            <div class="stat-card-value"
+                 th:text="${estimatedHoursThisWeek != null} ? ${#numbers.formatDecimal(estimatedHoursThisWeek, 1, 0)} + ' h' : '—'">—</div>
+            <div class="stat-card-sub">across all active tasks</div>
+        </div>
+        <div class="stat-card"
+             th:classappend="${needsAttention > 0} ? ' danger' : ' success'">
+            <div class="stat-card-label">Projects needing attention</div>
+            <div class="stat-card-value" th:text="${needsAttention}">—</div>
+            <div class="stat-card-sub"
+                 th:text="${needsAttention == 0} ? 'All projects on track'
+                         : ${needsAttention} + ' projects at risk'">
+            </div>
         </div>
     </div>
     <!-- også fabrikeret sort -->
@@ -60,8 +68,7 @@
         <table>
             <thead>
             <tr>
-                <th>Title ↓</th>
-                <th>Team size</th>
+                <th>Title </th>
                 <th>Est. revenue</th>
                 <th>Actual revenue</th>
                 <th>Est. hours</th>
@@ -77,11 +84,11 @@
                         <a th:href="@{/projects/{id}(id=${project.projectId})}"
                            th:text="${project.title}">Title</a>
                     </td>
-                    <td>—</td>
-                    <td>—</td>
-                    <td>—</td>
-                    <td>—</td>
-                    <td>
+                    <td th:with="est=${project.hourPrice != null} ? ${project.hourPrice.multiply(T(java.math.BigDecimal).valueOf(estimatedHoursByProject.get(project.projectId) != null ? estimatedHoursByProject.get(project.projectId) : 0))} : null"
+                        th:text="${est != null} ? ${#numbers.formatDecimal(est, 1, 'POINT', 0, 'NONE')} + ' DKK' : '—'">—</td>
+                    <td th:with="act=${project.hourPrice != null} ? ${project.hourPrice.multiply(T(java.math.BigDecimal).valueOf(actualHoursByProject.get(project.projectId) != null ? actualHoursByProject.get(project.projectId) : 0))} : null"
+                        th:text="${act != null} ? ${#numbers.formatDecimal(act, 1, 'POINT', 0, 'NONE')} + ' DKK' : '—'">—</td>
+                    <td th:text="${estimatedHoursByProject.get(project.projectId) != null} ? ${estimatedHoursByProject.get(project.projectId)} + ' h' : '—'">—</td>                    <td>
                         <!-- status + farver -->
                         <span class="badge"
                               th:classappend="${project.status == 'Actual Hours Done'} ? ' badge-green'

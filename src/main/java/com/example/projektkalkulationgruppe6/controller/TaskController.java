@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import java.util.ArrayList;
+
 import java.util.List;
 
 
@@ -60,11 +60,12 @@ public class TaskController {
     @GetMapping("/create-task")
     public String showCreateForm(@PathVariable int projectId, HttpSession session, Model model) {
         sessionHelper.isLoggedIn(session);
+        int rootProjectId = projectService.findRootProjectIdById(projectId);
         model.addAttribute("task", new Task());
         model.addAttribute("formTitle", "Create task");
         model.addAttribute("formAction", "/projects/" + projectId + "/tasks/create-task");
         model.addAttribute("submitLabel", "Create");
-        model.addAttribute("cancelUrl", "/projects/table");
+        model.addAttribute("cancelUrl", "/projects/" + rootProjectId);
         model.addAttribute("allCompetencies", taskService.findAllCompetencies());
         model.addAttribute("allEmployees", employeeService.findAll());
         model.addAttribute("projectId", projectId);
@@ -85,11 +86,12 @@ public class TaskController {
                     employeeId != null ? employeeId : List.of());
             return "redirect:/projects/" + rootProjectId;
         } catch (InvalidTaskException | DatabaseOperationException ex) {
+            int rootProjectId = projectService.findRootProjectIdById(projectId);
             model.addAttribute("task", task);
             model.addAttribute("formTitle", "Create task");
             model.addAttribute("formAction", "/projects/" + projectId + "/tasks/create-task");
             model.addAttribute("submitLabel", "Create");
-            model.addAttribute("cancelUrl", "/projects/table");
+            model.addAttribute("cancelUrl", "/projects/" + rootProjectId);
             model.addAttribute("allCompetencies", taskService.findAllCompetencies());
             model.addAttribute("allEmployees", employeeService.findAll());
             model.addAttribute("errorMessage", ex.getMessage());
@@ -104,11 +106,12 @@ public class TaskController {
     public String showSubTaskCreateForm(@PathVariable int projectId, @PathVariable int parentTaskId,
                                         HttpSession session, Model model) {
         sessionHelper.isLoggedIn(session);
+        int rootProjectId = projectService.findRootProjectIdById(projectId);
         model.addAttribute("task", new Task());
         model.addAttribute("formTitle", "Create task");
         model.addAttribute("formAction", "/projects/" + projectId + "/tasks/" + parentTaskId +  "/create-task");
         model.addAttribute("submitLabel", "Create");
-        model.addAttribute("cancelUrl", "/projects/table");
+        model.addAttribute("cancelUrl", "/projects/" + rootProjectId);
         model.addAttribute("allCompetencies", taskService.findAllCompetencies());
         model.addAttribute("allEmployees", employeeService.findAll());
         model.addAttribute("projectId", projectId);
@@ -131,12 +134,13 @@ public class TaskController {
                     employeeId != null ? employeeId : List.of());
 
             return "redirect:/projects/" + rootProjectId;
-        } catch (InvalidTaskException | DatabaseOperationException ex) {
+        } catch (InvalidTaskException ex) {
+            int rootProjectId = projectService.findRootProjectIdById(projectId);
             model.addAttribute("task", task);
             model.addAttribute("formTitle", "Create task");
             model.addAttribute("formAction", "/projects/" + projectId + "/tasks/" + parentTaskId +  "/create-task");
             model.addAttribute("submitLabel", "Create");
-            model.addAttribute("cancelUrl", "/projects/table");
+            model.addAttribute("cancelUrl", "/projects/" + rootProjectId);
             model.addAttribute("allCompetencies", taskService.findAllCompetencies());
             model.addAttribute("allEmployees", employeeService.findAll());
             model.addAttribute("errorMessage", ex.getMessage());
@@ -168,14 +172,43 @@ public class TaskController {
     }
 
     @PostMapping("/{id}/edit-task")
-    public String update(@PathVariable int projectId, @PathVariable int id, @ModelAttribute Task task, Model model) {
+    public String update(@PathVariable int projectId, @PathVariable int id,
+                         @ModelAttribute Task task,
+                         @RequestParam(required = false) List<Integer> competenceId,
+                         @RequestParam(required = false) List<Integer> employeeId,
+                         Model model) {
         task.setTaskId(id);
         int rootProjectId = projectService.findRootProjectIdById(projectId);
 
         try {
             taskService.update(task);
+
+            // Sync competencies
+            Task current = taskService.findById(id);
+            if (current.getCompetencies() != null) {
+                for (String title : current.getCompetencies()) {
+                    taskService.findAllCompetencies().stream()
+                            .filter(c -> c.title().equals(title))
+                            .findFirst()
+                            .ifPresent(c -> taskService.removeCompetenceFromTask(id, c.id()));
+                }
+            }
+            if (competenceId != null) {
+                for (int cId : competenceId) taskService.addCompetenceToTask(id, cId);
+            }
+
+            // Sync assignees
+            if (current.getAssignees() != null) {
+                for (var assignee : current.getAssignees()) {
+                    taskService.removeAssigneeFromTask(id, assignee.getEmployeeId());
+                }
+            }
+            if (employeeId != null) {
+                for (int eId : employeeId) taskService.addAssigneeToTask(id, eId);
+            }
+
             return "redirect:/projects/" + rootProjectId;
-        } catch (InvalidTaskException ex) {
+        } catch (InvalidTaskException | TaskNotFoundException | DatabaseOperationException ex) {
             model.addAttribute("task", task);
             model.addAttribute("formTitle", "Edit task");
             model.addAttribute("formAction", "/projects/" + projectId + "/tasks/" + id + "/edit-task");
@@ -184,7 +217,6 @@ public class TaskController {
             model.addAttribute("allCompetencies", taskService.findAllCompetencies());
             model.addAttribute("allEmployees", employeeService.findAll());
             model.addAttribute("errorMessage", ex.getMessage());
-
             return "tasks/task-form";
         }
     }
@@ -200,28 +232,28 @@ public class TaskController {
     public String addAssignee(@PathVariable int projectId, @PathVariable int taskId,
                               @RequestParam int employeeId) {
         taskService.addAssigneeToTask(taskId, employeeId);
-        return "redirect:/projects/" + projectId + "/tasks/" + taskId + "/edit";
+        return "redirect:/projects/" + projectId + "/tasks/" + taskId + "/edit-task";
     }
 
     @PostMapping("/{taskId}/assignee/remove")
     public String removeAssignee(@PathVariable int projectId, @PathVariable int taskId,
                                  @RequestParam int employeeId) {
         taskService.removeAssigneeFromTask(taskId, employeeId);
-        return "redirect:/projects/" + projectId + "/tasks/" + taskId + "/edit";
+        return "redirect:/projects/" + projectId + "/tasks/" + taskId + "/edit-task";
     }
 
     @PostMapping("/{taskId}/competence/add")
     public String addCompetence(@PathVariable int projectId, @PathVariable int taskId,
                                 @RequestParam int competenceId) {
         taskService.addCompetenceToTask(taskId, competenceId);
-        return "redirect:/projects/" + projectId + "/tasks/" + taskId + "/edit";
+        return "redirect:/projects/" + projectId + "/tasks/" + taskId + "/edit-task";
     }
 
     @PostMapping("/{taskId}/competence/remove")
     public String removeCompetence(@PathVariable int projectId, @PathVariable int taskId,
                                    @RequestParam int competenceId) {
         taskService.removeCompetenceFromTask(taskId, competenceId);
-        return "redirect:/projects/" + projectId + "/tasks/" + taskId + "/edit";
+        return "redirect:/projects/" + projectId + "/tasks/" + taskId + "/edit-task";
     }
 
 

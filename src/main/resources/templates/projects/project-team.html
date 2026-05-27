@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${project.title} + ' - Team'">Project Team</title>
+  <link rel="stylesheet" th:href="@{/main.css}"/>
+</head>
+<body>
+
+<aside th:replace="~{fragments :: sidebar(activePage='projects')}"></aside>
+
+<main class="main">
+
+  <div class="page-header">
+    <div>
+      <h1 class="page-title" th:text="${project.title}">Project Title</h1>
+      <p th:text="${project.description}">Description</p>
+      <p style="color: #7A7A7A; font-size: 12px">Project Owner:
+        <span th:text="${project.projectOwner.name}" style="color:#7A7A7A; font-size: 12px"></span>
+      </p>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs-row">
+    <div class="tabs">
+      <a th:href="@{/projects/{id}(id=${project.projectId})}" class="tab">Overview</a>
+      <a th:href="@{/projects/{id}/team(id=${project.projectId})}" class="tab active">Team</a>
+    </div>
+  </div>
+
+  <!-- Team table -->
+  <div class="stat-card-table" style="margin-top: 24px;">
+    <h3 class="stat-card-table-title">Project Team</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Tasks</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="employee : ${team}">
+          <td class="td-title" th:text="${employee.name}"></td>
+          <td class="td-mono" th:text="${employee.email}"></td>
+          <td>
+            <th:block th:each="task : ${project.tasks}">
+                                <span class="badge badge-gray"
+                                      th:if="${task.assignees != null and task.assignees.contains(employee)}"
+                                      th:text="${task.title}">
+                                </span>
+            </th:block>
+          </td>
+        </tr>
+        <tr th:if="${team == null or #lists.isEmpty(team)}">
+          <td colspan="3" style="text-align: center; color: var(--gray-500); padding: 20px;">
+            No team members assigned to this project
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+</body>
+</html>

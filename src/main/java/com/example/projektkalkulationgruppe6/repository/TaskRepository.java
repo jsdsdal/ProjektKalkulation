@@ -234,7 +234,7 @@ public class TaskRepository {
     public void removeCompetenceFromTask(int taskId, int competenceId) {
         String sql = """
         DELETE FROM task_competence
-        WHERE task_id = ? 
+        WHERE task_id = ?
         AND competence_id = ?
         """;
         jdbcTemplate.update(sql, taskId, competenceId); }
@@ -273,26 +273,42 @@ public class TaskRepository {
             SELECT COUNT(task_id)
             FROM task
             """;
-        return jdbcTemplate.queryForObject(sql, Integer.class);
+        Integer result = jdbcTemplate.queryForObject(sql, Integer.class);
+        return result != null ? result : 0;
     }
 
     public int countTasksByProjectId(int projectId) {
         String sql = """
-            SELECT COUNT(task_id)
-            FROM task
-            WHERE project_id = ?
-            """;
-        return jdbcTemplate.queryForObject(sql, Integer.class, projectId);
+        WITH RECURSIVE project_tree(project_id) AS (
+            SELECT project_id FROM project WHERE project_id = ?
+            UNION ALL
+            SELECT p.project_id FROM project p
+            JOIN project_tree pt ON p.parent_project_id = pt.project_id
+        )
+        SELECT COUNT(task_id)
+        FROM task
+        WHERE project_id IN (SELECT project_id FROM project_tree)
+        """;
+        Integer result = jdbcTemplate.queryForObject(sql, Integer.class, projectId);
+        return result != null ? result : 0;
     }
 
     public int countCompletedTasksByProjectId(int projectId) {
         String sql = """
-            SELECT COUNT(task_id)
-            FROM task
-            WHERE project_id = ?
-            AND actual_hours IS NOT NULL
-            """;
-        return jdbcTemplate.queryForObject(sql, Integer.class, projectId);
+        WITH RECURSIVE project_tree(project_id) AS (
+            SELECT project_id FROM project WHERE project_id = ?
+            UNION ALL
+            SELECT p.project_id FROM project p
+            JOIN project_tree pt ON p.parent_project_id = pt.project_id
+        )
+        SELECT COUNT(task_id)
+        FROM task
+        WHERE project_id IN (SELECT project_id FROM project_tree)
+        AND actual_hours IS NOT NULL
+        AND actual_hours > 0
+        """;
+        Integer result = jdbcTemplate.queryForObject(sql, Integer.class, projectId);
+        return result != null ? result : 0;
     }
 
     public BigDecimal sumEstimatedHoursThisWeek() {
@@ -304,7 +320,8 @@ public class TaskRepository {
                 AND
                 DATE_ADD(DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY), INTERVAL 6 DAY)
             """;
-        return jdbcTemplate.queryForObject(sql, BigDecimal.class);
+        BigDecimal result = jdbcTemplate.queryForObject(sql, BigDecimal.class);
+        return result != null ? result : new BigDecimal("0.0");
     }
 
 

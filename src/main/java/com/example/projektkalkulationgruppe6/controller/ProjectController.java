@@ -2,7 +2,6 @@ package com.example.projektkalkulationgruppe6.controller;
 
 import com.example.projektkalkulationgruppe6.exception.InvalidProjectException;
 import com.example.projektkalkulationgruppe6.exception.ProjectNotFoundException;
-import com.example.projektkalkulationgruppe6.model.Employee;
 import com.example.projektkalkulationgruppe6.model.Project;
 import com.example.projektkalkulationgruppe6.service.EmployeeService;
 import com.example.projektkalkulationgruppe6.service.ProjectService;
@@ -11,8 +10,11 @@ import com.example.projektkalkulationgruppe6.utility.SessionHelper;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.PathMatcher;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/projects")
@@ -21,15 +23,13 @@ public class ProjectController {
     private final ProjectService projectService;
     private final TaskService taskService;
     private final SessionHelper sessionHelper;
-    private final PathMatcher pathMatcher;
 
 
-    public ProjectController(ProjectService projectService, EmployeeService employeeService, TaskService taskService, SessionHelper sessionHelper, PathMatcher pathMatcher) {
+    public ProjectController(ProjectService projectService, EmployeeService employeeService, TaskService taskService, SessionHelper sessionHelper) {
         this.projectService = projectService;
         this.employeeService = employeeService;
         this.taskService = taskService;
         this.sessionHelper = sessionHelper;
-        this.pathMatcher = pathMatcher;
     }
 //TEST
 
@@ -37,7 +37,21 @@ public class ProjectController {
     public String list(Model model, HttpSession session) {
         sessionHelper.isLoggedIn(session);
 
-        model.addAttribute("projects", projectService.findAll());
+        List<Project> projects = projectService.findAll();
+
+        // build per-project hour maps for the table
+        Map<Integer, Double> estimatedHoursByProject = new HashMap<>();
+        Map<Integer, Double> actualHoursByProject = new HashMap<>();
+        for (Project p : projects) {
+            estimatedHoursByProject.put(p.getProjectId(),
+                    projectService.getTotalEstimatedHoursByProjectId(p.getProjectId()));
+            actualHoursByProject.put(p.getProjectId(),
+                    projectService.getTotalActualHoursByProjectId(p.getProjectId()));
+        }
+
+        model.addAttribute("projects", projects);
+        model.addAttribute("estimatedHoursByProject", estimatedHoursByProject);
+        model.addAttribute("actualHoursByProject", actualHoursByProject);
         model.addAttribute("viewProjectUrl", "/projects/");
         model.addAttribute("createProjectUrl", "/projects/create-project");
         model.addAttribute("editProjectUrl", "/projects/{id}/edit-project");
@@ -48,9 +62,7 @@ public class ProjectController {
         model.addAttribute("totalTasks", taskService.getAllTaskCount());
         model.addAttribute("estimatedHoursThisWeek", taskService.getEstimatedHoursThisWeek());
 
-
         return "projects/project-list";
-
     }
 
     @GetMapping("/{id}")
@@ -78,9 +90,17 @@ public class ProjectController {
 
         model.addAttribute("closeUrl", "/projects/" + rootProjectId);
 
+        model.addAttribute("forecastedRevenue", projectService.getExpectedRevenueForProject(id));
+        model.addAttribute("actualRevenue", projectService.getActualRevenueForProject(id));
+
+        model.addAttribute("tasksDueThisWeek", taskService.getCountOfAllTasksDueThisWeek());
+        model.addAttribute("totalTasks", taskService.getTaskCountByProjectId(id));
+        model.addAttribute("completedTasks", taskService.getCompletedTaskCountByProjectId(id));
+
         model.addAttribute("totalEstimatedHours", projectService.getTotalEstimatedHoursByProjectId(id));
         model.addAttribute("totalActualHours", projectService.getTotalActualHoursByProjectId(id));
         model.addAttribute("remainingHours", projectService.getRemainingHoursByProjectId(id));
+        model.addAttribute("team", projectService.getTeamByProjectId(id));
 
         if(project.getParentProjectId()== null) {
             return "projects/project-detail";
@@ -97,6 +117,15 @@ public class ProjectController {
 
 
         return "projects/project-overview";
+    }
+
+    @GetMapping("/{id}/team")
+    public String team(@PathVariable int id, HttpSession session, Model model) {
+        sessionHelper.isLoggedIn(session);
+        Project project = projectService.findById(id);
+        model.addAttribute("project", project);
+        model.addAttribute("team", projectService.getTeamByProjectId(id));
+        return "projects/project-team";
     }
 
     @GetMapping("/create-project")

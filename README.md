@@ -1,6 +1,6 @@
 # AlphaScope
 
-> [Link til website](projektkalkulation.azurewebsites.net)
+> [Link til website](http://projektkalkulation.azurewebsites.net/)
 > - Brug testbruger login:
 > - email: mikkel@alphasolutions.com
 > - password: mikkel1234

@@ -18,6 +18,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProjectService {
@@ -423,6 +424,14 @@ public class ProjectService {
         double estimatedHours = projectRepository.findTotalEstimatedHoursByProjectId(projectId);
         double actualHours = projectRepository.findTotalActualHoursByProjectId(projectId);
         return estimatedHours - actualHours;
+    }
+
+    public List<Project> findProjectsNeedingAttention() {
+        LocalDate today = LocalDate.now();
+        return findAll().stream()
+                .filter(p -> p.getEndDate() != null)
+                .filter(p -> ChronoUnit.DAYS.between(today, p.getEndDate()) <= 5)
+                .collect(Collectors.toList());
     }
 
 

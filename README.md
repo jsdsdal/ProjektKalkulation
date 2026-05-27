@@ -67,8 +67,8 @@ UI / UX er udarbejdet i Figma først mhb. på programmets første MVP.
 ## Installation
 
 ```
-git clone https://github.com/Wishlist-gruppe-1/Wishlist#
-cd Wishlist
+git clone https://github.com/ProjektKalkulation-Gruppe-6/ProjektKalkulation
+cd ProjektKalkulation
 mvn spring-boot:run
 ```
 

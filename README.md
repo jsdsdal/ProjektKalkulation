@@ -1,9 +1,10 @@
 # AlphaScope
 
 > [Link til website](projektkalkulation.azurewebsites.net)
->Brug testbruger login:
-> email: mikkel@alphasolutions.com
-> password: mikkel1234
+
+Brug testbruger login:
+email: mikkel@alphasolutions.com
+password: mikkel1234
 
 Vi har bygget et projektkalkulationsværktøj med formål at øge produktiviteten i virksomheden Alpha Solutions.
 Projektet er udarbejdet som en del af 2. semester eksamen på Datamatiker uddannelsen.

@@ -20,41 +20,80 @@
     </div>
 
     <!-- Stat cards -->
-    <div class="stat-cards">
-        <div class="stat-card">
-            <div class="stat-card-label">Resource load this month</div>
-            <div class="stat-card-value">0</div>
-            <div class="stat-card-sub">across all projects</div>
+    <div class="stat-cards"><div class="stat-card">
+        <div class="stat-card-label">Forecasted Revenue</div>
+        <div class="stat-card-value"
+             th:text="${#numbers.formatDecimal(forecastedRevenue, 1, 'POINT', 0, 'NONE')} + ' DKK'">—</div>
+        <div class="stat-card-sub">this quarter, all projects</div>
+    </div>
+
+        <div class="stat-card"
+             th:with="dev=${actualRevenue.subtract(forecastedRevenue)}"
+             th:classappend="${dev.compareTo(T(java.math.BigDecimal).ZERO) < 0} ? ' danger'
+                            : (${dev.compareTo(T(java.math.BigDecimal).ZERO) > 0} ? ' success' : '')">
+            <div class="stat-card-label">Actual Revenue</div>
+            <div class="stat-card-value"
+                 th:text="${#numbers.formatDecimal(actualRevenue, 1, 'POINT', 0, 'NONE')} + ' DKK'">—</div>
+            <div class="stat-card-sub"
+                 th:with="dev=${actualRevenue.subtract(forecastedRevenue)}"
+                 th:text="${dev.compareTo(T(java.math.BigDecimal).ZERO) == 0} ? 'On budget'
+                        : (${dev.compareTo(T(java.math.BigDecimal).ZERO) > 0}
+                            ? '+' + ${#numbers.formatDecimal(dev, 1, 'POINT', 0, 'NONE')} + ' DKK above forecast'
+                            : ${#numbers.formatDecimal(dev, 1, 'POINT', 0, 'NONE')} + ' DKK below forecast')">
+            </div>
         </div>
+
         <div class="stat-card">
-            <div class="stat-card-label">Forecasted revenue</div>
-            <div class="stat-card-value">0</div>
-            <div class="stat-card-sub">across all projects</div>
+            <div class="stat-card-label">Yearly Revenue</div>
+            <div class="stat-card-value"
+                 th:text="${#numbers.formatDecimal(annualRevenue, 1, 'POINT', 0, 'NONE')} + ' DKK'">—</div>
+            <div class="stat-card-sub"
+                 th:text="'across all ' + ${T(java.time.LocalDate).now().getYear()} + ' projects'">
+            </div>
         </div>
-        <div class="stat-card warning">
-            <div class="stat-card-label">Actual revenue</div>
-            <div class="stat-card-value">0</div>
-            <div class="stat-card-sub">0 deviation</div>
-        </div>
+
         <div class="stat-card">
-            <div class="stat-card-label">Yearly revenue</div>
-            <div class="stat-card-value">0</div>
-            <div class="stat-card-sub">Across this years projects</div>
+            <div class="stat-card-label">Resource Load This Month</div>
+            <div class="stat-card-value" th:text="${#lists.size(resourceLoad)}">—</div>
+            <div class="stat-card-sub">employees active this month</div>
         </div>
     </div>
 
 
     <div class="dashboard-bottom">
-
         <div class="stat-card-table">
             <h3 class="stat-card-table-title">Projects requiring attention</h3>
+            <div th:if="${#lists.isEmpty(projectsNeedingAttention)}"
+                 style="padding: 20px 0; color: var(--gray-500); font-size: 13px;">
+                No projects currently need attention.
+            </div>
+            <div class="stat-card-table-row"
+                 th:each="project : ${projectsNeedingAttention}">
+                <a th:href="@{/projects/{id}(id=${project.projectId})}"
+                   th:text="${project.title}"
+                   style="font-weight: 500; font-size: 14px;">Project</a>
+                <span class="badge"
+                      th:classappend="${project.status == 'Actual Hours Done'} ? ' badge-green'
+                                     : (${project.status == 'Estimate in Progress'} ? ' badge-yellow'
+                                     : (${project.status == 'Rejected'} ? ' badge-red'
+                                     : (${project.status == 'Not Started'} ? ' badge-gray'
+                                     : ' badge-blue')))"
+                      th:text="${project.status}">Status</span>
+            </div>
         </div>
-
         <div class="stat-card-table">
             <h3 class="stat-card-table-title">Resource load per employee</h3>
-            <div class="stat-card-table-row" th:each="row : ${resourceLoad}">
-                <span class="td-title" th:text="${#strings.arraySplit(row, '|')[0]}"></span>
-                <span class="td-mono" th:text="${#strings.arraySplit(row, '|')[1] + '%'}"></span>
+            <div th:if="${#lists.isEmpty(resourceLoad)}"
+                 style="padding: 20px 0; color: var(--gray-500); font-size: 13px;">
+                No employees allocated this month.
+            </div>
+            <div class="stat-card-table-row"
+                 th:each="row, iter : ${resourceLoad}"
+                 th:if="${iter.index < 5}">
+                <span class="td-title"
+                      th:text="${#strings.arraySplit(row, '|')[0]}"></span>
+                <span class="td-mono"
+                      th:text="${#strings.arraySplit(row, '|')[1]} + '%'"></span>
             </div>
         </div>
 

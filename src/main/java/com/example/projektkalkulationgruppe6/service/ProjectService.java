@@ -303,7 +303,14 @@ public class ProjectService {
 //        return "On time";
 //    }
 
-
+    // aktuel indkomst
+    public BigDecimal getActualRevenueForProject(int projectId) {
+        Project project = projectRepository.findById(projectId);
+        if (project == null) throw new ProjectNotFoundException(projectId);
+        if (project.getHourPrice() == null) return BigDecimal.ZERO;
+        double actualHours = projectRepository.findTotalActualHoursByProjectId(projectId);
+        return project.getHourPrice().multiply(BigDecimal.valueOf(actualHours));
+    }
 
 
     // forventet indtægt til projekt
@@ -386,8 +393,18 @@ public class ProjectService {
         return projectRepository.countActiveProjects();
     }
 
+    // antal projekter
     public int getProjectsNeedingAttentionCount() {
         return projectRepository.countProjectsNeedingAttention();
+    }
+
+    // liste af projekter
+    public List<Project> getProjectsNeedingAttention() {
+        try {
+            return projectRepository.findProjectsNeedingAttention();
+        } catch (DataAccessException ex) {
+            throw new DatabaseOperationException("Could not load projects needing attention.", ex);
+        }
     }
 
     public double getTotalEstimatedHoursByProjectId(int projectId) {

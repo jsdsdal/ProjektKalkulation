@@ -249,7 +249,9 @@ input, select, textarea { font-family: inherit; }
     height: 3px;
     background: var(--black);
 }
-.stat-card.warning::before { background: var(--red); }
+.stat-card.success::before  { background: #065F46; }
+.stat-card.warning::before  { background: #b6791b; }
+.stat-card.danger::before   { background: var(--red); }
 
 .stat-card-label {
     font-size: 11px;

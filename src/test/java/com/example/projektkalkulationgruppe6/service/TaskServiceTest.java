@@ -101,20 +101,20 @@ class TaskServiceTest {
         assertThrows(DatabaseOperationException.class, () -> taskService.deleteById(1));
     }
 
-//
-//    @Test
-//    void ThrowDatabaseOperationExceptionWhenAddAssigneeToTaskFails() {
-//        doThrow(new EmptyResultDataAccessException(1))
-//                .when(taskRepository).addAssigneeToTask(1, 1);
-//        assertThrows(DatabaseOperationException.class,
-//                () -> taskService.addAssigneeToTask(1, 1));
-//    }
-//
-//    @Test
-//    void ThrowDatabaseOperationExceptionWhenAddCompetenceToTaskFails() {
-//        doThrow(new EmptyResultDataAccessException(1))
-//                .when(taskRepository).addCompetenceToTask(1, 1);
-//        assertThrows(DatabaseOperationException.class,
-//                () -> taskService.addCompetenceToTask(1, 1));
-//    }
+
+    @Test
+    void ThrowDatabaseOperationExceptionWhenAddAssigneeToTaskFails() {
+        doThrow(new EmptyResultDataAccessException(1))
+                .when(taskRepository).addAssigneeToTask(1, 1);
+        assertThrows(DatabaseOperationException.class,
+                () -> taskService.addAssigneeToTask(1, 1));
+    }
+
+    @Test
+    void ThrowDatabaseOperationExceptionWhenAddCompetenceToTaskFails() {
+        doThrow(new EmptyResultDataAccessException(1))
+                .when(taskRepository).addCompetenceToTask(1, 1);
+        assertThrows(DatabaseOperationException.class,
+                () -> taskService.addCompetenceToTask(1, 1));
+    }
 }

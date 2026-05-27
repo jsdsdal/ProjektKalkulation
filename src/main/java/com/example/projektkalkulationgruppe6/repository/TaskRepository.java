@@ -273,7 +273,8 @@ public class TaskRepository {
             SELECT COUNT(task_id)
             FROM task
             """;
-        return jdbcTemplate.queryForObject(sql, Integer.class);
+        Integer result = jdbcTemplate.queryForObject(sql, Integer.class);
+        return result != null ? result : 0;
     }
 
     public int countTasksByProjectId(int projectId) {
@@ -317,7 +318,8 @@ public class TaskRepository {
                 AND
                 DATE_ADD(DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY), INTERVAL 6 DAY)
             """;
-        return jdbcTemplate.queryForObject(sql, BigDecimal.class);
+        BigDecimal result = jdbcTemplate.queryForObject(sql, BigDecimal.class);
+        return result != null ? result : new BigDecimal("0.0");
     }
 
 

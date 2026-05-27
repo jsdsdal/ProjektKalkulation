@@ -234,7 +234,7 @@ public class TaskRepository {
     public void removeCompetenceFromTask(int taskId, int competenceId) {
         String sql = """
         DELETE FROM task_competence
-        WHERE task_id = ? 
+        WHERE task_id = ?
         AND competence_id = ?
         """;
         jdbcTemplate.update(sql, taskId, competenceId); }

@@ -1,7 +1,6 @@
 package com.example.projektkalkulationgruppe6.service;
 
 import com.example.projektkalkulationgruppe6.exception.*;
-import com.example.projektkalkulationgruppe6.model.Project;
 import com.example.projektkalkulationgruppe6.model.Task;
 import com.example.projektkalkulationgruppe6.repository.TaskRepository;
 import org.springframework.dao.DataAccessException;

@@ -2,7 +2,6 @@ package com.example.projektkalkulationgruppe6.controller;
 
 
 import com.example.projektkalkulationgruppe6.exception.InvalidEmployeeException;
-import com.example.projektkalkulationgruppe6.exception.NotLoggedInException;
 import com.example.projektkalkulationgruppe6.model.Employee;
 import com.example.projektkalkulationgruppe6.service.EmployeeService;
 import jakarta.servlet.http.HttpSession;

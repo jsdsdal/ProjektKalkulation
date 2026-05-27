@@ -16,7 +16,7 @@ import java.util.List;
 @Repository
 public class ProjectRepository {
     private final JdbcTemplate jdbcTemplate;
-    private RowMapper<Project> projectRowMapper = (rs, rowNum) -> {
+    private final RowMapper<Project> projectRowMapper = (rs, rowNum) -> {
         java.sql.Date sqlStartDate = rs.getDate("start_date");
         java.sql.Date sqlEndDate = rs.getDate("end_date");
         Employee owner = null;
@@ -51,7 +51,7 @@ public class ProjectRepository {
             FROM project p
             JOIN status s ON p.status_id = s.status_id
             WHERE p.parent_project_id IS null
-                """;
+            """;
         return jdbcTemplate.query(sql, projectRowMapper);
     }
 
@@ -61,7 +61,7 @@ public class ProjectRepository {
             FROM project p
             JOIN status s ON p.status_id = s.status_id
             WHERE p.project_id = ?
-                """;
+            """;
         try {
             Project p = jdbcTemplate.queryForObject(sql, projectRowMapper, id);
             //attach subProjects
@@ -130,7 +130,7 @@ public class ProjectRepository {
 
     public List<String> findAllStatusList() {
         String sql = """
-                SELECT title 
+                SELECT title
                 FROM status
                 ORDER BY status_id
                 """;
@@ -140,7 +140,7 @@ public class ProjectRepository {
     public Project insert(Project project) {
         String sql = """
                 INSERT INTO project (
-                    title, description, start_date, end_date, 
+                    title, description, start_date, end_date,
                     hour_price, employee_id, parent_project_id, status_id
                     )
                     values(?, ?, ?, ?, ?, ?, ?, ?)
@@ -219,8 +219,8 @@ public class ProjectRepository {
             WITH RECURSIVE project_tree(project_id) AS (
                 SELECT project_id FROM project WHERE project_id = ?
                 UNION ALL
-                SELECT p.project_id FROM project p 
-                JOIN project_tree pt ON p.parent_project_id = pt.project_id             
+                SELECT p.project_id FROM project p
+                JOIN project_tree pt ON p.parent_project_id = pt.project_id
                 )
        
             SELECT COALESCE(SUM(estimated_hours), 0)
@@ -239,7 +239,7 @@ public class ProjectRepository {
                 SELECT p.project_id FROM project p
                 JOIN project_tree pt ON p.parent_project_id = pt.project_id
                 )
-             
+            
             SELECT COALESCE(SUM(actual_hours), 0)
             FROM task
             WHERE project_id IN (SELECT project_id FROM project_tree)

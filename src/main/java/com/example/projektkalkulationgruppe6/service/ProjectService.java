@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -289,34 +288,6 @@ public class ProjectService {
 
         return remainingDays;
     }
-//
-//    //Tag stilling til om denne skaber noget værdi
-//    public String getDeadlineStatus(int id) {
-//
-//        Project project = projectRepository.findById(id);
-//
-//        if (project == null) {
-//            throw new ProjectNotFoundException(id);
-//        }
-//
-//        if (project.getEndDate() == null) {
-//            throw new InvalidProjectException("Project has no deadline.");
-//        }
-//
-//        LocalDate today = LocalDate.now();
-//        long daysRemaining =
-//                ChronoUnit.DAYS.between(today, project.getEndDate());
-//
-//        if (daysRemaining < 0) {
-//            return "Behind";
-//        }
-//
-//        if (daysRemaining <= 2) {
-//            return "Needs attention";
-//        }
-//
-//        return "On time";
-//    }
 
     // aktuel indkomst
     public BigDecimal getActualRevenueForProject(int projectId) {

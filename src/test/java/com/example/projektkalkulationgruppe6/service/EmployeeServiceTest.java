@@ -4,7 +4,6 @@ import com.example.projektkalkulationgruppe6.exception.EmployeeNotFoundException
 import com.example.projektkalkulationgruppe6.exception.InvalidEmployeeException;
 import com.example.projektkalkulationgruppe6.model.Employee;
 import com.example.projektkalkulationgruppe6.repository.EmployeeRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

@@ -3,7 +3,6 @@ package com.example.projektkalkulationgruppe6.controller;
 import com.example.projektkalkulationgruppe6.exception.InvalidProjectException;
 import com.example.projektkalkulationgruppe6.model.Employee;
 import com.example.projektkalkulationgruppe6.model.Project;
-import com.example.projektkalkulationgruppe6.repository.ProjectRepository;
 import com.example.projektkalkulationgruppe6.service.EmployeeService;
 import com.example.projektkalkulationgruppe6.service.ProjectService;
 import com.example.projektkalkulationgruppe6.service.TaskService;
@@ -22,7 +21,6 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.*;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -210,7 +208,6 @@ class ProjectControllerTest {
                 .andExpect(model().attribute("submitLabel", "Create"))
                 .andExpect(model().attribute("cancelUrl", "/projects/table"));
 
-                ;
     }
 
 

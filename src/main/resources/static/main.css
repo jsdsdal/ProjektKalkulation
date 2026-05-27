@@ -1066,29 +1066,6 @@ input[type="checkbox"] {
     text-decoration: underline;
 }
 
-    /* ── Responsive ─────────────────────────────────────────────── */
-    @media (max-width: 900px) {
-        .stat-cards {
-            grid-template-columns: repeat(2, 1fr);
-        }
-
-        .main {
-            padding: 24px 20px;
-        }
-    }
-    @media (max-width: 600px) {
-        .sidebar {
-            display: none;
-        }
-
-        .main {
-            margin-left: 0;
-        }
-
-        .stat-cards {
-            grid-template-columns: 1fr;
-        }
-    }
 
 /* ── Gantt Chart ─────────────────────────────────────────────── */
 .gantt-wrap {
@@ -1199,3 +1176,26 @@ input[type="checkbox"] {
 }
 
 
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 900px) {
+    .stat-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .main {
+        padding: 24px 20px;
+    }
+}
+@media (max-width: 600px) {
+    .sidebar {
+        display: none;
+    }
+
+    .main {
+        margin-left: 0;
+    }
+
+    .stat-cards {
+        grid-template-columns: 1fr;
+    }
+}

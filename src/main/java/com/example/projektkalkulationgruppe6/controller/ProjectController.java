@@ -11,7 +11,6 @@ import com.example.projektkalkulationgruppe6.utility.SessionHelper;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.util.PathMatcher;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -25,15 +24,13 @@ public class ProjectController {
     private final ProjectService projectService;
     private final TaskService taskService;
     private final SessionHelper sessionHelper;
-    private final PathMatcher pathMatcher;
 
 
-    public ProjectController(ProjectService projectService, EmployeeService employeeService, TaskService taskService, SessionHelper sessionHelper, PathMatcher pathMatcher) {
+    public ProjectController(ProjectService projectService, EmployeeService employeeService, TaskService taskService, SessionHelper sessionHelper) {
         this.projectService = projectService;
         this.employeeService = employeeService;
         this.taskService = taskService;
         this.sessionHelper = sessionHelper;
-        this.pathMatcher = pathMatcher;
     }
 //TEST
 

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Employees</title>
+  <link rel="stylesheet" th:href="@{/main.css}"/>
+</head>
+<body>
+<aside th:replace="~{fragments :: sidebar(activePage='employees')}"></aside>
+
+<main class="main">
+
+  <div class="page-header">
+    <h1 class="page-title">Employees</h1>
+  </div>
+
+  <div class="stat-card-table">
+    <h3 class="stat-card-table-title">All Employees</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Competencies</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="employee : ${employees}">
+          <td class="td-title" th:text="${employee.name}"></td>
+          <td class="td-mono" th:text="${employee.email}"></td>
+          <td>
+                            <span th:each="c : ${employee.competencies}"
+                                  class="badge badge-gray"
+                                  th:text="${c}">
+                            </span>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+</body>
+</html>

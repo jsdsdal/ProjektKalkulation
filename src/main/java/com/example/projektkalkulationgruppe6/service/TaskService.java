@@ -6,6 +6,7 @@ import com.example.projektkalkulationgruppe6.model.Task;
 import com.example.projektkalkulationgruppe6.repository.TaskRepository;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -29,6 +30,7 @@ public class TaskService {
         }
     }
 
+    @Transactional(readOnly = true)
     public List<Task> getTreesByProjectId(int projectId) {
         try {
             return taskRepository.findParentsAndChildrenByProjectId(projectId);
@@ -38,7 +40,7 @@ public class TaskService {
     }
 
 
-
+    @Transactional(readOnly = true)
     public Task findById(int id) {
         try {
             Task task = taskRepository.findById(id);
@@ -51,6 +53,7 @@ public class TaskService {
         }
     }
 
+    @Transactional
     public Task create(Task task, int projectId, List<Integer> competenceIds, List<Integer> employeeIds) {
         validateTask(task);
         try {
@@ -75,6 +78,7 @@ public class TaskService {
         }
     }
 
+    @Transactional
     public Task update (Task task) {
         validateTask(task);
         if (task.getTaskId() == null){
@@ -91,6 +95,7 @@ public class TaskService {
         }
     }
 
+    @Transactional
     public void deleteById(int taskId) {
         validateId(taskId);
         try {
@@ -146,42 +151,42 @@ public class TaskService {
         }
 
     }
-
-    public void addAssigneeToTask(int taskId, int employeeId) {
-        try {
-            taskRepository.addAssigneeToTask(taskId, employeeId);
-        } catch (DataAccessException ex) {
-            throw new DatabaseOperationException("Error: could not add assignee to task", ex);
-        }
-    }
-
-    public void removeAssigneeFromTask(int taskId, int employeeId) {
-        try {
-            taskRepository.removeAssigneeFromTask(taskId, employeeId);
-        } catch (DataAccessException ex) {
-            throw new DatabaseOperationException("Error: could not remove assignee from task", ex);
-        }
-    }
+//
+//    public void addAssigneeToTask(int taskId, int employeeId) {
+//        try {
+//            taskRepository.addAssigneeToTask(taskId, employeeId);
+//        } catch (DataAccessException ex) {
+//            throw new DatabaseOperationException("Error: could not add assignee to task", ex);
+//        }
+//    }
+//
+//    public void removeAssigneeFromTask(int taskId, int employeeId) {
+//        try {
+//            taskRepository.removeAssigneeFromTask(taskId, employeeId);
+//        } catch (DataAccessException ex) {
+//            throw new DatabaseOperationException("Error: could not remove assignee from task", ex);
+//        }
+//    }
 
     public List<TaskRepository.CompetenceOption> findAllCompetencies() {
         return taskRepository.findAllCompetencies();
     }
-
-    public void addCompetenceToTask(int taskId, int competenceId) {
-        try {
-            taskRepository.addCompetenceToTask(taskId, competenceId);
-        } catch (DataAccessException ex) {
-            throw new DatabaseOperationException("Error: could not add competence to task", ex);
-        }
-    }
-
-    public void removeCompetenceFromTask(int taskId, int competenceId) {
-        try {
-            taskRepository.removeCompetenceFromTask(taskId, competenceId);
-        } catch (DataAccessException ex) {
-            throw new DatabaseOperationException("Error: could not remove competence from task", ex);
-        }
-    }
+//
+//    public void addCompetenceToTask(int taskId, int competenceId) {
+//        try {
+//            taskRepository.addCompetenceToTask(taskId, competenceId);
+//        } catch (DataAccessException ex) {
+//            throw new DatabaseOperationException("Error: could not add competence to task", ex);
+//        }
+//    }
+//
+//    public void removeCompetenceFromTask(int taskId, int competenceId) {
+//        try {
+//            taskRepository.removeCompetenceFromTask(taskId, competenceId);
+//        } catch (DataAccessException ex) {
+//            throw new DatabaseOperationException("Error: could not remove competence from task", ex);
+//        }
+//    }
 
     public int getCountOfAllTasksDueThisWeek(){
         return taskRepository.findAllTasksDueThisWeek().size();

@@ -9,6 +9,7 @@ import com.example.projektkalkulationgruppe6.model.Task;
 import com.example.projektkalkulationgruppe6.repository.ProjectRepository;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -39,6 +40,7 @@ public class ProjectService {
         }
     }
 
+    @Transactional
     public Project create(Project project, Integer projectOwnerId) {
         validateProject(project, projectOwnerId);
         Employee projectOwner = employeeService.findById(projectOwnerId);
@@ -51,10 +53,9 @@ public class ProjectService {
         }
     }
 
+    @Transactional(readOnly = true)
     public int findRootProjectIdById(int id) {
-
         Project project = findById(id);
-
         int rootProjectId;
 
         if (project.getParentProjectId() == null) {
@@ -65,6 +66,7 @@ public class ProjectService {
         return rootProjectId;
     }
 
+    @Transactional(readOnly = true)
     public Project findById(int id) {
         validateId(id);
 
@@ -158,6 +160,15 @@ public class ProjectService {
             throw new InvalidProjectException("Project Title is a mandatory field");
         }
 
+        if (title.length() > 50) {
+            throw new InvalidProjectException("Project Title cannot be longer than 50 characters");
+        }
+
+        String description = project.getDescription();
+        if (description != null && description.length() > 500) {
+            throw new InvalidProjectException("Project Description cannot be longer than 500 characters");
+        }
+
         String status = project.getStatus();
         if (status == null || status.isBlank() ) {
             throw new InvalidProjectException("Project Status is a mandatory field");
@@ -178,11 +189,9 @@ public class ProjectService {
         if (projectOwnerId == null) {
             throw new InvalidProjectException("Project Owner is a mandatory field");
         }
-
-        //OBS: Mangler validering af project Owner
-
     }
 
+    @Transactional
     public Project createSubproject(Project subproject, int parentProjectId, Integer projectOwnerId) {
         Project parent = projectRepository.findById(parentProjectId);
 
@@ -214,10 +223,10 @@ public class ProjectService {
         return create(subproject, projectOwnerId);
     }
 
+    @Transactional
     public void delete(int projectId){
-        if(projectId<=0){
-            throw new InvalidProjectException("ProjectID needs to be a positive number");
-        }
+        validateId(projectId);
+
 
         boolean deleted = projectRepository.deleteById(projectId);
 
@@ -228,6 +237,7 @@ public class ProjectService {
     }
 
 
+    @Transactional
     public Project update(int projectId, Project project, Integer projectOwnerId) {
         validateId(projectId);
 
@@ -264,39 +274,40 @@ public class ProjectService {
 
         return remainingDays;
     }
-
-    //Tag stilling til om denne skaber noget værdi
-    public String getDeadlineStatus(int id) {
-
-        Project project = projectRepository.findById(id);
-
-        if (project == null) {
-            throw new ProjectNotFoundException(id);
-        }
-
-        if (project.getEndDate() == null) {
-            throw new InvalidProjectException("Project has no deadline.");
-        }
-
-        LocalDate today = LocalDate.now();
-        long daysRemaining =
-                ChronoUnit.DAYS.between(today, project.getEndDate());
-
-        if (daysRemaining < 0) {
-            return "Behind";
-        }
-
-        if (daysRemaining <= 2) {
-            return "Needs attention";
-        }
-
-        return "On time";
-    }
+//
+//    //Tag stilling til om denne skaber noget værdi
+//    public String getDeadlineStatus(int id) {
+//
+//        Project project = projectRepository.findById(id);
+//
+//        if (project == null) {
+//            throw new ProjectNotFoundException(id);
+//        }
+//
+//        if (project.getEndDate() == null) {
+//            throw new InvalidProjectException("Project has no deadline.");
+//        }
+//
+//        LocalDate today = LocalDate.now();
+//        long daysRemaining =
+//                ChronoUnit.DAYS.between(today, project.getEndDate());
+//
+//        if (daysRemaining < 0) {
+//            return "Behind";
+//        }
+//
+//        if (daysRemaining <= 2) {
+//            return "Needs attention";
+//        }
+//
+//        return "On time";
+//    }
 
 
 
 
     // forventet indtægt til projekt
+    @Transactional(readOnly = true)
     public BigDecimal getExpectedRevenueForProject(int projectId) {
         Project project = projectRepository.findById(projectId);
         if (project == null) {
@@ -316,6 +327,7 @@ public class ProjectService {
         return !date.isBefore(start) && !date.isAfter(end);
     }
 
+    @Transactional(readOnly = true)
     // Est indkomst (kvartal)
     public BigDecimal getQuarterlyEstimatedRevenue(int year, int quarter) {
         List<Project> projects = projectRepository.findAll();
@@ -334,6 +346,7 @@ public class ProjectService {
         return estimated;
     }
 
+    @Transactional(readOnly = true)
     // Aktuelle indkomst (kvartal)
     public BigDecimal getQuarterlyActualRevenue(int year, int quarter) {
         List<Project> projects = projectRepository.findAll();
@@ -352,6 +365,7 @@ public class ProjectService {
         return actual;
     }
 
+    @Transactional(readOnly = true)
     // Årlig indtjening - alle projekter
     public BigDecimal getAnnualRevenue(int year) {
         List<Project> projects = projectRepository.findAll();
@@ -386,6 +400,7 @@ public class ProjectService {
         return projectRepository.findTotalActualHoursByProjectId(projectId);
     }
 
+    @Transactional(readOnly = true)
     public double getRemainingHoursByProjectId(int projectId) {
        validateId(projectId);
         double estimatedHours = projectRepository.findTotalEstimatedHoursByProjectId(projectId);

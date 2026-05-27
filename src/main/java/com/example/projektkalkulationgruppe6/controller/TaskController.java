@@ -134,7 +134,7 @@ public class TaskController {
                     employeeId != null ? employeeId : List.of());
 
             return "redirect:/projects/" + rootProjectId;
-        } catch (InvalidTaskException | DatabaseOperationException ex) {
+        } catch (InvalidTaskException ex) {
             int rootProjectId = projectService.findRootProjectIdById(projectId);
             model.addAttribute("task", task);
             model.addAttribute("formTitle", "Create task");

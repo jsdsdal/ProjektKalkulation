@@ -289,7 +289,8 @@ public class TaskRepository {
         FROM task
         WHERE project_id IN (SELECT project_id FROM project_tree)
         """;
-        return jdbcTemplate.queryForObject(sql, Integer.class, projectId);
+        Integer result = jdbcTemplate.queryForObject(sql, Integer.class, projectId);
+        return result != null ? result : 0;
     }
 
     public int countCompletedTasksByProjectId(int projectId) {
@@ -306,7 +307,8 @@ public class TaskRepository {
         AND actual_hours IS NOT NULL
         AND actual_hours > 0
         """;
-        return jdbcTemplate.queryForObject(sql, Integer.class, projectId);
+        Integer result = jdbcTemplate.queryForObject(sql, Integer.class, projectId);
+        return result != null ? result : 0;
     }
 
     public BigDecimal sumEstimatedHoursThisWeek() {

@@ -41,6 +41,20 @@ public class ProjectService {
         }
     }
 
+    @Transactional(readOnly = true)
+    public List<Project> findAllThisYearForGanttDiagram() {
+
+        List<Project> projects = findAll();
+        List<Project> thisYearProjects = new ArrayList<>();
+
+        for (Project p : projects) {
+            if (p.getStartDate().getYear() == (LocalDate.now().getYear())) {
+                thisYearProjects.add(p);
+            }
+        }
+        return thisYearProjects;
+    }
+
     @Transactional
     public Project create(Project project, Integer projectOwnerId) {
         validateProject(project, projectOwnerId);

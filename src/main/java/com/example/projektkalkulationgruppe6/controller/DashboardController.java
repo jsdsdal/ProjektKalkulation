@@ -21,6 +21,11 @@ public class DashboardController {
     private final EmployeeService employeeService;
     private final ProjectService projectService;
 
+    @GetMapping("/")
+    public String root() {
+        return "redirect:/login";
+    }
+
     public DashboardController(SessionHelper sessionHelper, EmployeeService employeeService, ProjectService projectService) {
         this.sessionHelper = sessionHelper;
         this.employeeService = employeeService;

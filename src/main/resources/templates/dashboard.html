@@ -118,7 +118,12 @@
                  th:if="${project.startDate != null and project.endDate != null}">
                 <div class="gantt__row-first" th:text="${project.title}"></div>
                 <ul class="gantt__row-bars">
-                    <li th:style="'grid-column: ' + ${project.startDate.monthValue} + '/' + ${project.endDate.monthValue + 1} + '; background-color: #111111;'"
+                    <li th:with="color=${project.status == 'Actual Hours Done'} ? '#065F46'
+                    : (${project.status == 'Estimate in Progress'} ? '#b6791b'
+                    : (${project.status == 'Rejected'} ? '#C0392B'
+                    : (${project.status == 'Not Started'} ? '#7A7A7A'
+                    : '#1E40AF')))"
+                        th:style="'grid-column: ' + ${project.startDate.monthValue} + '/' + ${project.endDate.monthValue + 1} + '; background-color: ' + ${color} + ';'"
                         th:text="${project.title}">
                     </li>
                 </ul>

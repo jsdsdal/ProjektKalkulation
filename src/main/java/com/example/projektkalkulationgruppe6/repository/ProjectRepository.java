@@ -110,7 +110,7 @@ public class ProjectRepository {
             JOIN project_tree pt ON p.parent_project_id = pt.project_id
         )
         SELECT * FROM project_tree
-                """;
+        """;
         return jdbcTemplate.query(sql, projectRowMapper, id);
 
     }

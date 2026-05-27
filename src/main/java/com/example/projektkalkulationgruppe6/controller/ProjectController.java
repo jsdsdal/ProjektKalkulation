@@ -100,6 +100,7 @@ public class ProjectController {
         model.addAttribute("totalEstimatedHours", projectService.getTotalEstimatedHoursByProjectId(id));
         model.addAttribute("totalActualHours", projectService.getTotalActualHoursByProjectId(id));
         model.addAttribute("remainingHours", projectService.getRemainingHoursByProjectId(id));
+        model.addAttribute("team", projectService.getTeamByProjectId(id));
 
         if(project.getParentProjectId()== null) {
             return "projects/project-detail";
@@ -116,6 +117,15 @@ public class ProjectController {
 
 
         return "projects/project-overview";
+    }
+
+    @GetMapping("/{id}/team")
+    public String team(@PathVariable int id, HttpSession session, Model model) {
+        sessionHelper.isLoggedIn(session);
+        Project project = projectService.findById(id);
+        model.addAttribute("project", project);
+        model.addAttribute("team", projectService.getTeamByProjectId(id));
+        return "projects/project-team";
     }
 
     @GetMapping("/create-project")

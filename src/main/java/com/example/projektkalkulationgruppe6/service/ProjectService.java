@@ -419,6 +419,16 @@ public class ProjectService {
                 .collect(Collectors.toList());
     }
 
+    public List<Employee> getTeamByProjectId(int projectId) {
+        List<Task> tasks = taskService.getTreesByProjectId(projectId);
+
+        return tasks.stream()
+                .filter(t -> t.getAssignees() != null)
+                .flatMap(t -> t.getAssignees().stream())
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
 
 
 

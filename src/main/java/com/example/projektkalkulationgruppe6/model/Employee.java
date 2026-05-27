@@ -1,6 +1,7 @@
 package com.example.projektkalkulationgruppe6.model;
 
 import java.util.List;
+import java.util.Objects;
 
 public class Employee {
 
@@ -47,6 +48,19 @@ public class Employee {
                 ", password='" + password + '\'' +
                 ", competencies=" + competencies +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Employee)) return false;
+        Employee employee = (Employee) o;
+        return Objects.equals(employeeId, employee.employeeId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(employeeId);
     }
 
 }
